@@ -1,7 +1,5 @@
 import surf
 
-canonInD = ['D-1', 'A-1', 'B-1', 'F#1', 'G-1', 'D-1', 'G-1', 'A-1', 'D-1', 'A-1', 'B-1', 'F#1', 'G-1', 'D-1', 'G-1', 'A-1']
-
 oscillator = surf.Oscillator()
 oscillator.setOctaveOffset(2)
 
@@ -12,7 +10,9 @@ output.start()
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
 
-for note in canonInD:
+notation = open('canon.txt')
+
+for note in notation:
 	sequencer.addNote(note)
 
 time = 0
