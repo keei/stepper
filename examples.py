@@ -17,7 +17,11 @@ for note in canonInD:
 trackLength = sequencer.getTrackLength()
 
 for sample in range (trackLength):
-	pass
+	sequencer.setSample(sample)
+	time = sequencer.getTime()
+	print(time)
+	# sequencer.setTime(time)
+	# currentNote = sequencer.getCurrentNote()
 # for note in sequencer.notes:
 	# cVNote = notationToCVConverter.convert(note)
 	# print(cVNote)
