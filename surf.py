@@ -79,7 +79,7 @@ class Output:
 # I'll probably have to merge this with the converter, to enable slides and non-pitch attributes.
 class Sequencer:
 	notes = []                      # Unlimited list of strings
-	noteTable = ['c-', 'c#', 'd-', 'd#', 'e-', 'f-', 'f#', 'g-', 'g#', 'a-', 'a#', 'b-']
+	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	semiquaverLength = 0            # 0 to unlimited, float
 	temperament = '12e'             # '12e'
 	tempo = 120                     # 0 to unlimited, float

@@ -1,6 +1,6 @@
 import surf
 
-canonInD = ['d-1', 'a-1', 'b-1', 'f#1', 'g-1', 'd-1', 'g-1', 'a-1', 'd-1', 'a-1', 'b-1', 'f#1', 'g-1', 'd-1', 'g-1', 'a-1']
+canonInD = ['D-1', 'A-1', 'B-1', 'F#1', 'G-1', 'D-1', 'G-1', 'A-1', 'D-1', 'A-1', 'B-1', 'F#1', 'G-1', 'D-1', 'G-1', 'A-1']
 
 oscillator = surf.Oscillator()
 oscillator.setOctaveOffset(2)
