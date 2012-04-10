@@ -7,6 +7,7 @@
 # this application to real modular hardware.
 
 from math import floor, pi, sin
+from struct import pack
 import sys
 import wave
 
@@ -72,8 +73,8 @@ class Output:
 		self.outputFile.close()
 
 	def write(self):
-		value = self.value / 5 * 16384 # Still 16-bit only
-		valueBinary = struct.pack('<hh', value)
+		value = floor((self.value + 5) / 10 * 32768) # Still 16-bit only
+		valueBinary = pack('<hh', value, value) # It's mono for now
 		self.outputFile.writeframes(valueBinary)
 
 # For now, there is only one channel, all notes are semiquavers, and there are no rests.

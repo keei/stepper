@@ -26,4 +26,5 @@ while time < trackLength:
 	oscillator.setPitch(pitch)
 	oscillator.setTime(time)
 	waveform = oscillator.getSine()
-	print(waveform)
+	output.setValue(waveform)
+	output.write()
