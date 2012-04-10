@@ -40,6 +40,9 @@ class Oscillator:
 	def getSine(self):
 		pass
 
+	def setFrequency(self, frequency):
+		self.frequency = 440 / 4.75 * frequency # A4 = 440Hz = 4.75v
+
 class Output:
 	filename = 'surf.wav'
 	time = 0                        # 0 to unlimited, int
@@ -73,6 +76,7 @@ class Output:
 		self.outputFile.writeframes(valueBinary)
 
 # For now, there is only one channel, all notes are semiquavers, and there are no rests.
+# I'll probably have to merge this with the converter, to enable slides and non-pitch attributes.
 class Sequencer:
 	notes = []                      # Unlimited list of strings
 	semiquaverLength = 0            # 0 to unlimited, float
@@ -84,6 +88,15 @@ class Sequencer:
 
 	def addNote(self, note):
 		self.notes.append(note)
+
+	def getCurrentNote(self):
+		currentNoteNumber = int(self.time // self.semiquaverLength)
+
+		if currentNoteNumber > len(self.notes) - 1:
+			currentNoteNumber = len(self.notes) - 1
+
+		currentNote = self.notes[currentNoteNumber]
+		return currentNote
 
 	def getTrackLength(self):
 		return len(self.notes) * self.semiquaverLength
