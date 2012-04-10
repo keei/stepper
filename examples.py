@@ -17,7 +17,10 @@ for note in canonInD:
 stepLength = sequencer.getStepLength()
 trackLength = sequencer.getTrackLength()
 
-for time in range (0, trackLength, stepLength):
+time = 0
+
+while time < trackLength:
+	time = time + stepLength
 	print(time)
 	# sequencer.setTime(time)
 	# time = sequencer.getTime()
