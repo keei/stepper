@@ -26,7 +26,7 @@ class Oscillator:
 		pass
 
 	def setPitch(self, pitch):
-		self.frequency = 440 / 4.75 * pitch # A4 = 440Hz = 4.75v
+		self.frequency = 440 / (2 ** 4.75) * (2 ** pitch) # A4 = 440Hz = 4.75v
 
 class Output:
 	filename = 'surf.wav'
