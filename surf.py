@@ -6,6 +6,7 @@
 # or 0 and +5.  Theoretically, it should one day be possible to connect
 # this application to real modular hardware.
 
+from math import pi, sin
 import sys
 import wave
 
@@ -14,10 +15,15 @@ class Oscillator:
 	frequency = 0                   # 0 to +5, float
 	octaveOffset = 0                # -5 to +5, int
 	pulseWidth = 0                  # -5 to +5, float
+	sineWaveLookupTable = []
 	time = 0                        # 0 to unlimited, int
 
 	def __init__(self):
-		pass
+		i = 0
+
+		while i < 1000:
+			self.sineWaveLookupTable.append(sin(i / 1000 * 2 * pi))
+			i = i + 1
 
 	def getPulse(self):
 		pass
