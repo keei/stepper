@@ -1,4 +1,8 @@
 import surf
 
-canonInD = ['D', 'A', 'B', 'Fs', 'G', 'D', 'G', 'A', 'D', 'A', 'B', 'Fs', 'G', 'D', 'G', 'A']
-print(canonInD)
+canonInD = ['d1', 'a1', 'b1', 'fs1', 'g1', 'd1', 'g1', 'a1', 'd1', 'a1', 'b1', 'fs1', 'g1', 'd1', 'g1', 'a1']
+notationToCVConverter = surf.NotationToCVConverter()
+
+for note in canonInD:
+	cVNote = notationToCVConverter.convert(note)
+	print(cVNote)
