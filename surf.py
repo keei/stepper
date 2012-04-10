@@ -6,14 +6,16 @@
 # or 0 and +5.  Theoretically, it should one day be possible to connect
 # this application to real modular hardware.
 
-from math import pi, sin
+from math import floor, pi, sin
 import sys
 import wave
 
+# For now, it works out where the waveform would be if the oscillator had been playing its current note all along.  This will cause clicking.  It should instead remember where it's up to (hence the pointer variable) so that it can gracefully glide from one pitch to the next.
 class Oscillator:
 	centOffset = 0                  # -5 to +5, float
 	frequency = 0                   # 0 to +5, float
 	octaveOffset = 0                # -5 to +5, int
+	pointer = 0                     # 0 to 999 (int)
 	pulseWidth = 0                  # -5 to +5, float
 	sineWaveLookupTable = []
 	time = 0                        # 0 to unlimited, int
@@ -29,13 +31,18 @@ class Oscillator:
 		pass
 
 	def getSine(self):
-		pass
+		cycles = self.frequency * self.time
+		self.pointer = floor(cycles % 1 * 1000)
+		return self.sineWaveLookupTable[self.pointer]
 
 	def setOctaveOffset(self, octaveOffset):
 		self.octaveOffset = octaveOffset
 
 	def setPitch(self, pitch):
 		self.frequency = 440 / (2 ** 4.75) * (2 ** (pitch + self.octaveOffset + (self.centOffset / 5 * 100))) # A4 = 440Hz = 4.75v
+
+	def setTime(self, time):
+		self.time = time
 
 class Output:
 	filename = 'surf.wav'

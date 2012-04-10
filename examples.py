@@ -24,4 +24,6 @@ while time < trackLength:
 
 	pitch = sequencer.getPitch()
 	oscillator.setPitch(pitch)
-	print(oscillator.frequency)
+	oscillator.setTime(time)
+	waveform = oscillator.getSine()
+	print(waveform)
