@@ -8,8 +8,6 @@ output = surf.Output()
 output.setFilename('test.wav')
 output.start()
 
-notationToCVConverter = surf.NotationToCVConverter()
-
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
 
@@ -23,7 +21,6 @@ while time < trackLength:
 	sequencer.incrementTime()
 	time = sequencer.getTime()
 
-	currentNote = sequencer.getCurrentNote()
-	cVNote = notationToCVConverter.convert(currentNote)
-	oscillator.setPitch(cVNote)
+	pitch = sequencer.getPitch()
+	oscillator.setPitch(pitch)
 	print(oscillator.frequency)

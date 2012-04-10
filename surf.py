@@ -9,21 +9,6 @@
 import sys
 import wave
 
-class NotationToCVConverter:
-	temperament = '12e'             # '12e'
-	noteTable = ['c-', 'c#', 'd-', 'd#', 'e-', 'f-', 'f#', 'g-', 'g#', 'a-', 'a#', 'b-']
-
-	def __init__(self):
-		pass
-
-	def convert(self, note):
-		if self.temperament == '12e':
-			noteLetter = note[:2]
-			noteOctave = int(note[2:])
-			noteOctave = noteOctave - 1
-			noteNumber = self.noteTable.index(noteLetter)
-			return noteOctave + (1 / 12 * noteNumber)
-
 class Oscillator:
 	centOffset = 0                  # -5 to +5, float
 	frequency = 0                   # 0 to +5, float
@@ -79,7 +64,9 @@ class Output:
 # I'll probably have to merge this with the converter, to enable slides and non-pitch attributes.
 class Sequencer:
 	notes = []                      # Unlimited list of strings
+	noteTable = ['c-', 'c#', 'd-', 'd#', 'e-', 'f-', 'f#', 'g-', 'g#', 'a-', 'a#', 'b-']
 	semiquaverLength = 0            # 0 to unlimited, float
+	temperament = '12e'             # '12e'
 	tempo = 120                     # 0 to unlimited, float
 	time = 0                        # 0 to self.getTrackLength(), float
 
@@ -89,14 +76,24 @@ class Sequencer:
 	def addNote(self, note):
 		self.notes.append(note)
 
-	def getCurrentNote(self):
-		currentNoteNumber = int(self.time // self.semiquaverLength)
+	def getPitch(self):
+		# Work out the current note's pitch
+		noteNumber = int(self.time // self.semiquaverLength)
 
-		if currentNoteNumber > len(self.notes) - 1:
-			currentNoteNumber = len(self.notes) - 1
+		if noteNumber > len(self.notes) - 1:
+			noteNumber = len(self.notes) - 1
 
-		currentNote = self.notes[currentNoteNumber]
-		return currentNote
+		note = self.notes[noteNumber]
+
+		# Convert this pitch to a control voltage, 1v/oct
+		if self.temperament == '12e':
+			noteLetter = note[:2]
+			noteOctave = int(note[2:])
+			noteOctave = noteOctave - 1
+			noteNumber = self.noteTable.index(noteLetter)
+			return noteOctave + (1 / 12 * noteNumber)
+		else:
+			return 0
 
 	def getTrackLength(self):
 		return len(self.notes) * self.semiquaverLength
