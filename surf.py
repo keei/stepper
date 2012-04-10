@@ -48,16 +48,25 @@ class Output:
 	value = 0                       # -5 to +5, float
 
 	def __del__(self):
-		self.outputFile.close()
+		self.stop()
 
 	def __init__(self):
+		pass
+
+	def setFilename(self, filename):
+		self.filename = filename
+
+	def setValue(self, value):
+		self.value = value
+
+	def start(self):
 		self.outputFile = wave.open(self.filename, 'w')
 		self.outputFile.setnchannels(2) # Stereo only
 		self.outputFile.setsampwidth(2) # 16-bit only
-		self.outputFile.setframerate(audioRefreshRate)
+		self.outputFile.setframerate(self.audioRefreshRate)
 
-	def set(self, value):
-		self.value = value
+	def stop(self):
+		self.outputFile.close()
 
 	def write(self):
 		value = self.value / 5 * 16384 # Still 16-bit only
@@ -65,8 +74,15 @@ class Output:
 		self.outputFile.writeframes(valueBinary)
 
 class Sequencer:
-	tempo = 0                       # 0 to unlimited, float
+	notes = []                      # Unlimited list of strings
+	tempo = 120                     # 0 to unlimited, float
 	time = 0                        # 0 to unlimited, int
 
 	def __init__(self):
 		pass
+
+	def pushNote(self, note):
+		self.notes.append(note)
+
+	def setTempo(self, tempo):
+		self.tempo = tempo
