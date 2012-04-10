@@ -19,12 +19,11 @@ time = 0
 trackLength = sequencer.getTrackLength()
 
 while time < trackLength:
-	sequencer.incrementTime()
 	time = sequencer.getTime()
-
+	increment = sequencer.incrementTime()
 	pitch = sequencer.getPitch()
 	oscillator.setPitch(pitch)
-	oscillator.setTime(time)
+	oscillator.incrementTime(increment)
 	waveform = oscillator.getSine()
 	output.setValue(waveform)
 	output.write()

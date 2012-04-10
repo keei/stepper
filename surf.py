@@ -11,15 +11,13 @@ from struct import pack
 import sys
 import wave
 
-# For now, it works out where the waveform would be if the oscillator had been playing its current note all along.  This will cause clicking.  It should instead remember where it's up to (hence the pointer variable) so that it can gracefully glide from one pitch to the next.
 class Oscillator:
 	centOffset = 0                  # -5 to +5, float
 	frequency = 0                   # 0 to +5, float
 	octaveOffset = 0                # -5 to +5, int
-	pointer = 0                     # 0 to 999 (int)
+	pointer = 0                     # 0 to 1, float
 	pulseWidth = 0                  # -5 to +5, float
 	sineWaveLookupTable = []
-	time = 0                        # 0 to unlimited, int
 
 	def __init__(self):
 		i = 0
@@ -32,18 +30,17 @@ class Oscillator:
 		pass
 
 	def getSine(self):
-		cycles = self.frequency * self.time
-		self.pointer = floor(cycles % 1 * 1000)
-		return self.sineWaveLookupTable[self.pointer]
+		pointer = floor(self.pointer * 1000)
+		return self.sineWaveLookupTable[pointer]
+
+	def incrementTime(self, increment):
+		self.pointer = (self.pointer + (self.frequency * increment)) % 1
 
 	def setOctaveOffset(self, octaveOffset):
 		self.octaveOffset = octaveOffset
 
 	def setPitch(self, pitch):
 		self.frequency = 440 / (2 ** 4.75) * (2 ** (pitch + self.octaveOffset + (self.centOffset / 5 * 100))) # A4 = 440Hz = 4.75v
-
-	def setTime(self, time):
-		self.time = time
 
 class Output:
 	filename = 'surf.wav'
@@ -120,7 +117,9 @@ class Sequencer:
 		return self.time
 
 	def incrementTime(self):
-		self.time = self.time + 1 / 44100
+		increment = 1 / 44100
+		self.time = self.time + increment
+		return increment
 
 	def setTempo(self, tempo):
 		self.tempo = tempo
