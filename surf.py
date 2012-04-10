@@ -82,8 +82,8 @@ class Sequencer:
 	def __init__(self):
 		self.setTempo(120)
 
-	def getStepLength(self):
-		return 1 / 44100
+	def addNote(self, note):
+		self.notes.append(note)
 
 	def getTrackLength(self):
 		return len(self.notes) * self.semiquaverLength
@@ -91,11 +91,8 @@ class Sequencer:
 	def getTime(self):
 		return self.time
 
-	def pushNote(self, note):
-		self.notes.append(note)
-
-	def setTime(self, time):
-		self.time = time
+	def incrementTime(self):
+		self.time = self.time + 1 / 44100
 
 	def setTempo(self, tempo):
 		self.tempo = tempo

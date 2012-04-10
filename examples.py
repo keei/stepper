@@ -12,21 +12,15 @@ sequencer = surf.Sequencer()
 sequencer.setTempo(120)
 
 for note in canonInD:
-	sequencer.pushNote(note)
-
-stepLength = sequencer.getStepLength()
-trackLength = sequencer.getTrackLength()
+	sequencer.addNote(note)
 
 time = 0
+trackLength = sequencer.getTrackLength()
 
 while time < trackLength:
-	time = time + stepLength
+	sequencer.incrementTime()
+	time = sequencer.getTime()
 	print(time)
-	# sequencer.setTime(time)
-	# time = sequencer.getTime()
-	# print(time)
-	# sequencer.setTime(time)
 	# currentNote = sequencer.getCurrentNote()
-# for note in sequencer.notes:
-	# cVNote = notationToCVConverter.convert(note)
+	# cVNote = notationToCVConverter.convert(currentNote)
 	# print(cVNote)
