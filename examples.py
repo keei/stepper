@@ -25,5 +25,5 @@ while time < trackLength:
 
 	currentNote = sequencer.getCurrentNote()
 	cVNote = notationToCVConverter.convert(currentNote)
-	oscillator.setFrequency(cVNote)
+	oscillator.setPitch(cVNote)
 	print(oscillator.frequency)

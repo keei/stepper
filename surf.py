@@ -40,8 +40,8 @@ class Oscillator:
 	def getSine(self):
 		pass
 
-	def setFrequency(self, frequency):
-		self.frequency = 440 / 4.75 * frequency # A4 = 440Hz = 4.75v
+	def setPitch(self, pitch):
+		self.frequency = 440 / 4.75 * pitch # A4 = 440Hz = 4.75v
 
 class Output:
 	filename = 'surf.wav'
