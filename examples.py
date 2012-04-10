@@ -16,8 +16,8 @@ for note in canonInD:
 
 trackLength = sequencer.getTrackLength()
 
-for sample in range (trackLength):
-	sequencer.setSample(sample)
+for time in range (trackLength):
+	sequencer.setTime(time)
 	time = sequencer.getTime()
 	print(time)
 	# sequencer.setTime(time)

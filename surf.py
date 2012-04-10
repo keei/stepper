@@ -75,10 +75,10 @@ class Output:
 # For now, there is only one channel, all notes are semiquavers, and there are no rests.
 class Sequencer:
 	notes = []                      # Unlimited list of strings
-	sample = 0                      # 0 to self.getTrackLength()
 	semiquaverLengthInSamples = 0   # 0 to unlimited, int
 	tempo = 120                     # 0 to unlimited, float
-	time = 0                        # 0 to unlimited, int
+	timeInSamples = 0               # 0 to self.getTrackLength(), int
+	timeInSeconds = 0               # 0 to unlimited, float
 
 	def __init__(self):
 		self.setTempo(120)
@@ -87,13 +87,13 @@ class Sequencer:
 		return int(len(self.notes) * self.semiquaverLengthInSamples)
 
 	def getTime(self):
-		return self.sample / 44100
+		return self.timeInSamples / 44100
 
 	def pushNote(self, note):
 		self.notes.append(note)
 
-	def setSample(self, sample):
-		self.sample = sample
+	def setTime(self, timeInSamples):
+		self.timeInSamples = timeInSamples
 
 	def setTempo(self, tempo):
 		self.tempo = tempo
