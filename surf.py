@@ -27,7 +27,10 @@ class Oscillator:
 			i = i + 1
 
 	def getPulse(self):
-		pass
+		if (self.pointer - 0.5) * 10 < self.pulseWidth:
+			return 5
+		else:
+			return -1
 
 	def getSine(self):
 		pointer = floor(self.pointer * 1000)
@@ -41,6 +44,9 @@ class Oscillator:
 
 	def setPitch(self, pitch):
 		self.frequency = 440 / (2 ** 4.75) * (2 ** (pitch + self.octaveOffset + (self.centOffset / 5 * 100))) # A4 = 440Hz = 4.75v
+
+	def setPulseWidth(self, pulseWidth):
+		self.pulseWidth = pulseWidth
 
 class Output:
 	filename = 'surf.wav'
