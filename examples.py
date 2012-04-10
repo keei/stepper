@@ -1,7 +1,7 @@
 import surf
 
 oscillator = surf.Oscillator()
-oscillator.setOctaveOffset(2)
+oscillator.setOctaveOffset(1)
 
 output = surf.Output()
 output.setFilename('test.wav')
