@@ -73,7 +73,7 @@ class Output:
 		self.outputFile.close()
 
 	def write(self):
-		value = floor((self.value + 5) / 10 * 32768) # Still 16-bit only
+		value = floor(self.value / 5 * 32767) # Still 16-bit only
 		valueBinary = pack('<hh', value, value) # It's mono for now
 		self.outputFile.writeframes(valueBinary)
 
