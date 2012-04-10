@@ -1,6 +1,6 @@
 import surf
 
-canonInD = ['d1', 'a1', 'b1', 'fs1', 'g1', 'd1', 'g1', 'a1', 'd1', 'a1', 'b1', 'fs1', 'g1', 'd1', 'g1', 'a1']
+canonInD = ['d-1', 'a-1', 'b-1', 'f#1', 'g-1', 'd-1', 'g-1', 'a-1', 'd-1', 'a-1', 'b-1', 'f#1', 'g-1', 'd-1', 'g-1', 'a-1']
 
 output = surf.Output()
 output.setFilename('test.wav')
@@ -21,6 +21,7 @@ while time < trackLength:
 	sequencer.incrementTime()
 	time = sequencer.getTime()
 	print(time)
+
 	# currentNote = sequencer.getCurrentNote()
 	# cVNote = notationToCVConverter.convert(currentNote)
 	# print(cVNote)
