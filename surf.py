@@ -25,7 +25,7 @@ class Oscillator:
 		i = 0
 
 		while i < 1000:
-			self.sineWaveLookupTable.append(sin(i / 1000 * 2 * pi))
+			self.sineWaveLookupTable.append(sin(i / 1000 * 2 * pi) * 5)
 			i = i + 1
 
 	def getPulse(self):
