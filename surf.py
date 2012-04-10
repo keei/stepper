@@ -41,8 +41,6 @@ class Oscillator:
 		pass
 
 class Output:
-	audioRefreshRate = 44100        # 0 to unlimited, int
-	dataRefreshRate = 4410          # 0 to unlimited, int
 	filename = 'surf.wav'
 	time = 0                        # 0 to unlimited, int
 	value = 0                       # -5 to +5, float
@@ -60,10 +58,11 @@ class Output:
 		self.value = value
 
 	def start(self):
+		# Only make CD quality files
 		self.outputFile = wave.open(self.filename, 'w')
-		self.outputFile.setnchannels(2) # Stereo only
-		self.outputFile.setsampwidth(2) # 16-bit only
-		self.outputFile.setframerate(self.audioRefreshRate)
+		self.outputFile.setnchannels(2) # Stereo
+		self.outputFile.setsampwidth(2) # 16-bit
+		self.outputFile.setframerate(44100)
 
 	def stop(self):
 		self.outputFile.close()
@@ -73,16 +72,25 @@ class Output:
 		valueBinary = struct.pack('<hh', value)
 		self.outputFile.writeframes(valueBinary)
 
+# For now, there is only one channel, all notes are semiquavers, and there are no rests.
 class Sequencer:
 	notes = []                      # Unlimited list of strings
+	semiquaverLengthInSamples = 0   # 0 to unlimited, int
 	tempo = 120                     # 0 to unlimited, float
 	time = 0                        # 0 to unlimited, int
 
 	def __init__(self):
-		pass
+		self.setTempo(120)
+
+	def getTrackLength(self):
+		return int(len(self.notes) * self.semiquaverLengthInSamples)
 
 	def pushNote(self, note):
 		self.notes.append(note)
 
 	def setTempo(self, tempo):
 		self.tempo = tempo
+		crotchetLengthInSeconds = 60 / self.tempo
+		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4
+		semiquaverLengthInSamples = semiquaverLengthInSeconds * 44100
+		self.semiquaverLengthInSamples = semiquaverLengthInSamples
