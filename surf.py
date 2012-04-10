@@ -74,7 +74,8 @@ class Output:
 
 	def write(self):
 		value = floor(self.value / 5 * 32767) # Still 16-bit only
-		valueBinary = pack('<hh', value, value) # It's mono for now
+		valueBinary = pack('<h', value) # It's mono for now
+		valueBinary = pack('<h', value) # It's mono for now
 		self.outputFile.writeframes(valueBinary)
 
 # For now, there is only one channel, all notes are semiquavers, and there are no rests.
