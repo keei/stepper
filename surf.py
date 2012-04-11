@@ -1,5 +1,5 @@
 # Surf, version 0.1, for Python 3.
-# By ZoëB, 2012-04-10 to 2012-04-11.
+# By ZoeB, 2012-04-10 to 2012-04-11.
 
 # This is a software implementation of a basic modular synthesiser.
 # Almost all values should be numbers between either -5 and +5,
@@ -79,8 +79,8 @@ class Output:
 	def start(self):
 		# Only make CD quality files
 		self.outputFile = wave.open(self.filename, 'w')
-		self.outputFile.setnchannels(2) # Stereo
-		self.outputFile.setsampwidth(2) # 16-bit
+		self.outputFile.setnchannels(2) # Stereo
+		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
 		self.writing = True
 
@@ -103,7 +103,7 @@ class Sequencer:
 	notes = []                      # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	pitch = 0                       # 0 to +5, float
-	semiquaverLength = 0            # 0 to unlimited, float
+	semiquaverLength = 0            # 0 to unlimited, float
 	temperament = '12e'             # '12e'
 	tempo = 120                     # 0 to unlimited, float
 	time = 0                        # 0 to self.getTrackLength(), float
