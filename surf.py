@@ -57,6 +57,7 @@ class Output:
 	time = 0                        # 0 to unlimited, int
 	valueLeft = 0                   # -5 to +5, float
 	valueRight = 0                  # -5 to +5, float
+	writing = False                 # Boolean
 
 	def __del__(self):
 		self.stop()
@@ -81,11 +82,16 @@ class Output:
 		self.outputFile.setnchannels(2) # Stereo
 		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
+		self.writing = True
 
 	def stop(self):
 		self.outputFile.close()
+		self.writing = False
 
 	def write(self):
+		if self.writing == False:
+			self.start()
+
 		valueLeft = int(floor(self.valueLeft / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueLeft)
 		self.outputFile.writeframes(valueBinary)

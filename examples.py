@@ -5,7 +5,6 @@ oscillator.setOctaveOffset(1)
 
 output = surf.Output()
 output.setFilename('test.wav')
-output.start()
 
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
