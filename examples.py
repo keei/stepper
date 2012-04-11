@@ -1,7 +1,7 @@
 import surf
 
 oscillator = surf.Oscillator()
-oscillator.setOctaveOffset(1)
+oscillator.setOctaveOffset(2)
 
 output = surf.Output()
 output.setFilename('test.wav')
@@ -9,7 +9,7 @@ output.setFilename('test.wav')
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
 
-notation = open('canon.txt')
+notation = open('walking_in_the_rain.txt')
 
 for note in notation:
 	sequencer.addNote(note)

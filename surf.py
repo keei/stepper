@@ -102,6 +102,7 @@ class Output:
 class Sequencer:
 	notes = []                      # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
+	pitch = 0                       # 0 to +5, float
 	semiquaverLength = 0            # 0 to unlimited, float
 	temperament = '12e'             # '12e'
 	tempo = 120                     # 0 to unlimited, float
@@ -114,23 +115,7 @@ class Sequencer:
 		self.notes.append(note)
 
 	def getPitch(self):
-		# Work out the current note's pitch
-		noteNumber = int(self.time // self.semiquaverLength)
-
-		if noteNumber > len(self.notes) - 1:
-			noteNumber = len(self.notes) - 1
-
-		note = self.notes[noteNumber]
-
-		# Convert this pitch to a control voltage, 1v/oct
-		if self.temperament == '12e':
-			noteLetter = note[:2]
-			noteOctave = int(note[2:])
-			noteOctave = noteOctave - 1
-			noteNumber = self.noteTable.index(noteLetter)
-			return noteOctave + (1 / 12 * noteNumber)
-		else:
-			return 0
+		return self.pitch
 
 	def getTrackLength(self):
 		return len(self.notes) * self.semiquaverLength
@@ -141,6 +126,27 @@ class Sequencer:
 	def incrementTime(self):
 		increment = float(1) / float(44100)
 		self.time = self.time + increment
+
+		# Work out the current note's pitch
+		noteNumber = int(self.time // self.semiquaverLength)
+
+		if noteNumber > len(self.notes) - 1:
+			noteNumber = len(self.notes) - 1
+
+		note = self.notes[noteNumber]
+
+		# Convert this pitch to a control voltage, 1v/oct
+		if note[:3] == '---':
+			pass
+		elif self.temperament == '12e':
+			noteLetter = note[:2]
+			noteOctave = int(note[2:])
+			noteOctave = noteOctave - 1
+			noteNumber = self.noteTable.index(noteLetter)
+			self.pitch = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+		else:
+			pass
+
 		return increment
 
 	def setTempo(self, tempo):
