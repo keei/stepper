@@ -11,9 +11,9 @@ from struct import pack
 import wave
 
 class Attenuator:
-	audio = 0                       # -5 to +5, float
-	cv1 = 0                         # -5 to +5, float
-	cv2 = 0                         # -5 to +5, float
+	audio = 0.0                     # -5 to +5, float
+	cv1 = 0.0                       # -5 to +5, float
+	cv2 = 0.0                       # -5 to +5, float
 
 	def __init__(self):
 		pass
@@ -34,12 +34,12 @@ class Attenuator:
 		return True
 
 class DecayEnvelopeGenerator:
-	cv = 0                          # 0 to +5, float
-	gate = 0                        # 0 or +5, float
+	cv = 0.0                        # 0 to +5, float
+	gate = 0.0                      # 0 or +5, float
 	speed = 0.1                     # 0 to +5, float
 
 	def __init__(self):
-		self.gate = 0
+		self.gate = 0.0
 		self.speed = 0.1
 
 	def getCV(self):
@@ -60,11 +60,11 @@ class DecayEnvelopeGenerator:
 		self.speed = speed
 
 class Oscillator:
-	centOffset = 0                  # -5 to +5, float
-	frequency = 0                   # 0 to +5, float
+	centOffset = 0.0                # -5 to +5, float
+	frequency = 0.0                 # 0 to +5, float
 	octaveOffset = 0                # -5 to +5, int
-	pointer = 0                     # 0 to +5, float
-	pulseWidth = 0                  # -5 to +5, float
+	pointer = 0.0                   # 0 to +5, float
+	pulseWidth = 0.0                # -5 to +5, float
 	sineWaveLookupTable = []
 
 	def __init__(self):
@@ -104,8 +104,8 @@ class Oscillator:
 class Output:
 	filename = 'surf.wav'
 	time = 0                        # 0 to unlimited, int
-	valueLeft = 0                   # -5 to +5, float
-	valueRight = 0                  # -5 to +5, float
+	valueLeft = 0.0                 # -5 to +5, float
+	valueRight = 0.0                # -5 to +5, float
 	writing = False                 # Boolean
 
 	def __del__(self):
@@ -153,19 +153,19 @@ class Sequencer:
 	cv2 = []                        # 0 to +5, float
 	gate = []                       # 0 or +5, float
 	pitch = []                      # 0 to +5, float
-	gateLength = 0                  # -5 to +5, float
-	noteRowNumber = 0                  # 0 to unlimited, int
-	noteRowTime = 0                    # 0 to unlimited, float
+	gateLength = 0.0                # -5 to +5, float
+	noteRowNumber = 0               # 0 to unlimited, int
+	noteRowTime = 0.0               # 0 to unlimited, float
 	noteRows = []                   # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
-	noteRowLength = 0            # 0 to unlimited, float
+	noteRowLength = 0.0             # 0 to unlimited, float
 	temperament = '12e'             # '12e'
-	tempo = 120                     # 0 to unlimited, float
-	time = 0                        # 0 to self.getTrackLength(), float
+	tempo = 120.0                   # 0 to unlimited, float
+	time = 0.0                      # 0 to self.getTrackLength(), float
 
 	def __init__(self):
 		self.setTempo(120)            # Default to 120BPM
-		self.setGateLength(0)         # Default to half the note length
+		self.setGateLength(0.0)       # Default to half the note length
 
 		for channel in range(4):
 			self.cv1.append(0.0)
@@ -207,7 +207,7 @@ class Sequencer:
 		# See if we're up to a new note (or rest)
 		if noteRowNumber > self.noteRowNumber:
 			self.noteRowNumber = noteRowNumber
-			self.noteRowTime = 0
+			self.noteRowTime = 0.0
 		else:
 			self.noteRowTime = self.noteRowTime + increment
 
@@ -231,13 +231,13 @@ class Sequencer:
 				slide = False
 
 			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				self.gate[channel] = 0
-				self.noteRowTime = 0
+				self.gate[channel] = 0.0
+				self.noteRowTime = 0.0
 			elif self.temperament == '12e':
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
 				if self.noteRowTime > gateLength and slide == False:
-					self.gate[channel] = 0
+					self.gate[channel] = 0.0
 				else:
 					self.gate[channel] = 5
 
