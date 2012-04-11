@@ -149,6 +149,7 @@ class Output:
 		self.outputFile.writeframes(valueBinary)
 
 class Sequencer:
+	cv1 = 0                         # 0 to +5, float
 	gate = 0                        # 0 or +5, float
 	gateLength = 0                  # -5 to +5, float
 	notes = []                      # Unlimited list of strings
@@ -167,6 +168,9 @@ class Sequencer:
 
 	def addNote(self, note):
 		self.notes.append(note)
+
+	def getCV1(self):
+		return self.cv1
 
 	def getGate(self):
 		return self.gate
@@ -231,6 +235,8 @@ class Sequencer:
 			noteOctave = noteOctave - 1
 			noteNumber = self.noteTable.index(noteLetter)
 			self.pitch = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+			noteCV1 = note[6:8]
+			self.cv1 = float(noteCV1) / float(99) * float(5)
 		else:
 			pass
 

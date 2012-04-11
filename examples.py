@@ -24,6 +24,7 @@ trackLength = sequencer.getTrackLength()
 while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
+	cv1 = sequencer.getCV1() # This can control anything.  Let's arbitrarily use it as the velocity.
 	gate = sequencer.getGate()
 	pitch = sequencer.getPitch()
 	oscillator.setPitch(pitch)
@@ -33,7 +34,7 @@ while time < trackLength:
 	decay.incrementTime(increment)
 	attenuator.setAudio(pulse)
 	attenuator.setCV1(decay.getCV())
-	attenuator.setCV2(5)
+	attenuator.setCV2(cv1)
 	pulse = attenuator.getAudio()
 	output.setValue(pulse)
 	output.write()
