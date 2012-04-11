@@ -61,7 +61,7 @@ class DecayEnvelopeGenerator:
 
 class Oscillator:
 	centOffset = 0.0                # -5 to +5, float
-	frequency = 0.0                 # 0 to +5, float
+	frequency = 0.0                 # 0 to unlimited, float
 	octaveOffset = 0                # -5 to +5, int
 	pointer = 0.0                   # 0 to +5, float
 	pulseWidth = 0.0                # -5 to +5, float
