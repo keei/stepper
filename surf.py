@@ -36,6 +36,9 @@ class Oscillator:
 		pointer = floor((self.pointer + 5) * 100)
 		return self.sineWaveLookupTable[pointer]
 
+	def getSawtooth(self):
+		return self.pointer
+
 	def incrementTime(self, increment):
 		self.pointer = (self.pointer + 5) / 10 # From [-5 to +5] to [0 to +1]
 		self.pointer = (self.pointer + (self.frequency * increment)) % 1
