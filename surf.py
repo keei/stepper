@@ -19,18 +19,18 @@ class Attenuator:
 		pass
 
 	def getAudio(self):
-		return this.audio / 25 * this.cv1 * this.cv2
+		return self.audio / 25 * self.cv1 * self.cv2
 
 	def setAudio(self, audio):
-		this.audio = audio
+		self.audio = audio
 		return True
 
 	def setCV1(self, cv1):
-		this.cv1 = cv1
+		self.cv1 = cv1
 		return True
 
 	def setCV2(self, cv2):
-		this.cv2 = cv2
+		self.cv2 = cv2
 		return True
 
 class Oscillator:
@@ -123,6 +123,8 @@ class Output:
 		self.outputFile.writeframes(valueBinary)
 
 class Sequencer:
+	gate = 0                        # 0 or +5, float
+	gateDuration = 0                # 0 to unlimited, float
 	notes = []                      # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	pitch = 0                       # 0 to +5, float
@@ -136,6 +138,9 @@ class Sequencer:
 
 	def addNote(self, note):
 		self.notes.append(note)
+
+	def getGate(self):
+		return self.gate
 
 	def getPitch(self):
 		return self.pitch
@@ -160,8 +165,15 @@ class Sequencer:
 
 		# Convert this pitch to a control voltage, 1v/oct
 		if note[:3] == '...':
-			pass
+			self.gate = 0
+			self.gateDuration = 0
 		elif self.temperament == '12e':
+			if self.gate == 5:
+				self.gateDuration = self.gateDuration + increment
+			else:
+				self.gate = 5
+				self.gateDuration = 0
+
 			noteLetter = note[:2]
 			noteOctave = int(note[2:])
 			noteOctave = noteOctave - 1

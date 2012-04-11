@@ -1,5 +1,7 @@
 import surf
 
+attenuator = surf.Attenuator()
+
 oscillator = surf.Oscillator()
 oscillator.setOctaveOffset(2)
 
@@ -20,10 +22,14 @@ trackLength = sequencer.getTrackLength()
 while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
+	gate = sequencer.getGate()
 	pitch = sequencer.getPitch()
 	oscillator.setPitch(pitch)
 	oscillator.incrementTime(increment)
 	pulse = oscillator.getPulse()
-	sawtooth = oscillator.getSawtooth()
-	output.setValue(pulse, sawtooth)
+	attenuator.setAudio(pulse)
+	attenuator.setCV1(gate)
+	attenuator.setCV2(5)
+	pulse = attenuator.getAudio()
+	output.setValue(pulse)
 	output.write()
