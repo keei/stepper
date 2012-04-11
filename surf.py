@@ -1,5 +1,5 @@
 # Surf, version 0.1, for Python 3.
-# By ZoëB, 2012-04-10 to 2012-04-10.
+# By ZoëB, 2012-04-10 to 2012-04-11.
 
 # This is a software implementation of a basic modular synthesiser.
 # Almost all values should be numbers between either -5 and +5,
@@ -86,8 +86,6 @@ class Output:
 		valueBinary = pack('<h', value) # It's mono for now
 		self.outputFile.writeframes(valueBinary)
 
-# For now, there is only one channel, all notes are semiquavers, and there are no rests.
-# I'll probably have to merge this with the converter, to enable slides and non-pitch attributes.
 class Sequencer:
 	notes = []                      # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
