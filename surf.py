@@ -15,7 +15,7 @@ class Oscillator:
 	centOffset = 0                  # -5 to +5, float
 	frequency = 0                   # 0 to +5, float
 	octaveOffset = 0                # -5 to +5, int
-	pointer = 0                     # 0 to 1, float
+	pointer = 0                     # 0 to +5, float
 	pulseWidth = 0                  # -5 to +5, float
 	sineWaveLookupTable = []
 
@@ -27,17 +27,19 @@ class Oscillator:
 			i = i + 1
 
 	def getPulse(self):
-		if (self.pointer - 0.5) * 10 < self.pulseWidth:
+		if self.pointer < self.pulseWidth:
 			return 5
 		else:
 			return -1
 
 	def getSine(self):
-		pointer = floor(self.pointer * 1000)
+		pointer = floor((self.pointer + 5) * 100)
 		return self.sineWaveLookupTable[pointer]
 
 	def incrementTime(self, increment):
+		self.pointer = (self.pointer + 5) / 10 # From [-5 to +5] to [0 to +1]
 		self.pointer = (self.pointer + (self.frequency * increment)) % 1
+		self.pointer = (self.pointer * 10) - 5 # From [0 to +1] to [-5 to +5]
 
 	def setOctaveOffset(self, octaveOffset):
 		self.octaveOffset = octaveOffset
