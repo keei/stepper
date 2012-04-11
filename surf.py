@@ -190,6 +190,7 @@ class Sequencer:
 		if noteNumber > len(self.notes) - 1:
 			noteNumber = len(self.notes) - 1
 
+		# See if we're up to a new note (or rest)
 		if noteNumber > self.noteNumber:
 			self.noteNumber = noteNumber
 			self.noteTime = 0
@@ -200,24 +201,62 @@ class Sequencer:
 		note = self.notes[noteNumber]
 
 		# Convert this pitch to a control voltage, 1v/oct
-		if note[:3] == '...':
+		if note[4:5] == 'S':
+			slide = True
+			nextNoteNumber = noteNumber + 1
+
+			if nextNoteNumber > len(self.notes) - 1:
+				nextNoteNumber = len(self.notes) - 1
+
+			nextNote = self.notes[nextNoteNumber]
+
+			if nextNote[0:3] == '...':
+				slide = False
+		else:
+			slide = False
+
+		if note[0:3] == '...':
 			self.gate = 0
 			self.noteTime = 0
 		elif self.temperament == '12e':
 			gateLength = (self.gateLength + 5) / 10 * self.semiquaverLength
 
-			if self.noteTime > gateLength:
+			if self.noteTime > gateLength and slide == False:
 				self.gate = 0
 			else:
 				self.gate = 5
 
-			noteLetter = note[:2]
-			noteOctave = int(note[2:])
+			noteLetter = note[0:2]
+			noteOctave = int(note[2:3])
 			noteOctave = noteOctave - 1
 			noteNumber = self.noteTable.index(noteLetter)
 			self.pitch = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
 		else:
 			pass
+
+		if slide == True:
+			if self.temperament == '12e':
+				nextNoteLetter = nextNote[0:2]
+				nextNoteOctave = int(nextNote[2:3])
+				nextNoteOctave = nextNoteOctave - 1
+				nextNoteNumber = self.noteTable.index(nextNoteLetter)
+				nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+
+				# Glide effortlessly and gracefully from self.pitch to nextPitch
+				if self.noteTime > gateLength:
+					difference = nextPitch - self.pitch
+
+					# Work out how far along the slide we are, from 0 to 1
+					beginning = gateLength
+					end = self.semiquaverLength
+					time = self.noteTime
+					time = time - beginning
+					end = end - beginning
+					time = time / end
+
+					self.pitch = self.pitch + (difference / 1 * time)
+			else:
+				pass
 
 		return increment
 
