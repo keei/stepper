@@ -1,4 +1,3 @@
-Improve gate in the sequencer, so notes can last less than the whole time until the next note.  (You won't be able to rely on the gateDuration for this, as it would just turn off then straight back on again.  You probably need a noteDuration instead.)  The sequencer should have at least a global setNoteLength(value) method, if not a note-specific one.
 Allow other non-pitch attributes (eg velocity) in the sequencer
 Test the attenuator with the gate
 Make an envelope genrator; use the attenuator with that instead

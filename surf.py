@@ -124,6 +124,7 @@ class Output:
 
 class Sequencer:
 	gate = 0                        # 0 or +5, float
+	gateLength = 0                  # -5 to +5, float
 	notes = []                      # Unlimited list of strings
 	noteNumber = 0                  # 0 to unlimited, int
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
@@ -135,7 +136,8 @@ class Sequencer:
 	time = 0                        # 0 to self.getTrackLength(), float
 
 	def __init__(self):
-		self.setTempo(120)
+		self.setTempo(120)            # Default to 120BPM
+		self.setGateLength(0)         # Default to half the note length
 
 	def addNote(self, note):
 		self.notes.append(note)
@@ -176,7 +178,9 @@ class Sequencer:
 			self.gate = 0
 			self.noteTime = 0
 		elif self.temperament == '12e':
-			if self.noteTime >= self.semiquaverLength / 2: # This is currently hardwiring the gate length to be exactly half of the note length.  This should eventually be configurable at least globally, between always off and always on, and everything in between, for non-rests.
+			gateLength = (self.gateLength + 5) / 10 * self.semiquaverLength
+
+			if self.noteTime > gateLength:
 				self.gate = 0
 			else:
 				self.gate = 5
@@ -190,6 +194,9 @@ class Sequencer:
 			pass
 
 		return increment
+
+	def setGateLength(self, gateLength):
+		self.gateLength = float(gateLength)
 
 	def setTempo(self, tempo):
 		self.tempo = float(tempo)
