@@ -137,7 +137,8 @@ class Output:
 		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
 
-		valueBinary = ''.join(self.buffer) # I believe this no longer works in Python 3, hence my program is now faster but broken.
+		valueBinary = bytes()
+		valueBinary = valueBinary.join(self.buffer)
 		self.outputFile.writeframes(valueBinary)
 
 		self.outputFile.close()

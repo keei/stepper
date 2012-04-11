@@ -1,4 +1,3 @@
-Fix faster .wav file writing!
 Make sure slides in the sequencer work properly.
 Make slides in the sequencer change the CV values as well as the pitch.
 Add shuffle/swing to the sequencer.
