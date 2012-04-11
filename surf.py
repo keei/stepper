@@ -133,7 +133,7 @@ class Sequencer:
 		return increment
 
 	def setTempo(self, tempo):
-		self.tempo = tempo
+		self.tempo = float(tempo)
 		crotchetLength = 60 / self.tempo
 		semiquaverLength = crotchetLength / 4
 		self.semiquaverLength = semiquaverLength
