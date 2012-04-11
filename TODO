@@ -1,6 +1,7 @@
-Make an ADSR envelope genrator; use the attenuator with that instead.
+Speed up .wav file writing!  (See http://soledadpenades.com/2009/10/29/fastest-way-to-generate-wav-files-in-python-using-the-wave-module/ for an example of how to do this.)
 Make sure slides in the sequencer work properly.
 Make slides in the sequencer change the CV values as well as the pitch.
 Add shuffle/swing to the sequencer.
-Allow multiple channels in the sequencer.
 Make a mixer module with panning and stereo output.
+Make an ADSR envelope genrator; use the attenuator with that instead.
+A multimode filter would be nice, but is probably beyond my abilities.
