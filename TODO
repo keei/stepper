@@ -1,4 +1,3 @@
-Make the wave writer stereo internally, even when it's being used in mono
 Allow slides and non-pitch attributes (chiefly gate!) in the sequencer
 Make an envelope genrator and an attenuator
 Allow rests

@@ -56,7 +56,8 @@ class Oscillator:
 class Output:
 	filename = 'surf.wav'
 	time = 0                        # 0 to unlimited, int
-	value = 0                       # -5 to +5, float
+	valueLeft = 0                   # -5 to +5, float
+	valueRight = 0                  # -5 to +5, float
 
 	def __del__(self):
 		self.stop()
@@ -67,8 +68,13 @@ class Output:
 	def setFilename(self, filename):
 		self.filename = filename
 
-	def setValue(self, value):
-		self.value = value
+	def setValue(self, valueLeft, valueRight = None):
+		self.valueLeft = valueLeft
+
+		if valueRight != None:
+			self.valueRight = valueRight
+		else:
+			self.valueRight = valueLeft
 
 	def start(self):
 		# Only make CD quality files
@@ -81,9 +87,11 @@ class Output:
 		self.outputFile.close()
 
 	def write(self):
-		value = floor(self.value / 5 * 32767) # Still 16-bit only
-		valueBinary = pack('<h', value) # It's mono for now
-		valueBinary = pack('<h', value) # It's mono for now
+		valueLeft = floor(self.valueLeft / 5 * 32767) # 16-bit
+		valueBinary = pack('<h', valueLeft)
+		self.outputFile.writeframes(valueBinary)
+		valueRight = floor(self.valueRight / 5 * 32767) # 16-bit
+		valueBinary = pack('<h', valueRight)
 		self.outputFile.writeframes(valueBinary)
 
 class Sequencer:
