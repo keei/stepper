@@ -11,21 +11,26 @@ from struct import pack
 import wave
 
 class Attenuator:
-	signalX = 0                     # -5 to +5, float
-	signalY = 0                     # -5 to +5, float
+	audio = 0                       # -5 to +5, float
+	cv1 = 0                         # -5 to +5, float
+	cv2 = 0                         # -5 to +5, float
 
 	def __init__(self):
 		pass
 
-	def getMix(self):
-		return this.signalX / 5 * this.signalY
+	def getAudio(self):
+		return this.audio / 25 * this.cv1 * this.cv2
 
-	def setX(self, x):
-		this.signalX = x
+	def setAudio(self, audio):
+		this.audio = audio
 		return True
 
-	def setY(self, y):
-		this.signalY = y
+	def setCV1(self, cv1):
+		this.cv1 = cv1
+		return True
+
+	def setCV2(self, cv2):
+		this.cv2 = cv2
 		return True
 
 class Oscillator:
