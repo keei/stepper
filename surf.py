@@ -124,9 +124,10 @@ class Output:
 
 class Sequencer:
 	gate = 0                        # 0 or +5, float
-	gateDuration = 0                # 0 to unlimited, float
 	notes = []                      # Unlimited list of strings
+	noteNumber = 0                  # 0 to unlimited, int
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
+	noteTime = 0                    # 0 to unlimited, float
 	pitch = 0                       # 0 to +5, float
 	semiquaverLength = 0            # 0 to unlimited, float
 	temperament = '12e'             # '12e'
@@ -155,24 +156,30 @@ class Sequencer:
 		increment = float(1) / float(44100)
 		self.time = self.time + increment
 
-		# Work out the current note's pitch
+		# Work out the current note
 		noteNumber = int(self.time // self.semiquaverLength)
 
 		if noteNumber > len(self.notes) - 1:
 			noteNumber = len(self.notes) - 1
 
+		if noteNumber > self.noteNumber:
+			self.noteNumber = noteNumber
+			self.noteTime = 0
+		else:
+			self.noteTime = self.noteTime + increment
+
+		# Work out the current note's pitch
 		note = self.notes[noteNumber]
 
 		# Convert this pitch to a control voltage, 1v/oct
 		if note[:3] == '...':
 			self.gate = 0
-			self.gateDuration = 0
+			self.noteTime = 0
 		elif self.temperament == '12e':
-			if self.gate == 5:
-				self.gateDuration = self.gateDuration + increment
+			if self.noteTime >= self.semiquaverLength / 2: # This is currently hardwiring the gate length to be exactly half of the note length.  This should eventually be configurable at least globally, between always off and always on, and everything in between, for non-rests.
+				self.gate = 0
 			else:
 				self.gate = 5
-				self.gateDuration = 0
 
 			noteLetter = note[:2]
 			noteOctave = int(note[2:])
