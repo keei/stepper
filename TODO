@@ -1,4 +1,4 @@
-Speed up .wav file writing!  (See http://soledadpenades.com/2009/10/29/fastest-way-to-generate-wav-files-in-python-using-the-wave-module/ for an example of how to do this.)
+Fix faster .wav file writing!
 Make sure slides in the sequencer work properly.
 Make slides in the sequencer change the CV values as well as the pitch.
 Add shuffle/swing to the sequencer.

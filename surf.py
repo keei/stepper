@@ -102,6 +102,7 @@ class Oscillator:
 		self.pulseWidth = pulseWidth
 
 class Output:
+	buffer = []
 	filename = 'surf.wav'
 	time = 0                        # 0 to unlimited, int
 	valueLeft = 0.0                 # -5 to +5, float
@@ -126,14 +127,19 @@ class Output:
 			self.valueRight = valueLeft
 
 	def start(self):
+		self.buffer = []
+		self.writing = True
+
+	def stop(self):
 		# Only make CD quality files
 		self.outputFile = wave.open(self.filename, 'w')
 		self.outputFile.setnchannels(2) # Stereo
 		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
-		self.writing = True
 
-	def stop(self):
+		valueBinary = ''.join(self.buffer) # I believe this no longer works in Python 3, hence my program is now faster but broken.
+		self.outputFile.writeframes(valueBinary)
+
 		self.outputFile.close()
 		self.writing = False
 
@@ -143,10 +149,10 @@ class Output:
 
 		valueLeft = int(floor(self.valueLeft / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueLeft)
-		self.outputFile.writeframes(valueBinary)
+		self.buffer.append(valueBinary)
 		valueRight = int(floor(self.valueRight / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueRight)
-		self.outputFile.writeframes(valueBinary)
+		self.buffer.append(valueBinary)
 
 class Sequencer:
 	cv1 = []                        # 0 to +5, float

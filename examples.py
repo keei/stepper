@@ -33,7 +33,7 @@ while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
 
-	leadCV1 = sequencer.getCV1(0) # This can control anything.  Let's arbitrarily use it as the velocity.
+	leadCV1 = sequencer.getCV1(0) # This can control anything.  Let's arbitrarily use it as the velocity.
 	leadCV2 = sequencer.getCV2(0)
 	leadGate = sequencer.getGate(0)
 	leadPitch = sequencer.getPitch(0)
@@ -48,7 +48,7 @@ while time < trackLength:
 	leadAttenuator.setCV2(leadCV1)
 	leadPulse = leadAttenuator.getAudio()
 
-	bassCV1 = sequencer.getCV1(1) # This can control anything.  Let's arbitrarily use it as the velocity.
+	bassCV1 = sequencer.getCV1(1) # This can control anything.  Let's arbitrarily use it as the velocity.
 	bassGate = sequencer.getGate(1)
 	bassPitch = sequencer.getPitch(1)
 	bassOscillator.setPitch(bassPitch)
