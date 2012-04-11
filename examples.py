@@ -8,6 +8,7 @@ leadOscillator = surf.Oscillator()
 leadOscillator.setOctaveOffset(2)
 
 bassDecay = surf.DecayEnvelopeGenerator()
+bassDecay.setSpeed(0.2)
 
 bassAttenuator = surf.Attenuator()
 
