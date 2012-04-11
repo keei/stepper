@@ -22,8 +22,8 @@ sequencer.setTempo(120)
 
 notation = open('walking_in_the_rain.txt')
 
-for note in notation:
-	sequencer.addNote(note)
+for noteRow in notation:
+	sequencer.addNoteRow(noteRow)
 
 time = 0
 trackLength = sequencer.getTrackLength()
@@ -32,10 +32,10 @@ while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
 
-	leadCV1 = sequencer.getChannel1CV1() # This can control anything.  Let's arbitrarily use it as the velocity.
-	leadCV2 = sequencer.getChannel1CV2()
-	leadGate = sequencer.getChannel1Gate()
-	leadPitch = sequencer.getChannel1Pitch()
+	leadCV1 = sequencer.getCV1(0) # This can control anything.  Let's arbitrarily use it as the velocity.
+	leadCV2 = sequencer.getCV2(0)
+	leadGate = sequencer.getGate(0)
+	leadPitch = sequencer.getPitch(0)
 	leadOscillator.setPitch(leadPitch)
 	leadOscillator.setPulseWidth(leadCV2)
 	leadOscillator.incrementTime(increment)
@@ -47,9 +47,9 @@ while time < trackLength:
 	leadAttenuator.setCV2(leadCV1)
 	leadPulse = leadAttenuator.getAudio()
 
-	bassCV1 = sequencer.getChannel2CV1() # This can control anything.  Let's arbitrarily use it as the velocity.
-	bassGate = sequencer.getChannel2Gate()
-	bassPitch = sequencer.getChannel2Pitch()
+	bassCV1 = sequencer.getCV1(1) # This can control anything.  Let's arbitrarily use it as the velocity.
+	bassGate = sequencer.getGate(1)
+	bassPitch = sequencer.getPitch(1)
 	bassOscillator.setPitch(bassPitch)
 	bassOscillator.incrementTime(increment)
 	bassPulse = bassOscillator.getPulse()

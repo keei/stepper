@@ -149,22 +149,10 @@ class Output:
 		self.outputFile.writeframes(valueBinary)
 
 class Sequencer:
-	channel1CV1 = 0                 # 0 to +5, float
-	channel1CV2 = 0                 # 0 to +5, float
-	channel1Gate = 0                # 0 or +5, float
-	channel1Pitch = 0               # 0 to +5, float
-	channel2CV1 = 0                 # 0 to +5, float
-	channel2CV2 = 0                 # 0 to +5, float
-	channel2Gate = 0                # 0 or +5, float
-	channel2Pitch = 0               # 0 to +5, float
-	channel3CV1 = 0                 # 0 to +5, float
-	channel3CV2 = 0                 # 0 to +5, float
-	channel3Gate = 0                # 0 or +5, float
-	channel3Pitch = 0               # 0 to +5, float
-	channel4CV1 = 0                 # 0 to +5, float
-	channel4CV2 = 0                 # 0 to +5, float
-	channel4Gate = 0                # 0 or +5, float
-	channel4Pitch = 0               # 0 to +5, float
+	cv1 = []                        # 0 to +5, float
+	cv2 = []                        # 0 to +5, float
+	gate = []                       # 0 or +5, float
+	pitch = []                      # 0 to +5, float
 	gateLength = 0                  # -5 to +5, float
 	noteRows = []                   # Unlimited list of strings
 	noteNumber = 0                  # 0 to unlimited, int
@@ -179,56 +167,26 @@ class Sequencer:
 		self.setTempo(120)            # Default to 120BPM
 		self.setGateLength(0)         # Default to half the note length
 
-	def addNote(self, note):
-		self.noteRows.append(note)
+		for channel in range(4):
+			self.cv1.append(0.0)
+			self.cv2.append(0.0)
+			self.gate.append(0.0)
+			self.pitch.append(0.0)
 
-	def getChannel1CV1(self):
-		return self.channel1CV1
+	def addNoteRow(self, noteRow):
+		self.noteRows.append(noteRow)
 
-	def getChannel1CV2(self):
-		return self.channel1CV2
+	def getCV1(self, channel):
+		return self.cv1[channel]
 
-	def getChannel1Gate(self):
-		return self.channel1Gate
+	def getCV2(self, channel):
+		return self.cv2[channel]
 
-	def getChannel1Pitch(self):
-		return self.channel1Pitch
+	def getGate(self, channel):
+		return self.gate[channel]
 
-	def getChannel2CV1(self):
-		return self.channel2CV1
-
-	def getChannel2CV2(self):
-		return self.channel2CV2
-
-	def getChannel2Gate(self):
-		return self.channel2Gate
-
-	def getChannel2Pitch(self):
-		return self.channel2Pitch
-
-	def getChannel3CV1(self):
-		return self.channel3CV1
-
-	def getChannel3CV2(self):
-		return self.channel3CV2
-
-	def getChannel3Gate(self):
-		return self.channel3Gate
-
-	def getChannel3Pitch(self):
-		return self.channel3Pitch
-
-	def getChannel4CV1(self):
-		return self.channel4CV1
-
-	def getChannel4CV2(self):
-		return self.channel4CV2
-
-	def getChannel4Gate(self):
-		return self.channel4Gate
-
-	def getChannel4Pitch(self):
-		return self.channel4Pitch
+	def getPitch(self, channel):
+		return self.pitch[channel]
 
 	def getTrackLength(self):
 		return len(self.noteRows) * self.semiquaverLength
@@ -253,28 +211,6 @@ class Sequencer:
 		else:
 			self.noteTime = self.noteTime + increment
 
-		selfCV1 = [0.0, 0.0, 0.0, 0.0]
-		selfCV2 = [0.0, 0.0, 0.0, 0.0]
-		selfGate = [0.0, 0.0, 0.0, 0.0]
-		selfPitch = [0.0, 0.0, 0.0, 0.0]
-
-		selfCV1[0] = self.channel1CV1
-		selfCV1[1] = self.channel2CV1
-		selfCV1[2] = self.channel3CV1
-		selfCV1[3] = self.channel4CV1
-		selfCV2[0] = self.channel1CV2
-		selfCV2[1] = self.channel2CV2
-		selfCV2[2] = self.channel3CV2
-		selfCV2[3] = self.channel4CV2
-		selfGate[0] = self.channel1Gate
-		selfGate[1] = self.channel2Gate
-		selfGate[2] = self.channel3Gate
-		selfGate[3] = self.channel4Gate
-		selfPitch[0] = self.channel1Pitch
-		selfPitch[1] = self.channel2Pitch
-		selfPitch[2] = self.channel3Pitch
-		selfPitch[3] = self.channel4Pitch
-
 		for channel in range(4):
 			# Work out the current note's pitch
 			note = self.noteRows[noteNumber]
@@ -295,25 +231,25 @@ class Sequencer:
 				slide = False
 
 			if note[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				selfGate[channel] = 0
+				self.gate[channel] = 0
 				self.noteTime = 0
 			elif self.temperament == '12e':
 				gateLength = (self.gateLength + 5) / 10 * self.semiquaverLength
 
 				if self.noteTime > gateLength and slide == False:
-					selfGate[channel] = 0
+					self.gate[channel] = 0
 				else:
-					selfGate[channel] = 5
+					self.gate[channel] = 5
 
 				noteLetter = note[(channel * 14) + 0:(channel * 14) + 2]
 				noteOctave = int(note[(channel * 14) + 2:(channel * 14) + 3])
 				noteOctave = noteOctave - 1
 				noteNumber = self.noteTable.index(noteLetter)
-				selfPitch[channel] = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+				self.pitch[channel] = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
 				noteCV1 = note[(channel * 14) + 6:(channel * 14) + 8]
-				selfCV1[channel] = float(noteCV1) / float(99) * float(5)
+				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
 				noteCV2 = note[(channel * 14) + 9:(channel * 14) + 11]
-				selfCV2[channel] = float(noteCV2) / float(99) * float(5)
+				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
 			else:
 				pass
 
@@ -327,7 +263,7 @@ class Sequencer:
 
 					# Glide effortlessly and gracefully from self.pitch to nextPitch
 					if self.noteTime > gateLength:
-						difference = nextPitch - selfPitch[channel]
+						difference = nextPitch - self.pitch[channel]
 
 						# Work out how far along the slide we are, from 0 to 1
 						beginning = gateLength
@@ -337,26 +273,9 @@ class Sequencer:
 						end = end - beginning
 						time = time / end
 
-						selfPitch[channel] = selfPitch[channel] + (difference / 1 * time)
+						self.pitch[channel] = self.pitch[channel] + (difference / 1 * time)
 				else:
 					pass
-
-		self.channel1CV1 = selfCV1[0]
-		self.channel2CV1 = selfCV1[1]
-		self.channel3CV1 = selfCV1[2]
-		self.channel4CV1 = selfCV1[3]
-		self.channel1CV2 = selfCV2[0]
-		self.channel2CV2 = selfCV2[1]
-		self.channel3CV2 = selfCV2[2]
-		self.channel4CV2 = selfCV2[3]
-		self.channel1Gate = selfGate[0]
-		self.channel2Gate = selfGate[1]
-		self.channel3Gate = selfGate[2]
-		self.channel4Gate = selfGate[3]
-		self.channel1Pitch = selfPitch[0]
-		self.channel2Pitch = selfPitch[1]
-		self.channel3Pitch = selfPitch[2]
-		self.channel4Pitch = selfPitch[3]
 
 		return increment
 
