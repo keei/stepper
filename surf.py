@@ -150,6 +150,7 @@ class Output:
 
 class Sequencer:
 	cv1 = 0                         # 0 to +5, float
+	cv2 = 0                         # 0 to +5, float
 	gate = 0                        # 0 or +5, float
 	gateLength = 0                  # -5 to +5, float
 	notes = []                      # Unlimited list of strings
@@ -171,6 +172,9 @@ class Sequencer:
 
 	def getCV1(self):
 		return self.cv1
+
+	def getCV2(self):
+		return self.cv2
 
 	def getGate(self):
 		return self.gate
@@ -237,6 +241,8 @@ class Sequencer:
 			self.pitch = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
 			noteCV1 = note[6:8]
 			self.cv1 = float(noteCV1) / float(99) * float(5)
+			noteCV2 = note[9:11]
+			self.cv2 = float(noteCV2) / float(99) * float(5)
 		else:
 			pass
 

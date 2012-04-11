@@ -25,9 +25,11 @@ while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
 	cv1 = sequencer.getCV1() # This can control anything.  Let's arbitrarily use it as the velocity.
+	cv2 = sequencer.getCV2()
 	gate = sequencer.getGate()
 	pitch = sequencer.getPitch()
 	oscillator.setPitch(pitch)
+	oscillator.setPulseWidth(cv2)
 	oscillator.incrementTime(increment)
 	pulse = oscillator.getPulse()
 	decay.setGate(gate)
