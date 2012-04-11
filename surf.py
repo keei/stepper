@@ -136,7 +136,7 @@ class Sequencer:
 		note = self.notes[noteNumber]
 
 		# Convert this pitch to a control voltage, 1v/oct
-		if note[:3] == '---':
+		if note[:3] == '...':
 			pass
 		elif self.temperament == '12e':
 			noteLetter = note[:2]
