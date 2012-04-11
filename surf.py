@@ -154,11 +154,11 @@ class Sequencer:
 	gate = []                       # 0 or +5, float
 	pitch = []                      # 0 to +5, float
 	gateLength = 0                  # -5 to +5, float
+	noteRowNumber = 0                  # 0 to unlimited, int
+	noteRowTime = 0                    # 0 to unlimited, float
 	noteRows = []                   # Unlimited list of strings
-	noteNumber = 0                  # 0 to unlimited, int
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
-	noteTime = 0                    # 0 to unlimited, float
-	semiquaverLength = 0            # 0 to unlimited, float
+	noteRowLength = 0            # 0 to unlimited, float
 	temperament = '12e'             # '12e'
 	tempo = 120                     # 0 to unlimited, float
 	time = 0                        # 0 to self.getTrackLength(), float
@@ -189,7 +189,7 @@ class Sequencer:
 		return self.pitch[channel]
 
 	def getTrackLength(self):
-		return len(self.noteRows) * self.semiquaverLength
+		return len(self.noteRows) * self.noteRowLength
 
 	def getTime(self):
 		return self.time
@@ -199,26 +199,26 @@ class Sequencer:
 		self.time = self.time + increment
 
 		# Work out the current note
-		noteNumber = int(self.time // self.semiquaverLength)
+		noteRowNumber = int(self.time // self.noteRowLength)
 
-		if noteNumber > len(self.noteRows) - 1:
-			noteNumber = len(self.noteRows) - 1
+		if noteRowNumber > len(self.noteRows) - 1:
+			noteRowNumber = len(self.noteRows) - 1
 
 		# See if we're up to a new note (or rest)
-		if noteNumber > self.noteNumber:
-			self.noteNumber = noteNumber
-			self.noteTime = 0
+		if noteRowNumber > self.noteRowNumber:
+			self.noteRowNumber = noteRowNumber
+			self.noteRowTime = 0
 		else:
-			self.noteTime = self.noteTime + increment
+			self.noteRowTime = self.noteRowTime + increment
 
 		for channel in range(4):
 			# Work out the current note's pitch
-			note = self.noteRows[noteNumber]
+			note = self.noteRows[noteRowNumber]
 
 			# Convert this pitch to a control voltage, 1v/oct
 			if note[(channel * 14) + 4:(channel * 14) + 5] == 'S':
 				slide = True
-				nextNoteNumber = noteNumber + 1
+				nextNoteNumber = noteRowNumber + 1
 
 				if nextNoteNumber > len(self.noteRows) - 1:
 					nextNoteNumber = len(self.noteRows) - 1
@@ -232,11 +232,11 @@ class Sequencer:
 
 			if note[(channel * 14) + 0:(channel * 14) + 3] == '...':
 				self.gate[channel] = 0
-				self.noteTime = 0
+				self.noteRowTime = 0
 			elif self.temperament == '12e':
-				gateLength = (self.gateLength + 5) / 10 * self.semiquaverLength
+				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
-				if self.noteTime > gateLength and slide == False:
+				if self.noteRowTime > gateLength and slide == False:
 					self.gate[channel] = 0
 				else:
 					self.gate[channel] = 5
@@ -244,8 +244,8 @@ class Sequencer:
 				noteLetter = note[(channel * 14) + 0:(channel * 14) + 2]
 				noteOctave = int(note[(channel * 14) + 2:(channel * 14) + 3])
 				noteOctave = noteOctave - 1
-				noteNumber = self.noteTable.index(noteLetter)
-				self.pitch[channel] = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+				noteRowNumber = self.noteTable.index(noteLetter)
+				self.pitch[channel] = noteOctave + (1 / 12 * noteRowNumber) # I should check if I need to make any of these explicitly floats on some setups.
 				noteCV1 = note[(channel * 14) + 6:(channel * 14) + 8]
 				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
 				noteCV2 = note[(channel * 14) + 9:(channel * 14) + 11]
@@ -262,13 +262,13 @@ class Sequencer:
 					nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
 
 					# Glide effortlessly and gracefully from self.pitch to nextPitch
-					if self.noteTime > gateLength:
+					if self.noteRowTime > gateLength:
 						difference = nextPitch - self.pitch[channel]
 
 						# Work out how far along the slide we are, from 0 to 1
 						beginning = gateLength
-						end = self.semiquaverLength
-						time = self.noteTime
+						end = self.noteRowLength
+						time = self.noteRowTime
 						time = time - beginning
 						end = end - beginning
 						time = time / end
@@ -286,4 +286,4 @@ class Sequencer:
 		self.tempo = float(tempo)
 		crotchetLength = 60 / self.tempo
 		semiquaverLength = crotchetLength / 4
-		self.semiquaverLength = semiquaverLength
+		self.noteRowLength = semiquaverLength
