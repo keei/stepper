@@ -1,11 +1,18 @@
 import surf
 
-decay = surf.DecayEnvelopeGenerator()
+leadDecay = surf.DecayEnvelopeGenerator()
 
-attenuator = surf.Attenuator()
+leadAttenuator = surf.Attenuator()
 
-oscillator = surf.Oscillator()
-oscillator.setOctaveOffset(2)
+leadOscillator = surf.Oscillator()
+leadOscillator.setOctaveOffset(2)
+
+bassDecay = surf.DecayEnvelopeGenerator()
+
+bassAttenuator = surf.Attenuator()
+
+bassOscillator = surf.Oscillator()
+bassOscillator.setOctaveOffset(1)
 
 output = surf.Output()
 output.setFilename('test.wav')
@@ -24,19 +31,34 @@ trackLength = sequencer.getTrackLength()
 while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
-	cv1 = sequencer.getCV1() # This can control anything.  Let's arbitrarily use it as the velocity.
-	cv2 = sequencer.getCV2()
-	gate = sequencer.getGate()
-	pitch = sequencer.getPitch()
-	oscillator.setPitch(pitch)
-	oscillator.setPulseWidth(cv2)
-	oscillator.incrementTime(increment)
-	pulse = oscillator.getPulse()
-	decay.setGate(gate)
-	decay.incrementTime(increment)
-	attenuator.setAudio(pulse)
-	attenuator.setCV1(decay.getCV())
-	attenuator.setCV2(cv1)
-	pulse = attenuator.getAudio()
-	output.setValue(pulse)
+
+	leadCV1 = sequencer.getChannel1CV1() # This can control anything.  Let's arbitrarily use it as the velocity.
+	leadCV2 = sequencer.getChannel1CV2()
+	leadGate = sequencer.getChannel1Gate()
+	leadPitch = sequencer.getChannel1Pitch()
+	leadOscillator.setPitch(leadPitch)
+	leadOscillator.setPulseWidth(leadCV2)
+	leadOscillator.incrementTime(increment)
+	leadPulse = leadOscillator.getPulse()
+	leadDecay.setGate(leadGate)
+	leadDecay.incrementTime(increment)
+	leadAttenuator.setAudio(leadPulse)
+	leadAttenuator.setCV1(leadDecay.getCV())
+	leadAttenuator.setCV2(leadCV1)
+	leadPulse = leadAttenuator.getAudio()
+
+	bassCV1 = sequencer.getChannel2CV1() # This can control anything.  Let's arbitrarily use it as the velocity.
+	bassGate = sequencer.getChannel2Gate()
+	bassPitch = sequencer.getChannel2Pitch()
+	bassOscillator.setPitch(bassPitch)
+	bassOscillator.incrementTime(increment)
+	bassPulse = bassOscillator.getPulse()
+	bassDecay.setGate(bassGate)
+	bassDecay.incrementTime(increment)
+	bassAttenuator.setAudio(bassPulse)
+	bassAttenuator.setCV1(bassDecay.getCV())
+	bassAttenuator.setCV2(bassCV1)
+	bassPulse = bassAttenuator.getAudio()
+
+	output.setValue(leadPulse, bassPulse)
 	output.write()
