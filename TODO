@@ -1,6 +1,5 @@
 Allow other non-pitch attributes (eg velocity) in the sequencer
-Test the attenuator with the gate
-Make an envelope genrator; use the attenuator with that instead
+Make an ADSR envelope genrator; use the attenuator with that instead
 Allow slides in the sequencer
 Add shuffle/swing to the sequencer
 Allow multiple channels in the sequencer

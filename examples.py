@@ -1,5 +1,7 @@
 import surf
 
+decay = surf.DecayEnvelopeGenerator()
+
 attenuator = surf.Attenuator()
 
 oscillator = surf.Oscillator()
@@ -27,8 +29,10 @@ while time < trackLength:
 	oscillator.setPitch(pitch)
 	oscillator.incrementTime(increment)
 	pulse = oscillator.getPulse()
+	decay.setGate(gate)
+	decay.incrementTime(increment)
 	attenuator.setAudio(pulse)
-	attenuator.setCV1(gate)
+	attenuator.setCV1(decay.getCV())
 	attenuator.setCV2(5)
 	pulse = attenuator.getAudio()
 	output.setValue(pulse)

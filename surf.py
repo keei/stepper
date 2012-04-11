@@ -33,6 +33,32 @@ class Attenuator:
 		self.cv2 = cv2
 		return True
 
+class DecayEnvelopeGenerator:
+	cv = 0                          # 0 to +5, float
+	gate = 0                        # 0 or +5, float
+	speed = 0.1                     # 0 to +5, float
+
+	def __init__(self):
+		self.gate = 0
+		self.speed = 0.1
+
+	def getCV(self):
+		return self.cv
+
+	def incrementTime(self, increment):
+		if self.cv > 0:
+			self.cv = self.cv - (increment / self.speed);
+
+	def setGate(self, gate):
+		if self.gate == 0 and gate == 5:
+			self.cv = 5
+			self.gate = 5
+		else:
+			self.gate = gate
+
+	def setSpeed(self, speed):
+		self.speed = speed
+
 class Oscillator:
 	centOffset = 0                  # -5 to +5, float
 	frequency = 0                   # 0 to +5, float
