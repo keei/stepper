@@ -1,5 +1,6 @@
 Allow non-pitch attributes (chiefly gate!) in the sequencer
-Make an envelope genrator and an attenuator
+Test the attenuator with the gate
+Make an envelope genrator; use the attenuator with that instead
 Allow slides in the sequencer
 Add shuffle/swing to the sequencer
 Allow multiple channels in the sequencer

@@ -10,6 +10,24 @@ from math import floor, pi, sin
 from struct import pack
 import wave
 
+class Attenuator:
+	signalX = 0                     # -5 to +5, float
+	signalY = 0                     # -5 to +5, float
+
+	def __init__(self):
+		pass
+
+	def getMix(self):
+		return this.signalX / 5 * this.signalY
+
+	def setX(self, x):
+		this.signalX = x
+		return True
+
+	def setY(self, y):
+		this.signalY = y
+		return True
+
 class Oscillator:
 	centOffset = 0                  # -5 to +5, float
 	frequency = 0                   # 0 to +5, float
