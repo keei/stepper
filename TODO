@@ -1,7 +1,7 @@
-Allow slides and non-pitch attributes (chiefly gate!) in the sequencer
+Allow non-pitch attributes (chiefly gate!) in the sequencer
 Make an envelope genrator and an attenuator
-Allow rests
-Add shuffle/swing
-Allow multiple channels
-Make a mixer with stereo output
-Allow the wave writer to receive stereo input
+Allow rests in the sequencer
+Allow slides in the sequencer
+Add shuffle/swing to the sequencer
+Allow multiple channels in the sequencer
+Make a mixer module with panning and stereo output

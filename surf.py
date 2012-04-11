@@ -8,7 +8,6 @@
 
 from math import floor, pi, sin
 from struct import pack
-import sys
 import wave
 
 class Oscillator:
@@ -33,7 +32,7 @@ class Oscillator:
 			return -1
 
 	def getSine(self):
-		pointer = floor((self.pointer + 5) * 100)
+		pointer = int(floor((self.pointer + 5) * 100))
 		return self.sineWaveLookupTable[pointer]
 
 	def getSawtooth(self):
@@ -87,10 +86,10 @@ class Output:
 		self.outputFile.close()
 
 	def write(self):
-		valueLeft = floor(self.valueLeft / 5 * 32767) # 16-bit
+		valueLeft = int(floor(self.valueLeft / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueLeft)
 		self.outputFile.writeframes(valueBinary)
-		valueRight = floor(self.valueRight / 5 * 32767) # 16-bit
+		valueRight = int(floor(self.valueRight / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueRight)
 		self.outputFile.writeframes(valueBinary)
 
@@ -134,7 +133,7 @@ class Sequencer:
 		return self.time
 
 	def incrementTime(self):
-		increment = 1 / 44100
+		increment = float(1) / float(44100)
 		self.time = self.time + increment
 		return increment
 
