@@ -1,12 +1,12 @@
 # Surf, version 0.1, for Python 3.
-# By ZoeB, 2012-04-10 to 2012-04-11.
+# By ZoeB, 2012-04-10 to 2012-04-12.
 
 # This is a software implementation of a basic modular synthesiser.
 # Almost all values should be numbers between either -5 and +5,
 # or 0 and +5.  Theoretically, it should one day be possible to connect
 # this application to real modular hardware.
 
-from math import floor, pi, sin
+from math import ceil, floor, pi, sin
 from struct import pack
 import wave
 
@@ -179,6 +179,7 @@ class Sequencer:
 	noteRows = []                   # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	noteRowLength = 0.0             # 0 to unlimited, float
+	numberOfChannels = 4            # 0 to unlimited, int
 	temperament = '12e'             # '12e'
 	tempo = 120.0                   # 0 to unlimited, float
 	time = 0.0                      # 0 to self.getTrackLength(), float
@@ -186,14 +187,12 @@ class Sequencer:
 	def __init__(self):
 		self.setTempo(120)            # Default to 120BPM
 		self.setGateLength(0.0)       # Default to half the note length
-
-		for channel in range(4):
-			self.cv1.append(0.0)
-			self.cv2.append(0.0)
-			self.gate.append(0.0)
-			self.pitch.append(0.0)
+		self.setNumberOfChannels(4)   # Default to 4 channels
 
 	def addNoteRow(self, noteRow):
+		if not self.noteRows:
+			self.setNumberOfChannels(ceil(len(noteRow) / 14))
+
 		self.noteRows.append(noteRow)
 
 	def getCV1(self, channel):
@@ -231,7 +230,7 @@ class Sequencer:
 		else:
 			self.noteRowTime = self.noteRowTime + increment
 
-		for channel in range(4):
+		for channel in range(self.numberOfChannels):
 			# Work out each current note's pitch
 			noteRow = self.noteRows[noteRowNumber]
 
@@ -301,6 +300,21 @@ class Sequencer:
 
 	def setGateLength(self, gateLength):
 		self.gateLength = float(gateLength)
+
+	def setNumberOfChannels(self, numberOfChannels):
+		self.cv1 = []
+		self.cv2 = []
+		self.gate = []
+		self.pitch = []
+
+		for channel in range(numberOfChannels):
+			self.cv1.append(0.0)
+			self.cv2.append(0.0)
+			self.gate.append(0.0)
+			self.pitch.append(0.0)
+
+		self.numberOfChannels = numberOfChannels
+		return True
 
 	def setTempo(self, tempo):
 		self.tempo = float(tempo)
