@@ -191,7 +191,7 @@ class Sequencer:
 
 	def addNoteRow(self, noteRow):
 		if not self.noteRows:
-			self.setNumberOfChannels(ceil(len(noteRow) / 14))
+			self.setNumberOfChannels(ceil(len(noteRow) / 16))
 
 		self.noteRows.append(noteRow)
 
@@ -235,7 +235,7 @@ class Sequencer:
 			noteRow = self.noteRows[noteRowNumber]
 
 			# Convert this pitch to a control voltage, 1v/oct
-			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S':
+			if noteRow[(channel * 16) + 4:(channel * 16) + 5] == 'S':
 				slide = True
 				nextNoteRowNumber = noteRowNumber + 1
 
@@ -244,12 +244,12 @@ class Sequencer:
 
 				nextNoteRow = self.noteRows[nextNoteRowNumber]
 
-				if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
+				if nextNoteRow[(channel * 16) + 0:(channel * 16) + 3] == '...':
 					slide = False
 			else:
 				slide = False
 
-			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
+			if noteRow[(channel * 16) + 0:(channel * 16) + 3] == '...':
 				self.gate[channel] = 0.0
 				self.noteRowTime = 0.0
 			elif self.temperament == '12e':
@@ -260,22 +260,22 @@ class Sequencer:
 				else:
 					self.gate[channel] = 5
 
-				noteLetter = noteRow[(channel * 14) + 0:(channel * 14) + 2]
-				noteOctave = int(noteRow[(channel * 14) + 2:(channel * 14) + 3])
+				noteLetter = noteRow[(channel * 16) + 0:(channel * 16) + 2]
+				noteOctave = int(noteRow[(channel * 16) + 2:(channel * 16) + 3])
 				noteOctave = noteOctave - 1
 				noteNumber = self.noteTable.index(noteLetter)
 				self.pitch[channel] = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
-				noteCV1 = noteRow[(channel * 14) + 6:(channel * 14) + 8]
-				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
-				noteCV2 = noteRow[(channel * 14) + 9:(channel * 14) + 11]
-				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
+				noteCV1 = noteRow[(channel * 16) + 6:(channel * 16) + 9]
+				self.cv1[channel] = float(noteCV1) / float(999) * float(5)
+				noteCV2 = noteRow[(channel * 16) + 10:(channel * 16) + 13]
+				self.cv2[channel] = float(noteCV2) / float(999) * float(5)
 			else:
 				pass
 
 			if slide == True:
 				if self.temperament == '12e':
-					nextNoteLetter = nextNoteRow[(channel * 14) + 0:(channel * 14) + 2]
-					nextNoteOctave = int(nextNoteRow[(channel * 14) + 2:(channel * 14) + 3])
+					nextNoteLetter = nextNoteRow[(channel * 16) + 0:(channel * 16) + 2]
+					nextNoteOctave = int(nextNoteRow[(channel * 16) + 2:(channel * 16) + 3])
 					nextNoteOctave = nextNoteOctave - 1
 					nextNoteNumber = self.noteTable.index(nextNoteLetter)
 					nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
