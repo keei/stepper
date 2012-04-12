@@ -321,3 +321,28 @@ class Sequencer:
 		crotchetLength = 60 / self.tempo
 		semiquaverLength = crotchetLength / 4
 		self.noteRowLength = semiquaverLength
+
+class SustainReleaseEnvelopeGenerator:
+	cv = 0.0                        # 0 to +5, float
+	gate = 0.0                      # 0 or +5, float
+	speed = 0.1                     # 0 to +5, float
+
+	def __init__(self):
+		self.gate = 0.0
+		self.speed = 0.1
+
+	def getCV(self):
+		return self.cv
+
+	def incrementTime(self, increment):
+		if self.cv > 0 and self.gate == 0:
+			self.cv = self.cv - (increment / self.speed);
+
+	def setGate(self, gate):
+			self.gate = gate
+
+			if gate == 5:
+				self.cv = gate
+
+	def setSpeed(self, speed):
+		self.speed = speed

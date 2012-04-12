@@ -1,14 +1,15 @@
 import surf
 
-leadDecay = surf.DecayEnvelopeGenerator()
+leadEnvelope = surf.SustainReleaseEnvelopeGenerator()
+leadEnvelope.setSpeed(0.025)
 
 leadAttenuator = surf.Attenuator()
 
 leadOscillator = surf.Oscillator()
 leadOscillator.setOctaveOffset(2)
 
-bassDecay = surf.DecayEnvelopeGenerator()
-bassDecay.setSpeed(0.2)
+bassEnvelope = surf.SustainReleaseEnvelopeGenerator()
+bassEnvelope.setSpeed(0.05)
 
 bassAttenuator = surf.Attenuator()
 
@@ -41,10 +42,10 @@ while time < trackLength:
 	leadOscillator.setPulseWidth(leadCV2)
 	leadOscillator.incrementTime(increment)
 	leadPulse = leadOscillator.getPulse()
-	leadDecay.setGate(leadGate)
-	leadDecay.incrementTime(increment)
+	leadEnvelope.setGate(leadGate)
+	leadEnvelope.incrementTime(increment)
 	leadAttenuator.setAudio(leadPulse)
-	leadAttenuator.setCV1(leadDecay.getCV())
+	leadAttenuator.setCV1(leadEnvelope.getCV())
 	leadAttenuator.setCV2(leadCV1)
 	leadPulse = leadAttenuator.getAudio()
 
@@ -54,10 +55,10 @@ while time < trackLength:
 	bassOscillator.setPitch(bassPitch)
 	bassOscillator.incrementTime(increment)
 	bassPulse = bassOscillator.getPulse()
-	bassDecay.setGate(bassGate)
-	bassDecay.incrementTime(increment)
+	bassEnvelope.setGate(bassGate)
+	bassEnvelope.incrementTime(increment)
 	bassAttenuator.setAudio(bassPulse)
-	bassAttenuator.setCV1(bassDecay.getCV())
+	bassAttenuator.setCV1(bassEnvelope.getCV())
 	bassAttenuator.setCV2(bassCV1)
 	bassPulse = bassAttenuator.getAudio()
 
