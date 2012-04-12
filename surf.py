@@ -173,6 +173,71 @@ class Sequencer:
 	cv2 = []                        # 0 to +5, float
 	gate = []                       # 0 or +5, float
 	pitch = []                      # 0 to +5, float
+
+	pitchVoltageLookupTable = {
+		'C-1': 0.0,
+		'C#1': 0.083,
+		'D-1': 0.166,
+		'D#1': 0.25,
+		'E-1': 0.333,
+		'F-1': 0.416,
+		'F#1': 0.5,
+		'G-1': 0.583,
+		'G#1': 0.666,
+		'A-1': 0.75,
+		'A#1': 0.833,
+		'B-1': 0.916,
+		'C-2': 1.0,
+		'C#2': 1.083,
+		'D-2': 1.166,
+		'D#2': 1.25,
+		'E-2': 1.333,
+		'F-2': 1.416,
+		'F#2': 1.5,
+		'G-2': 1.583,
+		'G#2': 1.666,
+		'A-2': 1.75,
+		'A#2': 1.833,
+		'B-2': 1.916,
+		'C-3': 2.0,
+		'C#3': 2.083,
+		'D-3': 2.166,
+		'D#3': 2.25,
+		'E-3': 2.333,
+		'F-3': 2.416,
+		'F#3': 2.5,
+		'G-3': 2.583,
+		'G#3': 2.666,
+		'A-3': 2.75,
+		'A#3': 2.833,
+		'B-3': 2.916,
+		'C-4': 3.0,
+		'C#4': 3.083,
+		'D-4': 3.166,
+		'D#4': 3.25,
+		'E-4': 3.333,
+		'F-4': 3.416,
+		'F#4': 3.5,
+		'G-4': 3.583,
+		'G#4': 3.666,
+		'A-4': 3.75,
+		'A#4': 3.833,
+		'B-4': 3.916,
+		'C-5': 4.0,
+		'C#5': 4.083,
+		'D-5': 4.166,
+		'D#5': 4.25,
+		'E-5': 4.333,
+		'F-5': 4.416,
+		'F#5': 4.5,
+		'G-5': 4.583,
+		'G#5': 4.666,
+		'A-5': 4.75,
+		'A#5': 4.833,
+		'B-5': 4.916,
+		'C-6': 5.0
+	}
+
 	gateLength = 0.0                # -5 to +5, float
 	iterationWithinRow = 0          # 0 to unlimited, int
 	noteRowNumber = 0               # 0 to unlimited, int
@@ -233,10 +298,10 @@ class Sequencer:
 
 		self.noteRowTime = self.iterationWithinRow * increment
 
-		for channel in range(self.numberOfChannels):
-			# Work out each current note's pitch
-			noteRow = self.noteRows[noteRowNumber]
+		noteRow = self.noteRows[noteRowNumber]
 
+		# Work out each current note's pitch, CV1 and CV2
+		for channel in range(self.numberOfChannels):
 			# Convert this pitch to a control voltage, 1v/oct
 			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S':
 				slide = True
@@ -263,22 +328,16 @@ class Sequencer:
 				else:
 					self.gate[channel] = 5.0
 
-				noteLetter = noteRow[(channel * 14) + 0:(channel * 14) + 2]
-				noteOctave = int(noteRow[(channel * 14) + 2:(channel * 14) + 3])
-				noteOctave = noteOctave - 1
-				noteNumber = self.noteTable.index(noteLetter)
-				self.pitch[channel] = noteOctave + (1 / 12 * noteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+				noteName = noteRow[(channel * 14) + 0:(channel * 14) + 3]
+				self.pitch[channel] = self.pitchVoltageLookupTable[noteName]
 				noteCV1 = noteRow[(channel * 14) + 6:(channel * 14) + 8]
 				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
 				noteCV2 = noteRow[(channel * 14) + 9:(channel * 14) + 11]
 				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
 
 			if slide == True:
-				nextNoteLetter = nextNoteRow[(channel * 14) + 0:(channel * 14) + 2]
-				nextNoteOctave = int(nextNoteRow[(channel * 14) + 2:(channel * 14) + 3])
-				nextNoteOctave = nextNoteOctave - 1
-				nextNoteNumber = self.noteTable.index(nextNoteLetter)
-				nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+				nextNoteName = nextNoteRow[(channel * 14) + 0:(channel * 14) + 3]
+				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
 				nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
 				nextCV1 = float(nextNoteCV1) / float(99) * float(5)
 				nextNoteCV2 = nextNoteRow[(channel * 14) + 9:(channel * 14) + 11]
