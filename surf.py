@@ -181,7 +181,6 @@ class Sequencer:
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	noteRowLength = 0.0             # 0 to unlimited, float
 	numberOfChannels = 4            # 0 to unlimited, int
-	temperament = '12e'             # '12e'
 	tempo = 120.0                   # 0 to unlimited, float
 	time = 0.0                      # 0 to self.getTrackLength(), float
 
@@ -256,7 +255,7 @@ class Sequencer:
 			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
 				self.gate[channel] = 0.0
 				self.noteRowTime = 0.0
-			elif self.temperament == '12e':
+			else:
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
 				if self.noteRowTime > gateLength and slide == False:
@@ -273,40 +272,35 @@ class Sequencer:
 				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
 				noteCV2 = noteRow[(channel * 14) + 9:(channel * 14) + 11]
 				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
-			else:
-				pass
 
 			if slide == True:
-				if self.temperament == '12e':
-					nextNoteLetter = nextNoteRow[(channel * 14) + 0:(channel * 14) + 2]
-					nextNoteOctave = int(nextNoteRow[(channel * 14) + 2:(channel * 14) + 3])
-					nextNoteOctave = nextNoteOctave - 1
-					nextNoteNumber = self.noteTable.index(nextNoteLetter)
-					nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
-					nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
-					nextCV1 = float(nextNoteCV1) / float(99) * float(5)
-					nextNoteCV2 = nextNoteRow[(channel * 14) + 9:(channel * 14) + 11]
-					nextCV2 = float(nextNoteCV2) / float(99) * float(5)
+				nextNoteLetter = nextNoteRow[(channel * 14) + 0:(channel * 14) + 2]
+				nextNoteOctave = int(nextNoteRow[(channel * 14) + 2:(channel * 14) + 3])
+				nextNoteOctave = nextNoteOctave - 1
+				nextNoteNumber = self.noteTable.index(nextNoteLetter)
+				nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+				nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
+				nextCV1 = float(nextNoteCV1) / float(99) * float(5)
+				nextNoteCV2 = nextNoteRow[(channel * 14) + 9:(channel * 14) + 11]
+				nextCV2 = float(nextNoteCV2) / float(99) * float(5)
 
-					# Glide effortlessly and gracefully from self.pitch to nextPitch
-					if self.noteRowTime > gateLength:
-						differenceInPitch = nextPitch - self.pitch[channel]
-						differenceInCV1 = nextCV1 - self.cv1[channel]
-						differenceInCV2 = nextCV2 - self.cv2[channel]
+				# Glide effortlessly and gracefully from self.pitch to nextPitch
+				if self.noteRowTime > gateLength:
+					differenceInPitch = nextPitch - self.pitch[channel]
+					differenceInCV1 = nextCV1 - self.cv1[channel]
+					differenceInCV2 = nextCV2 - self.cv2[channel]
 
-						# Work out how far along the slide we are, from 0 to 1
-						beginning = gateLength
-						end = self.noteRowLength
-						time = self.noteRowTime
-						time = time - beginning
-						end = end - beginning
-						time = time / end
+					# Work out how far along the slide we are, from 0 to 1
+					beginning = gateLength
+					end = self.noteRowLength
+					time = self.noteRowTime
+					time = time - beginning
+					end = end - beginning
+					time = time / end
 
-						self.pitch[channel] = self.pitch[channel] + (differenceInPitch / 1 * time)
-						self.cv1[channel] = self.cv1[channel] + (differenceInCV1 / 1 * time)
-						self.cv2[channel] = self.cv2[channel] + (differenceInCV2 / 1 * time)
-				else:
-					pass
+					self.pitch[channel] = self.pitch[channel] + (differenceInPitch / 1 * time)
+					self.cv1[channel] = self.cv1[channel] + (differenceInCV1 / 1 * time)
+					self.cv2[channel] = self.cv2[channel] + (differenceInCV2 / 1 * time)
 
 		return increment
 
