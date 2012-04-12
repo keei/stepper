@@ -59,6 +59,19 @@ class DecayEnvelopeGenerator:
 	def setSpeed(self, speed):
 		self.speed = speed
 
+class Inverter:
+	audio = 0.0                     # -5 to +5, float
+
+	def __init__(self):
+		pass
+
+	def getAudio(self):
+		return 0 - self.audio
+
+	def setAudio(self, audio):
+		self.audio = audio
+		return True
+
 class Oscillator:
 	centOffset = 0.0                # -5 to +5, float
 	frequency = 0.0                 # 0 to unlimited, float
