@@ -283,10 +283,16 @@ class Sequencer:
 					nextNoteOctave = nextNoteOctave - 1
 					nextNoteNumber = self.noteTable.index(nextNoteLetter)
 					nextPitch = nextNoteOctave + (1 / 12 * nextNoteNumber) # I should check if I need to make any of these explicitly floats on some setups.
+					nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
+					nextCV1 = float(nextNoteCV1) / float(99) * float(5)
+					nextNoteCV2 = nextNoteRow[(channel * 14) + 9:(channel * 14) + 11]
+					nextCV2 = float(nextNoteCV2) / float(99) * float(5)
 
 					# Glide effortlessly and gracefully from self.pitch to nextPitch
 					if self.noteRowTime > gateLength:
-						difference = nextPitch - self.pitch[channel]
+						differenceInPitch = nextPitch - self.pitch[channel]
+						differenceInCV1 = nextCV1 - self.cv1[channel]
+						differenceInCV2 = nextCV2 - self.cv2[channel]
 
 						# Work out how far along the slide we are, from 0 to 1
 						beginning = gateLength
@@ -296,7 +302,9 @@ class Sequencer:
 						end = end - beginning
 						time = time / end
 
-						self.pitch[channel] = self.pitch[channel] + (difference / 1 * time)
+						self.pitch[channel] = self.pitch[channel] + (differenceInPitch / 1 * time)
+						self.cv1[channel] = self.cv1[channel] + (differenceInCV1 / 1 * time)
+						self.cv2[channel] = self.cv2[channel] + (differenceInCV2 / 1 * time)
 				else:
 					pass
 

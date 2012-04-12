@@ -1,4 +1,3 @@
-Make slides in the sequencer change the CV values as well as the pitch.
 Add shuffle/swing to the sequencer.
 Make a mixer module with panning and stereo output.
 Make an ADSR envelope genrator; use the attenuator with that instead.
