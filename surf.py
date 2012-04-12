@@ -8,7 +8,7 @@
 
 from math import ceil, floor, pi, sin
 from struct import pack
-import wave
+from wave import open
 
 class Attenuator:
 	audio = 0.0                     # -5 to +5, float
@@ -145,7 +145,7 @@ class Output:
 
 	def stop(self):
 		# Only make CD quality files
-		self.outputFile = wave.open(self.filename, 'w')
+		self.outputFile = open(self.filename, 'w')
 		self.outputFile.setnchannels(2) # Stereo
 		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
