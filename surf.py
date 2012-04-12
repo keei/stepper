@@ -174,6 +174,7 @@ class Sequencer:
 	gate = []                       # 0 or +5, float
 	pitch = []                      # 0 to +5, float
 	gateLength = 0.0                # -5 to +5, float
+	iterationWithinRow = 0          # 0 to unlimited, int
 	noteRowNumber = 0               # 0 to unlimited, int
 	noteRowTime = 0.0               # 0 to unlimited, float
 	noteRows = []                   # Unlimited list of strings
@@ -188,6 +189,7 @@ class Sequencer:
 		self.setTempo(120)            # Default to 120BPM
 		self.setGateLength(0.0)       # Default to half the note length
 		self.setNumberOfChannels(4)   # Default to 4 channels
+		self.iterationWithinRow = 0 # If I ever make a "reset" method, it should do this!
 
 	def addNoteRow(self, noteRow):
 		if not self.noteRows:
@@ -226,9 +228,11 @@ class Sequencer:
 		# See if we're up to a new note (or rest)
 		if noteRowNumber > self.noteRowNumber:
 			self.noteRowNumber = noteRowNumber
-			self.noteRowTime = 0.0
+			self.iterationWithinRow = 0
 		else:
-			self.noteRowTime = self.noteRowTime + increment
+			self.iterationWithinRow = self.iterationWithinRow + 1
+
+		self.noteRowTime = self.iterationWithinRow * increment
 
 		for channel in range(self.numberOfChannels):
 			# Work out each current note's pitch
@@ -258,7 +262,7 @@ class Sequencer:
 				if self.noteRowTime > gateLength and slide == False:
 					self.gate[channel] = 0.0
 				else:
-					self.gate[channel] = 5
+					self.gate[channel] = 5.0
 
 				noteLetter = noteRow[(channel * 14) + 0:(channel * 14) + 2]
 				noteOctave = int(noteRow[(channel * 14) + 2:(channel * 14) + 3])
