@@ -304,7 +304,7 @@ class Sequencer:
 		for channel in range(self.numberOfChannels):
 			# Convert this pitch to a control voltage, 1v/oct
 			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S':
-				slide = True
+				effect = 'slide'
 				nextNoteRowNumber = noteRowNumber + 1
 
 				if nextNoteRowNumber > len(self.noteRows) - 1:
@@ -313,9 +313,9 @@ class Sequencer:
 				nextNoteRow = self.noteRows[nextNoteRowNumber]
 
 				if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-					slide = False
+					effect = 'none'
 			else:
-				slide = False
+				effect = 'none'
 
 			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
 				self.gate[channel] = 0.0
@@ -323,7 +323,7 @@ class Sequencer:
 			else:
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
-				if self.noteRowTime > gateLength and slide == False:
+				if self.noteRowTime > gateLength and effect == 'none':
 					self.gate[channel] = 0.0
 				else:
 					self.gate[channel] = 5.0
@@ -335,7 +335,7 @@ class Sequencer:
 				noteCV2 = noteRow[(channel * 14) + 9:(channel * 14) + 11]
 				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
 
-			if slide == True:
+			if effect == 'slide':
 				nextNoteName = nextNoteRow[(channel * 14) + 0:(channel * 14) + 3]
 				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
 				nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
