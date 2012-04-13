@@ -1,8 +1,18 @@
+Important, low-level stuff:
+I should check why I'm resetting (or not) self.noteRowTime in surf.py, on lines 331 and 334.
+I should consider dispensing with effect and using self.effect exclusively.
+
+Nice features:
+Make a noise generating module, even if it's just using a lookup table.
 The "effect" column should offer several mutually exclusive options.  These should include "closed" and "open" ("C" and "O"), intended for percussive sounds such as hi-hats.  "Closed" should have a half-its-normal-length gate (or maybe a quarter), whereas "open" should have one that continues throughout all subsequent rests, right up until a half-normal-gate-off-length (or a quarter) before the next regular or closed note.  This way, any given channel can be used for pitched sounds or percussive ones, or pitched percussion, so we needn't have two different types of channels, we can just ignore the pitches of some instruments if we choose.  (Again, like tracking, in which drum sounds are hacked into something designed to play only pitched sounds.)
 Add shuffle/swing to the sequencer.
 Make a mixer module with panning and stereo output.
 Make an ADSR envelope genrator; use the attenuator with that instead.
-A multimode filter would be nice, but is probably beyond my abilities.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)
 Make a voltage controlled delay / echo module.  (With a set sized array, cycled through at a voltage controlled speed, with a voltage controlled amount of feedback and a voltage controlled dry/wet mix.)
 Have a go at making a chorus.  (I gather this is something like an extremely short delay with only one copy of the signal and a slightly variable speed.)
+
+Dreams:
+A multimode filter would be nice, but is probably beyond my abilities.
+A realtime user interface version of the sequencer, that lets you edit rather than passively play notation, with load and save facilities and audio output (even if just sine waves and white noise) would be great, and pave the way for a hardware version of it.
+So would a port of this written in C.

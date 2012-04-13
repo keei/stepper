@@ -171,7 +171,16 @@ class Output:
 class Sequencer:
 	cv1 = []                        # 0 to +5, float
 	cv2 = []                        # 0 to +5, float
+	effect = 'none'                 # 'none', 'slide', 'closed' or 'open'
 	gate = []                       # 0 or +5, float
+	gateLength = 0.0                # -5 to +5, float
+	iterationWithinRow = 0          # 0 to unlimited, int
+	noteRowNumber = 0               # 0 to unlimited, int
+	noteRowTime = 0.0               # 0 to unlimited, float
+	noteRows = []                   # Unlimited list of strings
+	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
+	noteRowLength = 0.0             # 0 to unlimited, float
+	numberOfChannels = 4            # 0 to unlimited, int
 	pitch = []                      # 0 to +5, float
 
 	pitchVoltageLookupTable = {
@@ -238,14 +247,6 @@ class Sequencer:
 		'C-6': 5.0
 	}
 
-	gateLength = 0.0                # -5 to +5, float
-	iterationWithinRow = 0          # 0 to unlimited, int
-	noteRowNumber = 0               # 0 to unlimited, int
-	noteRowTime = 0.0               # 0 to unlimited, float
-	noteRows = []                   # Unlimited list of strings
-	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
-	noteRowLength = 0.0             # 0 to unlimited, float
-	numberOfChannels = 4            # 0 to unlimited, int
 	tempo = 120.0                   # 0 to unlimited, float
 	time = 0.0                      # 0 to self.getTrackLength(), float
 
@@ -300,7 +301,7 @@ class Sequencer:
 
 		noteRow = self.noteRows[noteRowNumber]
 
-		# Work out each current note's pitch, CV1 and CV2
+		# Work out each current note's pitch, effect, gate, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert this pitch to a control voltage, 1v/oct
 			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S':
@@ -314,16 +315,45 @@ class Sequencer:
 
 				if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
 					effect = 'none'
+			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'C':
+				effect = 'closed'
+			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'O' or self.effect == 'open':
+				effect = 'open'
 			else:
 				effect = 'none'
 
+			# We need to remember if we're 'open', so the effect can carry across several rests
+			self.effect = effect
+
 			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				self.gate[channel] = 0.0
-				self.noteRowTime = 0.0
+				if effect == 'open':
+					self.gate[channel] = 5.0
+					# self.noteRowTime = 0.0
+				else:
+					self.gate[channel] = 0.0
+					self.noteRowTime = 0.0
 			else:
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
-				if self.noteRowTime > gateLength and effect == 'none':
+				# If we're open, we need to read the next note now.  Should we do this when we first read the current note as a port of call, or at least if the effect is either slide or open, both of which require knowing the next note later on?
+				if effect == 'open':
+					nextNoteRowNumber = noteRowNumber + 1
+
+					if nextNoteRowNumber > len(self.noteRows) - 1:
+						nextNoteRowNumber = len(self.noteRows) - 1
+
+					nextNoteRow = self.noteRows[nextNoteRowNumber]
+
+					if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
+						nextNoteIsRest = True
+					else:
+						nextNoteIsRest = False
+
+				if effect == 'none' and self.noteRowTime > gateLength:
+					self.gate[channel] = 0.0
+				elif effect == 'closed' and self.noteRowTime > gateLength / 2:
+					self.gate[channel] = 0.0
+				elif effect == 'open' and nextNoteIsRest == False and self.noteRowTime > gateLength * 1.5:
 					self.gate[channel] = 0.0
 				else:
 					self.gate[channel] = 5.0
