@@ -308,8 +308,13 @@ class Sequencer:
 
 		# Work out each current note's pitch, effect, gate, CV1 and CV2
 		for channel in range(self.numberOfChannels):
+			if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
+				nextNoteIsRest = True
+			else:
+				nextNoteIsRest = False
+
 			# Convert this pitch to a control voltage, 1v/oct
-			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S' and nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] != '...':
+			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S' and nextNoteIsRest == False:
 				self.effect = 'slide'
 			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'C':
 				self.effect = 'closed'
@@ -325,13 +330,6 @@ class Sequencer:
 					self.gate[channel] = 0.0
 			else:
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
-
-				# If we're open, we need to read the next note now.  Should we do this when we first read the current note as a port of call, or at least if the effect is either slide or open, both of which require knowing the next note later on?
-				if self.effect == 'open':
-					if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-						nextNoteIsRest = True
-					else:
-						nextNoteIsRest = False
 
 				if self.effect == 'none' and self.noteRowTime > gateLength:
 					self.gate[channel] = 0.0
