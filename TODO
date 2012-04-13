@@ -1,5 +1,6 @@
 Important, low-level stuff:
-I should consider dispensing with effect and using self.effect exclusively.
+Consider getting the next note straight after the current one (and after updating the current effect), if we're sliding or open.
+Make sure an open effect is closed by any non-rest, even if it's not a closing one.  (Unless there's a musical advantage to allowing pitch changes mid-note?)
 
 Nice features:
 Make a noise generating module, even if it's just using a lookup table.

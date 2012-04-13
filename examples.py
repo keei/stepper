@@ -77,5 +77,5 @@ while time < trackLength:
 	hihatAttenuator.setCV2(hihatCV1)
 	hihatPulse = hihatAttenuator.getAudio()
 
-	output.setValue(hihatPulse)
+	output.setValue(bassPulse)
 	output.write()

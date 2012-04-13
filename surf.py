@@ -305,7 +305,7 @@ class Sequencer:
 		for channel in range(self.numberOfChannels):
 			# Convert this pitch to a control voltage, 1v/oct
 			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S':
-				effect = 'slide'
+				self.effect = 'slide'
 				nextNoteRowNumber = noteRowNumber + 1
 
 				if nextNoteRowNumber > len(self.noteRows) - 1:
@@ -313,20 +313,18 @@ class Sequencer:
 
 				nextNoteRow = self.noteRows[nextNoteRowNumber]
 
+				# You can't slide into a rest.  It's a non sequitur.
 				if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-					effect = 'none'
+					self.effect = 'none'
 			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'C':
-				effect = 'closed'
-			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'O' or self.effect == 'open':
-				effect = 'open'
+				self.effect = 'closed'
+			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'O' or self.effect == 'open': # Once we're already open, we stay open through subsequent rests.
+				self.effect = 'open'
 			else:
-				effect = 'none'
-
-			# We need to remember if we're 'open', so the effect can carry across several rests
-			self.effect = effect
+				self.effect = 'none'
 
 			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				if effect == 'open':
+				if self.effect == 'open':
 					self.gate[channel] = 5.0
 				else:
 					self.gate[channel] = 0.0
@@ -334,7 +332,7 @@ class Sequencer:
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
 				# If we're open, we need to read the next note now.  Should we do this when we first read the current note as a port of call, or at least if the effect is either slide or open, both of which require knowing the next note later on?
-				if effect == 'open':
+				if self.effect == 'open':
 					nextNoteRowNumber = noteRowNumber + 1
 
 					if nextNoteRowNumber > len(self.noteRows) - 1:
@@ -347,11 +345,11 @@ class Sequencer:
 					else:
 						nextNoteIsRest = False
 
-				if effect == 'none' and self.noteRowTime > gateLength:
+				if self.effect == 'none' and self.noteRowTime > gateLength:
 					self.gate[channel] = 0.0
-				elif effect == 'closed' and self.noteRowTime > gateLength / 2:
+				elif self.effect == 'closed' and self.noteRowTime > gateLength / 2:
 					self.gate[channel] = 0.0
-				elif effect == 'open' and nextNoteIsRest == False and self.noteRowTime > gateLength * 1.5:
+				elif self.effect == 'open' and nextNoteIsRest == False and self.noteRowTime > gateLength * 1.5:
 					self.gate[channel] = 0.0
 				else:
 					self.gate[channel] = 5.0
@@ -363,7 +361,7 @@ class Sequencer:
 				noteCV2 = noteRow[(channel * 14) + 9:(channel * 14) + 11]
 				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
 
-			if effect == 'slide':
+			if self.effect == 'slide':
 				nextNoteName = nextNoteRow[(channel * 14) + 0:(channel * 14) + 3]
 				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
 				nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
