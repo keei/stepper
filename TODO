@@ -1,3 +1,4 @@
+The "slide" column should become a more general "effect" column, offering several mutually exclusive options.  These should include "closed" and "open" ("C" and "O"), intended for percussive sounds such as hi-hats.  "Closed" should have a half-its-normal-length gate (or maybe a quarter), whereas "open" should have one that continues throughout all subsequent rests, right up until a half-normal-gate-off-length (or a quarter) before the next regular or closed note.  This way, any given channel can be used for pitched sounds or percussive ones, or pitched percussion, so we needn't have two different types of channels, we can just ignore the pitches of some instruments if we choose.  (Again, like tracking, in which drum sounds are hacked into something designed to play only pitched sounds.)
 Add shuffle/swing to the sequencer.
 Make a mixer module with panning and stereo output.
 Make an ADSR envelope genrator; use the attenuator with that instead.
