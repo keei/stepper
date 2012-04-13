@@ -1,0 +1,4 @@
+Notation is known as "event rows".
+One of these is a single "event row".
+Each item in this is an "event".
+An event can either be a note or a rest.  In addition, notes (but not rests) can have an "effect", plus two control voltages, which have arbitrary uses.
