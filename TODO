@@ -1,4 +1,5 @@
 Important, low-level stuff:
+The bassline appears to be buggy.  Note the notes, the rendering of them.
 Consider getting the next note straight after the current one (and after updating the current effect), if we're sliding or open.
 Make sure an open effect is closed by any non-rest, even if it's not a closing one.  (Unless there's a musical advantage to allowing pitch changes mid-note?)
 
