@@ -328,10 +328,8 @@ class Sequencer:
 			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
 				if effect == 'open':
 					self.gate[channel] = 5.0
-					# self.noteRowTime = 0.0
 				else:
 					self.gate[channel] = 0.0
-					self.noteRowTime = 0.0
 			else:
 				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
 
