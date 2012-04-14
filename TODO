@@ -11,7 +11,7 @@ Make an ADSR envelope genrator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)
 Make a voltage controlled delay / echo module.  (With a set sized array, cycled through at a voltage controlled speed, with a voltage controlled amount of feedback and a voltage controlled dry/wet mix.)
 Have a go at making a chorus.  (I gather this is something like an extremely short delay with only one copy of the signal and a slightly variable speed.)
-Do I want this to be able to exactly mimic a TB-303?  If so, rests need to be able to explicitly state which note they're not playing, and you need to be able to slide into them.
+Do I want this to be able to exactly mimic a TB-303?  If so, rests need to be able to explicitly state which note they're not playing, and you need to be able to slide into them.  Not only that, but rests also need to be able to be slides.  So we either need the additional effects of "rest" and "resting slide", or we need two separate columns for pitch effects (slide) and gate effects (closed, open, rest).  Or we could simply forego gate effects entirely, in favour of listing the gate's duty cycle per event in a new column.
 
 Dreams:
 A multimode filter would be nice, but is probably beyond my abilities.
