@@ -171,9 +171,7 @@ class Output:
 class Sequencer:
 	cv1 = []                        # 0 to +5, float
 	cv2 = []                        # 0 to +5, float
-	effect = 'none'                 # 'none', 'slide', 'closed' or 'open'
 	gate = []                       # 0 or +5, float
-	gateLength = 0.0                # -5 to +5, float
 	iterationWithinRow = 0          # 0 to unlimited, int
 	eventRowNumber = 0              # 0 to unlimited, int
 	eventRowTime = 0.0              # 0 to unlimited, float
@@ -258,7 +256,7 @@ class Sequencer:
 
 	def addEventRow(self, eventRow):
 		if not self.matrix:
-			self.setNumberOfChannels(ceil(len(eventRow) / 14))
+			self.setNumberOfChannels(ceil(len(eventRow) / 16))
 
 		self.matrix.append(eventRow)
 
@@ -306,64 +304,59 @@ class Sequencer:
 
 		nextEventRow = self.matrix[nextEventRowNumber]
 
-		# Work out each current event's pitch, effect, gate, CV1 and CV2
+		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
-			if nextEventRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				nextEventIsNote = False
+			# Convert the pitch to a control voltage, 1v/oct
+			pitchName = eventRow[(channel * 16) + 0:(channel * 16) + 3]
+
+			if pitchName != '...':
+				self.pitch[channel] = self.pitchVoltageLookupTable[pitchName]
+
+			# Slide if necessary
+			if eventRow[(channel * 16) + 4:(channel * 16) + 5] == 'S':
+				slide = True
 			else:
-				nextEventIsNote = True
+				slide = False
 
-			# Convert this pitch to a control voltage, 1v/oct
-			if eventRow[(channel * 14) + 4:(channel * 14) + 5] == 'S' and nextEventIsNote == True:
-				self.effect = 'slide'
-			elif eventRow[(channel * 14) + 4:(channel * 14) + 5] == 'C':
-				self.effect = 'closed'
-			elif eventRow[(channel * 14) + 4:(channel * 14) + 5] == 'O' or self.effect == 'open': # Once we're already open, we stay open through subsequent rests.
-				self.effect = 'open'
+			# Set the gate length
+			if eventRow[(channel * 16) + 6:(channel * 16) + 8] != '..':
+				gateLength = floor(float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowTime))
+			elif slide == True:
+				gateLength = self.eventRowTime
+			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
+				gateLength = self.eventRowLength / 2
 			else:
-				self.effect = 'none'
+				gateLength = 0
 
-			if eventRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				if self.effect == 'open':
-					self.gate[channel] = 5.0
-				else:
-					self.gate[channel] = 0.0
+			if self.eventRowTime > gateLength:
+				self.gate[channel] = 0.0
 			else:
-				gateLength = (self.gateLength + 5) / 10 * self.eventRowLength
+				self.gate[channel] = 5.0
 
-				if self.effect == 'none' and self.eventRowTime > gateLength:
-					self.gate[channel] = 0.0
-				elif self.effect == 'closed' and self.eventRowTime > gateLength / 2:
-					self.gate[channel] = 0.0
-				elif self.effect == 'open' and nextEventIsNote == True and self.eventRowTime > gateLength * 1.5:
-					self.gate[channel] = 0.0
-				else:
-					self.gate[channel] = 5.0
-
-				noteName = eventRow[(channel * 14) + 0:(channel * 14) + 3]
-				self.pitch[channel] = self.pitchVoltageLookupTable[noteName]
-
-			eventCV1 = eventRow[(channel * 14) + 6:(channel * 14) + 8]
+			# Set CV1
+			eventCV1 = eventRow[(channel * 16) + 9:(channel * 16) + 11]
 
 			if eventCV1 != '..':
 				self.cv1[channel] = float(eventCV1) / float(99) * float(5)
 
-			eventCV2 = eventRow[(channel * 14) + 9:(channel * 14) + 11]
+			# Set CV2
+			eventCV2 = eventRow[(channel * 16) + 12:(channel * 16) + 14]
 
 			if eventCV2 != '..':
 				self.cv2[channel] = float(eventCV2) / float(99) * float(5)
 
-			if self.effect == 'slide':
-				nextNoteName = nextEventRow[(channel * 14) + 0:(channel * 14) + 3]
+			# Do the actual sliding
+			if slide == True:
+				nextNoteName = nextEventRow[(channel * 16) + 0:(channel * 16) + 3]
 				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
-				nextEventCV1 = nextEventRow[(channel * 14) + 6:(channel * 14) + 8]
+				nextEventCV1 = nextEventRow[(channel * 16) + 9:(channel * 16) + 11]
 
 				if nextEventCV1 != '..':
 					nextCV1 = float(nextEventCV1) / float(99) * float(5)
 				else:
 					nextCV1 = self.cv1[channel]
 
-				nextEventCV2 = nextEventRow[(channel * 14) + 9:(channel * 14) + 11]
+				nextEventCV2 = nextEventRow[(channel * 16) + 12:(channel * 16) + 14]
 
 				if nextEventCV2 != '..':
 					nextCV2 = float(nextEventCV2) / float(99) * float(5)
