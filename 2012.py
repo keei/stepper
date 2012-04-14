@@ -28,7 +28,6 @@ while time < trackLength:
 	time = sequencer.getTime()
 	increment = sequencer.incrementTime()
 
-	leadCV1 = sequencer.getCV1(0)
 	leadGate = sequencer.getGate(0)
 	leadPitch = sequencer.getPitch(0)
 	leadOscillator.setPitch(leadPitch)
@@ -38,7 +37,7 @@ while time < trackLength:
 	leadEnvelope.incrementTime(increment)
 	leadAttenuator.setAudio(leadSaw)
 	leadAttenuator.setCV1(leadEnvelope.getCV())
-	leadAttenuator.setCV2(leadCV1)
+	leadAttenuator.setCV2(5)
 	leadSaw = leadAttenuator.getAudio()
 
 	output.setValue(leadSaw)
