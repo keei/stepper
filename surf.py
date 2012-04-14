@@ -175,11 +175,11 @@ class Sequencer:
 	gate = []                       # 0 or +5, float
 	gateLength = 0.0                # -5 to +5, float
 	iterationWithinRow = 0          # 0 to unlimited, int
-	noteRowNumber = 0               # 0 to unlimited, int
-	noteRowTime = 0.0               # 0 to unlimited, float
-	noteRows = []                   # Unlimited list of strings
+	eventRowNumber = 0              # 0 to unlimited, int
+	eventRowTime = 0.0              # 0 to unlimited, float
+	matrix = []                     # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
-	noteRowLength = 0.0             # 0 to unlimited, float
+	eventRowLength = 0.0             # 0 to unlimited, float
 	numberOfChannels = 4            # 0 to unlimited, int
 	pitch = []                      # 0 to +5, float
 
@@ -256,11 +256,11 @@ class Sequencer:
 		self.setNumberOfChannels(4)   # Default to 4 channels
 		self.iterationWithinRow = 0 # If I ever make a "reset" method, it should do this!
 
-	def addNoteRow(self, noteRow):
-		if not self.noteRows:
-			self.setNumberOfChannels(ceil(len(noteRow) / 14))
+	def addEventRow(self, eventRow):
+		if not self.matrix:
+			self.setNumberOfChannels(ceil(len(eventRow) / 14))
 
-		self.noteRows.append(noteRow)
+		self.matrix.append(eventRow)
 
 	def getCV1(self, channel):
 		return self.cv1[channel]
@@ -275,7 +275,7 @@ class Sequencer:
 		return self.pitch[channel]
 
 	def getTrackLength(self):
-		return len(self.noteRows) * self.noteRowLength
+		return len(self.matrix) * self.eventRowLength
 
 	def getTime(self):
 		return self.time
@@ -284,87 +284,87 @@ class Sequencer:
 		increment = float(1) / float(44100)
 		self.time = self.time + increment
 
-		# Work out the current note
-		noteRowNumber = int(self.time // self.noteRowLength)
+		# Work out the current event row
+		eventRowNumber = int(self.time // self.eventRowLength)
 
-		if noteRowNumber > len(self.noteRows) - 1:
-			noteRowNumber = len(self.noteRows) - 1
+		if eventRowNumber > len(self.matrix) - 1:
+			eventRowNumber = len(self.matrix) - 1
 
-		# See if we're up to a new note (or rest)
-		if noteRowNumber > self.noteRowNumber:
-			self.noteRowNumber = noteRowNumber
+		# See if we're up to a new event row
+		if eventRowNumber > self.eventRowNumber:
+			self.eventRowNumber = eventRowNumber
 			self.iterationWithinRow = 0
 		else:
 			self.iterationWithinRow = self.iterationWithinRow + 1
 
-		self.noteRowTime = self.iterationWithinRow * increment
-		noteRow = self.noteRows[noteRowNumber]
-		nextNoteRowNumber = noteRowNumber + 1
+		self.eventRowTime = self.iterationWithinRow * increment
+		eventRow = self.matrix[eventRowNumber]
+		nextEventRowNumber = eventRowNumber + 1
 
-		if nextNoteRowNumber > len(self.noteRows) - 1:
-			nextNoteRowNumber = len(self.noteRows) - 1
+		if nextEventRowNumber > len(self.matrix) - 1:
+			nextEventRowNumber = len(self.matrix) - 1
 
-		nextNoteRow = self.noteRows[nextNoteRowNumber]
+		nextEventRow = self.matrix[nextEventRowNumber]
 
-		# Work out each current note's pitch, effect, gate, CV1 and CV2
+		# Work out each current event's pitch, effect, gate, CV1 and CV2
 		for channel in range(self.numberOfChannels):
-			if nextNoteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
-				nextNoteIsRest = True
+			if nextEventRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
+				nextEventIsNote = False
 			else:
-				nextNoteIsRest = False
+				nextEventIsNote = True
 
 			# Convert this pitch to a control voltage, 1v/oct
-			if noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'S' and nextNoteIsRest == False:
+			if eventRow[(channel * 14) + 4:(channel * 14) + 5] == 'S' and nextEventIsNote == True:
 				self.effect = 'slide'
-			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'C':
+			elif eventRow[(channel * 14) + 4:(channel * 14) + 5] == 'C':
 				self.effect = 'closed'
-			elif noteRow[(channel * 14) + 4:(channel * 14) + 5] == 'O' or self.effect == 'open': # Once we're already open, we stay open through subsequent rests.
+			elif eventRow[(channel * 14) + 4:(channel * 14) + 5] == 'O' or self.effect == 'open': # Once we're already open, we stay open through subsequent rests.
 				self.effect = 'open'
 			else:
 				self.effect = 'none'
 
-			if noteRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
+			if eventRow[(channel * 14) + 0:(channel * 14) + 3] == '...':
 				if self.effect == 'open':
 					self.gate[channel] = 5.0
 				else:
 					self.gate[channel] = 0.0
 			else:
-				gateLength = (self.gateLength + 5) / 10 * self.noteRowLength
+				gateLength = (self.gateLength + 5) / 10 * self.eventRowLength
 
-				if self.effect == 'none' and self.noteRowTime > gateLength:
+				if self.effect == 'none' and self.eventRowTime > gateLength:
 					self.gate[channel] = 0.0
-				elif self.effect == 'closed' and self.noteRowTime > gateLength / 2:
+				elif self.effect == 'closed' and self.eventRowTime > gateLength / 2:
 					self.gate[channel] = 0.0
-				elif self.effect == 'open' and nextNoteIsRest == False and self.noteRowTime > gateLength * 1.5:
+				elif self.effect == 'open' and nextEventIsNote == True and self.eventRowTime > gateLength * 1.5:
 					self.gate[channel] = 0.0
 				else:
 					self.gate[channel] = 5.0
 
-				noteName = noteRow[(channel * 14) + 0:(channel * 14) + 3]
+				noteName = eventRow[(channel * 14) + 0:(channel * 14) + 3]
 				self.pitch[channel] = self.pitchVoltageLookupTable[noteName]
-				noteCV1 = noteRow[(channel * 14) + 6:(channel * 14) + 8]
+				noteCV1 = eventRow[(channel * 14) + 6:(channel * 14) + 8]
 				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
-				noteCV2 = noteRow[(channel * 14) + 9:(channel * 14) + 11]
+				noteCV2 = eventRow[(channel * 14) + 9:(channel * 14) + 11]
 				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
 
 			if self.effect == 'slide':
-				nextNoteName = nextNoteRow[(channel * 14) + 0:(channel * 14) + 3]
+				nextNoteName = nextEventRow[(channel * 14) + 0:(channel * 14) + 3]
 				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
-				nextNoteCV1 = nextNoteRow[(channel * 14) + 6:(channel * 14) + 8]
+				nextNoteCV1 = nextEventRow[(channel * 14) + 6:(channel * 14) + 8]
 				nextCV1 = float(nextNoteCV1) / float(99) * float(5)
-				nextNoteCV2 = nextNoteRow[(channel * 14) + 9:(channel * 14) + 11]
+				nextNoteCV2 = nextEventRow[(channel * 14) + 9:(channel * 14) + 11]
 				nextCV2 = float(nextNoteCV2) / float(99) * float(5)
 
 				# Glide effortlessly and gracefully from self.pitch to nextPitch
-				if self.noteRowTime > gateLength:
+				if self.eventRowTime > gateLength:
 					differenceInPitch = nextPitch - self.pitch[channel]
 					differenceInCV1 = nextCV1 - self.cv1[channel]
 					differenceInCV2 = nextCV2 - self.cv2[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
 					beginning = gateLength
-					end = self.noteRowLength
-					time = self.noteRowTime
+					end = self.eventRowLength
+					time = self.eventRowTime
 					time = time - beginning
 					end = end - beginning
 					time = time / end
@@ -397,7 +397,7 @@ class Sequencer:
 		self.tempo = float(tempo)
 		crotchetLength = 60 / self.tempo
 		semiquaverLength = crotchetLength / 4
-		self.noteRowLength = semiquaverLength
+		self.eventRowLength = semiquaverLength
 
 class SustainReleaseEnvelopeGenerator:
 	cv = 0.0                        # 0 to +5, float

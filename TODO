@@ -1,6 +1,6 @@
 Important, low-level stuff:
-Bring internal variable names and commentary up to date with the official terminology.  Be methodical about naming things well.
-Update terminology file and actual code so that CVs can be updated during rests.  (How about resting close effects, to terminate an open effect seemingly of its own accord without an additional note?  Or am I over complicating things?)
+Make sure CVs can update during rests.
+Tidy up terminology file and finish implementing it.  How about resting close effects, to terminate an open effect seemingly of its own accord without an additional note?  Or am I over complicating things?
 The bassline appears to be buggy.  Note the notes, the rendering of them.
 Make sure an open effect is closed by any non-rest, even if it's not a closing one.  (Unless there's a musical advantage to allowing pitch changes mid-note?)
 "nextNoteIsRest == True" is a negative staged as a positive.  How about some consistent terminology, such as "nextEventIsNote == False"?

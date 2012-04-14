@@ -26,10 +26,10 @@ output.setFilename('test.wav')
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
 
-notation = open('walking_in_the_rain.txt')
+matrix = open('walking_in_the_rain.txt')
 
-for noteRow in notation:
-	sequencer.addNoteRow(noteRow)
+for eventRow in matrix:
+	sequencer.addEventRow(eventRow)
 
 time = 0
 trackLength = sequencer.getTrackLength()
