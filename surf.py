@@ -177,7 +177,7 @@ class Sequencer:
 	eventRowTime = 0.0              # 0 to unlimited, float
 	matrix = []                     # Unlimited list of strings
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
-	eventRowLength = 0.0             # 0 to unlimited, float
+	eventRowLength = 0.0            # 0 to unlimited, float
 	numberOfChannels = 4            # 0 to unlimited, int
 	pitch = []                      # 0 to +5, float
 
@@ -250,7 +250,6 @@ class Sequencer:
 
 	def __init__(self):
 		self.setTempo(120)            # Default to 120BPM
-		self.setGateLength(0.0)       # Default to half the note length
 		self.setNumberOfChannels(4)   # Default to 4 channels
 		self.iterationWithinRow = 0 # If I ever make a "reset" method, it should do this!
 
@@ -320,9 +319,9 @@ class Sequencer:
 
 			# Set the gate length
 			if eventRow[(channel * 16) + 6:(channel * 16) + 8] != '..':
-				gateLength = floor(float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowTime))
+				gateLength = floor(float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowLength))
 			elif slide == True:
-				gateLength = self.eventRowTime
+				gateLength = self.eventRowLength
 			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
 				gateLength = self.eventRowLength / 2
 			else:
@@ -382,9 +381,6 @@ class Sequencer:
 					self.cv2[channel] = self.cv2[channel] + (differenceInCV2 / 1 * time)
 
 		return increment
-
-	def setGateLength(self, gateLength):
-		self.gateLength = float(gateLength)
 
 	def setNumberOfChannels(self, numberOfChannels):
 		self.cv1 = []
