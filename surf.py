@@ -342,18 +342,33 @@ class Sequencer:
 
 				noteName = eventRow[(channel * 14) + 0:(channel * 14) + 3]
 				self.pitch[channel] = self.pitchVoltageLookupTable[noteName]
-				noteCV1 = eventRow[(channel * 14) + 6:(channel * 14) + 8]
-				self.cv1[channel] = float(noteCV1) / float(99) * float(5)
-				noteCV2 = eventRow[(channel * 14) + 9:(channel * 14) + 11]
-				self.cv2[channel] = float(noteCV2) / float(99) * float(5)
+
+			eventCV1 = eventRow[(channel * 14) + 6:(channel * 14) + 8]
+
+			if eventCV1 != '..':
+				self.cv1[channel] = float(eventCV1) / float(99) * float(5)
+
+			eventCV2 = eventRow[(channel * 14) + 9:(channel * 14) + 11]
+
+			if eventCV2 != '..':
+				self.cv2[channel] = float(eventCV2) / float(99) * float(5)
 
 			if self.effect == 'slide':
 				nextNoteName = nextEventRow[(channel * 14) + 0:(channel * 14) + 3]
 				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
-				nextNoteCV1 = nextEventRow[(channel * 14) + 6:(channel * 14) + 8]
-				nextCV1 = float(nextNoteCV1) / float(99) * float(5)
-				nextNoteCV2 = nextEventRow[(channel * 14) + 9:(channel * 14) + 11]
-				nextCV2 = float(nextNoteCV2) / float(99) * float(5)
+				nextEventCV1 = nextEventRow[(channel * 14) + 6:(channel * 14) + 8]
+
+				if nextEventCV1 != '..':
+					nextCV1 = float(nextEventCV1) / float(99) * float(5)
+				else:
+					nextCV1 = self.cv1[channel]
+
+				nextEventCV2 = nextEventRow[(channel * 14) + 9:(channel * 14) + 11]
+
+				if nextEventCV2 != '..':
+					nextCV2 = float(nextEventCV2) / float(99) * float(5)
+				else:
+					nextCV2 = self.cv2[channel]
 
 				# Glide effortlessly and gracefully from self.pitch to nextPitch
 				if self.eventRowTime > gateLength:
