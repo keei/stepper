@@ -1,2 +1,3 @@
 #!/bin/sh
-python3 examples.py
+python3 2012.py
+python3 walking_in_the_rain.py

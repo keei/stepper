@@ -1,5 +1,7 @@
 import surf
 
+# Walking In the Rain
+
 leadEnvelope = surf.SustainReleaseEnvelopeGenerator()
 leadEnvelope.setSpeed(0.025)
 
@@ -21,7 +23,7 @@ hihatOscillator.setOctaveOffset(3)
 hihatAttenuator = surf.Attenuator()
 
 output = surf.Output()
-output.setFilename('test.wav')
+output.setFilename('walking_in_the_rain.wav')
 
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
