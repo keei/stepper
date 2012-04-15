@@ -21,6 +21,9 @@ bassOscillator.setOctaveOffset(1)
 hihatOscillator = surf.NoiseGenerator()
 hihatAttenuator = surf.Attenuator()
 
+mixer = surf.Mixer()
+mixer.setNumberOfChannels(3)
+
 output = surf.Output()
 output.setFilename('walking_in_the_rain.wav')
 
@@ -77,5 +80,11 @@ while time < trackLength:
 	hihatAttenuator.setCV2(hihatCV1)
 	hihatNoise = hihatAttenuator.getAudio()
 
-	output.setValue(leadPulse, hihatNoise)
+	mixer.setAudio(0, leadPulse)
+	mixer.setAudio(1, bassPulse)
+	mixer.setAudio(2, hihatNoise)
+
+	mix = mixer.getAudio()
+
+	output.setValue(mix[0], mix[1])
 	output.write()

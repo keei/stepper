@@ -61,7 +61,7 @@ class DecayEnvelopeGenerator:
 		self.speedInUnipolarVolts = speedInUnipolarVolts
 
 class Inverter:
-	audioInBipolarVolts = 0.0                     # -5 to +5, float
+	audioInBipolarVolts = 0.0
 
 	def __init__(self):
 		pass
@@ -71,6 +71,50 @@ class Inverter:
 
 	def setAudio(self, audioInBipolarVolts):
 		self.audioInBipolarVolts = audioInBipolarVolts
+		return True
+
+class Mixer:
+	audioInBipolarVolts = []
+	numberOfChannels = 4
+	panningInBipolarVolts = []
+	volumeInUnipolarVolts = []
+
+	def __init__(self):
+		self.setNumberOfChannels(4) # Default to 4 channels
+
+	def getAudio(self):
+		audio = [0.0, 0.0]
+
+		for channel in range(self.numberOfChannels):
+			# Panning and volume are currently ignored.  I'll implement those later.
+			audio[0] = audio[0] + (self.audioInBipolarVolts[channel] / self.numberOfChannels)
+			audio[1] = audio[1] + (self.audioInBipolarVolts[channel] / self.numberOfChannels)
+
+		return audio
+
+	def setAudio(self, channel, audioInBipolarVolts):
+		self.audioInBipolarVolts[channel] = audioInBipolarVolts
+		return True
+
+	def setNumberOfChannels(self, numberOfChannels):
+		self.audioInBipolarVolts = []
+		self.panningInBipolarVolts = []
+		self.volumeInUnipolarVolts = []
+
+		for channel in range(numberOfChannels):
+			self.audioInBipolarVolts.append(5.0)
+			self.panningInBipolarVolts.append(0.0)
+			self.volumeInUnipolarVolts.append(0.0)
+
+		self.numberOfChannels = numberOfChannels
+		return True
+
+	def setPanning(self, channel, panningInBipolarVolts):
+		self.panningInBipolarVolts[channel] = panningInBipolarVolts
+		return True
+
+	def setVolume(self, channel, volumeInUnipolarVolts):
+		self.volumeInUnipolarVolts[channel] = volumeInUnipolarVolts
 		return True
 
 class NoiseGenerator:
@@ -257,8 +301,8 @@ class Sequencer:
 	matrixPositionInSeconds = 0.0
 
 	def __init__(self):
-		self.setTempo(120)            # Default to 120BPM
-		self.setNumberOfChannels(4)   # Default to 4 channels
+		self.setTempo(120) # Default to 120BPM
+		self.setNumberOfChannels(4) # Default to 4 channels
 		self.eventRowPositionInIterations = 0 # If I ever make a "reset" method, it should do this!
 
 	def addEventRow(self, eventRow):
