@@ -1,5 +1,5 @@
 # Surf, version 0.1, for Python 3.
-# By ZoeB, 2012-04-10 to 2012-04-12.
+# By ZoeB, 2012-04-10 to 2012-04-15.
 
 # This is a software implementation of a basic modular synthesiser.
 # Almost all values should be numbers between either -5 and +5,
@@ -321,7 +321,7 @@ class Sequencer:
 
 			# Set the gate length
 			if eventRow[(channel * 16) + 6:(channel * 16) + 8] != '..':
-				gateLength = floor(float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowLength))
+				gateLength = float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowLength)
 			elif slide == True:
 				gateLength = self.eventRowLength
 			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
