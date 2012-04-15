@@ -46,9 +46,9 @@ class DecayEnvelopeGenerator:
 	def getCV(self):
 		return self.cvInBipolarVolts
 
-	def incrementTime(self, incrementationLengthInSeconds):
+	def incrementTime(self, incrementLengthInSeconds):
 		if self.cvInBipolarVolts > 0:
-			self.cvInBipolarVolts = self.cvInBipolarVolts - (incrementationLengthInSeconds / self.speedInUnipolarVolts);
+			self.cvInBipolarVolts = self.cvInBipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts);
 
 	def setGate(self, gateInUnipolarVolts):
 		if self.gateInUnipolarVolts == 0 and gateInUnipolarVolts == 5:
@@ -108,9 +108,9 @@ class Oscillator:
 	def getSawtooth(self):
 		return self.pointer
 
-	def incrementTime(self, incrementationLengthInSeconds):
+	def incrementTime(self, incrementLengthInSeconds):
 		self.pointer = (self.pointer + 5) / 10 # From [-5 to +5] to [0 to +1]
-		self.pointer = (self.pointer + (self.frequency * incrementationLengthInSeconds)) % 1
+		self.pointer = (self.pointer + (self.frequency * incrementLengthInSeconds)) % 1
 		self.pointer = (self.pointer * 10) - 5 # From [0 to +1] to [-5 to +5]
 
 	def setOctaveOffset(self, octaveOffset):
@@ -286,8 +286,8 @@ class Sequencer:
 		return self.matrixPositionInSeconds
 
 	def incrementTime(self):
-		incrementationLengthInSeconds = float(1) / float(44100)
-		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementationLengthInSeconds
+		incrementLengthInSeconds = float(1) / float(44100)
+		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementLengthInSeconds
 
 		# Work out the current event row
 		eventRowNumber = int(self.matrixPositionInSeconds // self.eventRowLengthInSeconds)
@@ -302,7 +302,7 @@ class Sequencer:
 		else:
 			self.eventRowPositionInIterations = self.eventRowPositionInIterations + 1
 
-		self.eventRowPositionInSeconds = self.eventRowPositionInIterations * incrementationLengthInSeconds
+		self.eventRowPositionInSeconds = self.eventRowPositionInIterations * incrementLengthInSeconds
 
 		# Read in the current and next event rows
 		eventRow = self.matrix[eventRowNumber]
@@ -390,7 +390,7 @@ class Sequencer:
 					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (cv1Difference / 1 * positionAsDecimal)
 					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2Difference / 1 * positionAsDecimal)
 
-		return incrementationLengthInSeconds
+		return incrementLengthInSeconds
 
 	def setNumberOfChannels(self, numberOfChannels):
 		self.cv1InUnipolarVolts = []
@@ -425,9 +425,9 @@ class SustainReleaseEnvelopeGenerator:
 	def getCV(self):
 		return self.cvInUnipolarVolts
 
-	def incrementTime(self, incrementationLengthInSeconds):
+	def incrementTime(self, incrementLengthInSeconds):
 		if self.cvInUnipolarVolts > 0 and self.gateInUnipolarVolts == 0:
-			self.cvInUnipolarVolts = self.cvInUnipolarVolts - (incrementationLengthInSeconds / self.speedInUnipolarVolts);
+			self.cvInUnipolarVolts = self.cvInUnipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts);
 
 	def setGate(self, gateInUnipolarVolts):
 			self.gateInUnipolarVolts = gateInUnipolarVolts
