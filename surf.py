@@ -182,7 +182,6 @@ class Sequencer:
 	cv2InUnipolarVolts = []
 	eventRowNumber = 0
 	eventRowPositionInIterations = 0
-	eventRowPositionInSeconds = 0.0
 	gateInUnipolarVolts = []
 	matrix = []
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
@@ -302,10 +301,10 @@ class Sequencer:
 		if eventRowPairPositionInSeconds > firstEventRowLengthInSeconds:
 			eventRowNumber = eventRowNumber + 1
 			eventRowLengthInSeconds = eventRowPairLengthInSeconds - firstEventRowLengthInSeconds
-			self.eventRowPositionInSeconds = eventRowPairPositionInSeconds - firstEventRowLengthInSeconds
+			eventRowPositionInSeconds = eventRowPairPositionInSeconds - firstEventRowLengthInSeconds
 		else:
 			eventRowLengthInSeconds = firstEventRowLengthInSeconds
-			self.eventRowPositionInSeconds = eventRowPairPositionInSeconds
+			eventRowPositionInSeconds = eventRowPairPositionInSeconds
 
 		if eventRowNumber > len(self.matrix) - 1:
 			eventRowNumber = len(self.matrix) - 1
@@ -351,7 +350,7 @@ class Sequencer:
 				gateLengthInSeconds = 0.0
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
-			if self.eventRowPositionInSeconds > gateLengthInSeconds or (self.eventRowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
+			if eventRowPositionInSeconds > gateLengthInSeconds or (eventRowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
 				self.gateInUnipolarVolts[channel] = 0.0
 			else:
 				self.gateInUnipolarVolts[channel] = 5.0
@@ -392,7 +391,7 @@ class Sequencer:
 					nextCV2InUnipolarVolts = self.cv2InUnipolarVolts[channel]
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
-				if self.eventRowPositionInSeconds > eventRowLengthInSeconds / 2:
+				if eventRowPositionInSeconds > eventRowLengthInSeconds / 2:
 					pitchDifference = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
 					cv1Difference = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
 					cv2Difference = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
@@ -400,7 +399,7 @@ class Sequencer:
 					# Work out how far along the slide we are, from 0 to 1
 					beginningInSeconds = eventRowLengthInSeconds / 2
 					endInSeconds = eventRowLengthInSeconds
-					positionInSeconds = self.eventRowPositionInSeconds
+					positionInSeconds = eventRowPositionInSeconds
 					offsetPositionInSeconds = positionInSeconds - beginningInSeconds
 					offsetEndInSeconds = endInSeconds - beginningInSeconds
 					positionAsDecimal = offsetPositionInSeconds / offsetEndInSeconds
