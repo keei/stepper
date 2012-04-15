@@ -379,13 +379,13 @@ class Sequencer:
 					nextCV2InUnipolarVolts = self.cv2InUnipolarVolts[channel]
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
-				if self.eventRowPositionInSeconds > gateLengthInSeconds:
+				if self.eventRowPositionInSeconds > self.eventRowLengthInSeconds / 2:
 					pitchDifference = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
 					cv1Difference = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
 					cv2Difference = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
-					beginningInSeconds = gateLengthInSeconds
+					beginningInSeconds = self.eventRowLengthInSeconds / 2
 					endInSeconds = self.eventRowLengthInSeconds
 					positionInSeconds = self.eventRowPositionInSeconds
 					offsetPositionInSeconds = positionInSeconds - beginningInSeconds
