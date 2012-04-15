@@ -3,7 +3,7 @@ import surf
 # 2012
 
 leadEnvelope = surf.SustainReleaseEnvelopeGenerator()
-leadEnvelope.setSpeed(0.025)
+leadEnvelope.setSpeed(0.05)
 
 leadAttenuator = surf.Attenuator()
 
