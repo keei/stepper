@@ -335,9 +335,10 @@ class Sequencer:
 			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
 				gateLengthInSeconds = self.eventRowLengthInSeconds / 2
 			else:
-				gateLengthInSeconds = 0
+				gateLengthInSeconds = 0.0
 
-			if self.eventRowPositionInSeconds > gateLengthInSeconds:
+			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
+			if self.eventRowPositionInSeconds > gateLengthInSeconds or (self.eventRowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
 				self.gateInUnipolarVolts[channel] = 0.0
 			else:
 				self.gateInUnipolarVolts[channel] = 5.0
