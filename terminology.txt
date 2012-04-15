@@ -3,7 +3,7 @@ One row of this is a single "event row".
 Each item in this is an "event".
 An event can either be a note or a rest.
 An event can have the optional effect of "slide" (also known as "glide" or "portamento").
-All events consist of a twelve tone equal temperament note pitch, an optional slide effect, a duty cycle / length of the gate relative to the total event row length, and two control voltages, which have arbitrary uses.  By default (if filled in with full stop characters instead of actual data), the pitch is the same as it was in the last row, slide is off, the gate length / duty cycle is half the event row length if a note is specified, the whole of it if there's a slide, or completely off otherwise, and the two CV outputs are the same as they were before.  (I'm tempted to say the default gate length should be from a note on all the way up until half an event row before the next note on, satying open until then, but that's not necessarily anymore helpful.)
+All events consist of a twelve tone equal temperament note pitch, an optional slide effect, a duty cycle / length of the gate relative to the total event row length, and two control voltages, which have arbitrary uses.  By default (if filled in with full stop characters instead of actual data), the pitch is the same as it was in the last row, slide is off, the gate length / duty cycle is the whole of the event row length if there's a slide, half of the event row length if there's no slide but a note is specified, or completely off otherwise, and the two CV outputs are the same as they were before.
 
 To avoid confusion, variable names should end in a description of the unit:
 
@@ -11,5 +11,3 @@ To avoid confusion, variable names should end in a description of the unit:
 ...InUnipolarVolts (implying that it's a float in the range of 0 to +5)
 ...InBipolarVolts (implying that it's a float in the range of -5 to +5)
 ...InIterations (implying that it's an int, measuring the number of samples)
-
-I'm using the phrases "incrementation" and "iteration" almost synonymously.  I should fix that.

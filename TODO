@@ -1,7 +1,5 @@
 Important, low-level stuff:
-Tidy up terminology file and finish implementing it.  How about resting close effects, to terminate an open effect seemingly of its own accord without an additional note?  Or am I over complicating things?
-The bassline appears to be buggy.  Not the notes, the rendering of them.
-Make sure an open effect is closed by any non-rest, even if it's not a closing one.  (Unless there's a musical advantage to allowing pitch changes mid-note?)
+None.
 
 Nice features:
 Add shuffle/swing to the sequencer.
