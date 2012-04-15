@@ -169,17 +169,17 @@ class Output:
 		self.buffer.append(valueBinary)
 
 class Sequencer:
-	cv1 = []                        # 0 to +5, float
-	cv2 = []                        # 0 to +5, float
-	gate = []                       # 0 or +5, float
-	iterationWithinRow = 0          # 0 to unlimited, int
-	eventRowNumber = 0              # 0 to unlimited, int
-	eventRowTime = 0.0              # 0 to unlimited, float
-	matrix = []                     # Unlimited list of strings
+	cv1InUnipolarVolts = []
+	cv2InUnipolarVolts = []
+	eventRowLengthInSeconds = 0.0
+	eventRowNumber = 0
+	eventRowPositionInIterations = 0
+	eventRowPositionInSeconds = 0.0
+	gateInUnipolarVolts = []
+	matrix = []
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
-	eventRowLength = 0.0            # 0 to unlimited, float
-	numberOfChannels = 4            # 0 to unlimited, int
-	pitch = []                      # 0 to +5, float
+	numberOfChannels = 4
+	pitchInUnipolarVolts = []
 
 	pitchVoltageLookupTable = {
 		'C-1': 0.0,
@@ -245,13 +245,13 @@ class Sequencer:
 		'C-6': 5.0
 	}
 
-	tempo = 120.0                   # 0 to unlimited, float
-	time = 0.0                      # 0 to self.getTrackLength(), float
+	tempo = 120.0
+	matrixPositionInSeconds = 0.0
 
 	def __init__(self):
 		self.setTempo(120)            # Default to 120BPM
 		self.setNumberOfChannels(4)   # Default to 4 channels
-		self.iterationWithinRow = 0 # If I ever make a "reset" method, it should do this!
+		self.eventRowPositionInIterations = 0 # If I ever make a "reset" method, it should do this!
 
 	def addEventRow(self, eventRow):
 		if not self.matrix:
@@ -260,29 +260,29 @@ class Sequencer:
 		self.matrix.append(eventRow)
 
 	def getCV1(self, channel):
-		return self.cv1[channel]
+		return self.cv1InUnipolarVolts[channel]
 
 	def getCV2(self, channel):
-		return self.cv2[channel]
+		return self.cv2InUnipolarVolts[channel]
 
 	def getGate(self, channel):
-		return self.gate[channel]
+		return self.gateInUnipolarVolts[channel]
 
 	def getPitch(self, channel):
-		return self.pitch[channel]
+		return self.pitchInUnipolarVolts[channel]
 
 	def getTrackLength(self):
-		return len(self.matrix) * self.eventRowLength
+		return len(self.matrix) * self.eventRowLengthInSeconds
 
 	def getTime(self):
-		return self.time
+		return self.matrixPositionInSeconds
 
 	def incrementTime(self):
-		increment = float(1) / float(44100)
-		self.time = self.time + increment
+		incrementationLengthInSeconds = float(1) / float(44100)
+		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementationLengthInSeconds
 
 		# Work out the current event row
-		eventRowNumber = int(self.time // self.eventRowLength)
+		eventRowNumber = int(self.matrixPositionInSeconds // self.eventRowLengthInSeconds)
 
 		if eventRowNumber > len(self.matrix) - 1:
 			eventRowNumber = len(self.matrix) - 1
@@ -290,11 +290,11 @@ class Sequencer:
 		# See if we're up to a new event row, otherwise advance the iteration
 		if eventRowNumber > self.eventRowNumber:
 			self.eventRowNumber = eventRowNumber
-			self.iterationWithinRow = 0
+			self.eventRowPositionInIterations = 0
 		else:
-			self.iterationWithinRow = self.iterationWithinRow + 1
+			self.eventRowPositionInIterations = self.eventRowPositionInIterations + 1
 
-		self.eventRowTime = self.iterationWithinRow * increment
+		self.eventRowPositionInSeconds = self.eventRowPositionInIterations * incrementationLengthInSeconds
 
 		# Read in the current and next event rows
 		eventRow = self.matrix[eventRowNumber]
@@ -311,7 +311,7 @@ class Sequencer:
 			pitchName = eventRow[(channel * 16) + 0:(channel * 16) + 3]
 
 			if pitchName != '...':
-				self.pitch[channel] = self.pitchVoltageLookupTable[pitchName]
+				self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[pitchName]
 
 			# Slide if necessary
 			if eventRow[(channel * 16) + 4:(channel * 16) + 5] == 'S':
@@ -321,30 +321,30 @@ class Sequencer:
 
 			# Set the gate length
 			if eventRow[(channel * 16) + 6:(channel * 16) + 8] != '..':
-				gateLength = float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowLength)
+				gateLengthInSeconds = float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowLengthInSeconds)
 			elif slide == True:
-				gateLength = self.eventRowLength
+				gateLengthInSeconds = self.eventRowLengthInSeconds
 			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
-				gateLength = self.eventRowLength / 2
+				gateLengthInSeconds = self.eventRowLengthInSeconds / 2
 			else:
-				gateLength = 0
+				gateLengthInSeconds = 0
 
-			if self.eventRowTime > gateLength:
-				self.gate[channel] = 0.0
+			if self.eventRowPositionInSeconds > gateLengthInSeconds:
+				self.gateInUnipolarVolts[channel] = 0.0
 			else:
-				self.gate[channel] = 5.0
+				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
 			eventCV1 = eventRow[(channel * 16) + 9:(channel * 16) + 11]
 
 			if eventCV1 != '..':
-				self.cv1[channel] = float(eventCV1) / float(99) * float(5)
+				self.cv1InUnipolarVolts[channel] = float(eventCV1) / float(99) * float(5)
 
 			# Set CV2
 			eventCV2 = eventRow[(channel * 16) + 12:(channel * 16) + 14]
 
 			if eventCV2 != '..':
-				self.cv2[channel] = float(eventCV2) / float(99) * float(5)
+				self.cv2InUnipolarVolts[channel] = float(eventCV2) / float(99) * float(5)
 
 			# Do the actual sliding
 			if slide == True:
@@ -355,55 +355,55 @@ class Sequencer:
 				if nextEventCV1 != '..':
 					nextCV1 = float(nextEventCV1) / float(99) * float(5)
 				else:
-					nextCV1 = self.cv1[channel]
+					nextCV1 = self.cv1InUnipolarVolts[channel]
 
 				nextEventCV2 = nextEventRow[(channel * 16) + 12:(channel * 16) + 14]
 
 				if nextEventCV2 != '..':
 					nextCV2 = float(nextEventCV2) / float(99) * float(5)
 				else:
-					nextCV2 = self.cv2[channel]
+					nextCV2 = self.cv2InUnipolarVolts[channel]
 
-				# Glide effortlessly and gracefully from self.pitch to nextPitch
-				if self.eventRowTime > gateLength:
-					differenceInPitch = nextPitch - self.pitch[channel]
-					differenceInCV1 = nextCV1 - self.cv1[channel]
-					differenceInCV2 = nextCV2 - self.cv2[channel]
+				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
+				if self.eventRowPositionInSeconds > gateLengthInSeconds:
+					differenceInPitch = nextPitch - self.pitchInUnipolarVolts[channel]
+					differenceInCV1 = nextCV1 - self.cv1InUnipolarVolts[channel]
+					differenceInCV2 = nextCV2 - self.cv2InUnipolarVolts[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
-					beginning = gateLength
-					end = self.eventRowLength
-					time = self.eventRowTime
+					beginning = gateLengthInSeconds
+					end = self.eventRowLengthInSeconds
+					time = self.eventRowPositionInSeconds
 					time = time - beginning
 					end = end - beginning
 					time = time / end
 
-					self.pitch[channel] = self.pitch[channel] + (differenceInPitch / 1 * time)
-					self.cv1[channel] = self.cv1[channel] + (differenceInCV1 / 1 * time)
-					self.cv2[channel] = self.cv2[channel] + (differenceInCV2 / 1 * time)
+					self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (differenceInPitch / 1 * time)
+					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (differenceInCV1 / 1 * time)
+					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (differenceInCV2 / 1 * time)
 
-		return increment
+		return incrementationLengthInSeconds
 
 	def setNumberOfChannels(self, numberOfChannels):
-		self.cv1 = []
-		self.cv2 = []
-		self.gate = []
-		self.pitch = []
+		self.cv1InUnipolarVolts = []
+		self.cv2InUnipolarVolts = []
+		self.gateInUnipolarVolts = []
+		self.pitchInUnipolarVolts = []
 
 		for channel in range(numberOfChannels):
-			self.cv1.append(0.0)
-			self.cv2.append(0.0)
-			self.gate.append(0.0)
-			self.pitch.append(0.0)
+			self.cv1InUnipolarVolts.append(0.0)
+			self.cv2InUnipolarVolts.append(0.0)
+			self.gateInUnipolarVolts.append(0.0)
+			self.pitchInUnipolarVolts.append(0.0)
 
 		self.numberOfChannels = numberOfChannels
 		return True
 
 	def setTempo(self, tempo):
 		self.tempo = float(tempo)
-		crotchetLength = 60.0 / self.tempo
-		semiquaverLength = crotchetLength / 4.0
-		self.eventRowLength = semiquaverLength
+		crotchetLengthInSeconds = 60.0 / self.tempo
+		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
+		self.eventRowLengthInSeconds = semiquaverLengthInSeconds
 
 class SustainReleaseEnvelopeGenerator:
 	cv = 0.0                        # 0 to +5, float
