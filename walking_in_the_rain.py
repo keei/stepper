@@ -18,8 +18,7 @@ bassAttenuator = surf.Attenuator()
 bassOscillator = surf.Oscillator()
 bassOscillator.setOctaveOffset(1)
 
-hihatOscillator = surf.Oscillator()
-hihatOscillator.setOctaveOffset(3)
+hihatOscillator = surf.NoiseGenerator()
 hihatAttenuator = surf.Attenuator()
 
 output = surf.Output()
@@ -71,13 +70,11 @@ while time < trackLength:
 	hihatCV1 = sequencer.getCV1(2) # This can control anything.  Let's arbitrarily use it as the velocity.
 	hihatGate = sequencer.getGate(2)
 	hihatPitch = sequencer.getPitch(2)
-	hihatOscillator.setPitch(hihatPitch)
-	hihatOscillator.incrementTime(increment)
-	hihatPulse = hihatOscillator.getPulse()
-	hihatAttenuator.setAudio(hihatPulse)
+	hihatNoise = hihatOscillator.getAudio()
+	hihatAttenuator.setAudio(hihatNoise)
 	hihatAttenuator.setCV1(hihatGate)
 	hihatAttenuator.setCV2(hihatCV1)
-	hihatPulse = hihatAttenuator.getAudio()
+	hihatNoise = hihatAttenuator.getAudio()
 
-	output.setValue(hihatPulse)
+	output.setValue(hihatNoise)
 	output.write()

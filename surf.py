@@ -7,6 +7,7 @@
 # this application to real modular hardware.
 
 from math import ceil, floor, pi, sin
+from random import uniform
 from struct import pack
 from wave import open
 
@@ -71,6 +72,13 @@ class Inverter:
 	def setAudio(self, audioInBipolarVolts):
 		self.audioInBipolarVolts = audioInBipolarVolts
 		return True
+
+class NoiseGenerator:
+	def __init__(self):
+		pass
+
+	def getAudio(self):
+		return uniform(-5, 5)
 
 class Oscillator:
 	centOffset = 0.0                # -5 to +5, float

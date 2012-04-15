@@ -4,7 +4,6 @@ The bassline appears to be buggy.  Not the notes, the rendering of them.
 Make sure an open effect is closed by any non-rest, even if it's not a closing one.  (Unless there's a musical advantage to allowing pitch changes mid-note?)
 
 Nice features:
-Make a noise generating module, even if it's just using a lookup table.
 Add shuffle/swing to the sequencer.
 Make a mixer module with panning and stereo output.
 Make an ADSR envelope genrator; use the attenuator with that instead.
