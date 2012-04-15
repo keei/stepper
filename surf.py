@@ -349,38 +349,38 @@ class Sequencer:
 			# Do the actual sliding
 			if slide == True:
 				nextNoteName = nextEventRow[(channel * 16) + 0:(channel * 16) + 3]
-				nextPitch = self.pitchVoltageLookupTable[nextNoteName]
+				nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextNoteName]
 				nextEventCV1 = nextEventRow[(channel * 16) + 9:(channel * 16) + 11]
 
 				if nextEventCV1 != '..':
-					nextCV1 = float(nextEventCV1) / float(99) * float(5)
+					nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
 				else:
-					nextCV1 = self.cv1InUnipolarVolts[channel]
+					nextCV1InUnipolarVolts = self.cv1InUnipolarVolts[channel]
 
 				nextEventCV2 = nextEventRow[(channel * 16) + 12:(channel * 16) + 14]
 
 				if nextEventCV2 != '..':
-					nextCV2 = float(nextEventCV2) / float(99) * float(5)
+					nextCV2InUnipolarVolts = float(nextEventCV2) / float(99) * float(5)
 				else:
-					nextCV2 = self.cv2InUnipolarVolts[channel]
+					nextCV2InUnipolarVolts = self.cv2InUnipolarVolts[channel]
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
 				if self.eventRowPositionInSeconds > gateLengthInSeconds:
-					differenceInPitch = nextPitch - self.pitchInUnipolarVolts[channel]
-					differenceInCV1 = nextCV1 - self.cv1InUnipolarVolts[channel]
-					differenceInCV2 = nextCV2 - self.cv2InUnipolarVolts[channel]
+					pitchDifference = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
+					cv1Difference = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
+					cv2Difference = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
-					beginning = gateLengthInSeconds
-					end = self.eventRowLengthInSeconds
-					time = self.eventRowPositionInSeconds
-					time = time - beginning
-					end = end - beginning
-					time = time / end
+					beginningInSeconds = gateLengthInSeconds
+					endInSeconds = self.eventRowLengthInSeconds
+					positionInSeconds = self.eventRowPositionInSeconds
+					offsetPositionInSeconds = positionInSeconds - beginningInSeconds
+					offsetEndInSeconds = endInSeconds - beginningInSeconds
+					positionAsDecimal = offsetPositionInSeconds / offsetEndInSeconds
 
-					self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (differenceInPitch / 1 * time)
-					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (differenceInCV1 / 1 * time)
-					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (differenceInCV2 / 1 * time)
+					self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (pitchDifference / 1 * positionAsDecimal)
+					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (cv1Difference / 1 * positionAsDecimal)
+					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2Difference / 1 * positionAsDecimal)
 
 		return incrementationLengthInSeconds
 
