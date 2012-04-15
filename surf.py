@@ -287,7 +287,7 @@ class Sequencer:
 		if eventRowNumber > len(self.matrix) - 1:
 			eventRowNumber = len(self.matrix) - 1
 
-		# See if we're up to a new event row
+		# See if we're up to a new event row, otherwise advance the iteration
 		if eventRowNumber > self.eventRowNumber:
 			self.eventRowNumber = eventRowNumber
 			self.iterationWithinRow = 0
@@ -295,6 +295,8 @@ class Sequencer:
 			self.iterationWithinRow = self.iterationWithinRow + 1
 
 		self.eventRowTime = self.iterationWithinRow * increment
+
+		# Read in the current and next event rows
 		eventRow = self.matrix[eventRowNumber]
 		nextEventRowNumber = eventRowNumber + 1
 
@@ -399,8 +401,8 @@ class Sequencer:
 
 	def setTempo(self, tempo):
 		self.tempo = float(tempo)
-		crotchetLength = 60 / self.tempo
-		semiquaverLength = crotchetLength / 4
+		crotchetLength = 60.0 / self.tempo
+		semiquaverLength = crotchetLength / 4.0
 		self.eventRowLength = semiquaverLength
 
 class SustainReleaseEnvelopeGenerator:
