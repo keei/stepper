@@ -11,65 +11,65 @@ from struct import pack
 from wave import open
 
 class Attenuator:
-	audio = 0.0                     # -5 to +5, float
-	cv1 = 0.0                       # -5 to +5, float
-	cv2 = 0.0                       # -5 to +5, float
+	audioInBipolarVolts = 0.0
+	cv1InBipolarVolts = 0.0
+	cv2InBipolarVolts = 0.0
 
 	def __init__(self):
 		pass
 
 	def getAudio(self):
-		return self.audio / 25 * self.cv1 * self.cv2
+		return self.audioInBipolarVolts / 25 * self.cv1InBipolarVolts * self.cv2InBipolarVolts
 
-	def setAudio(self, audio):
-		self.audio = audio
+	def setAudio(self, audioInBipolarVolts):
+		self.audioInBipolarVolts = audioInBipolarVolts
 		return True
 
-	def setCV1(self, cv1):
-		self.cv1 = cv1
+	def setCV1(self, cv1InBipolarVolts):
+		self.cv1InBipolarVolts = cv1InBipolarVolts
 		return True
 
-	def setCV2(self, cv2):
-		self.cv2 = cv2
+	def setCV2(self, cv2InBipolarVolts):
+		self.cv2InBipolarVolts = cv2InBipolarVolts
 		return True
 
 class DecayEnvelopeGenerator:
-	cv = 0.0                        # 0 to +5, float
-	gate = 0.0                      # 0 or +5, float
-	speed = 0.1                     # 0 to +5, float
+	cvInBipolarVolts = 0.0
+	gateInUnipolarVolts = 0.0
+	speedInUnipolarVolts = 0.1
 
 	def __init__(self):
-		self.gate = 0.0
-		self.speed = 0.1
+		self.gateInUnipolarVolts = 0.0
+		self.speedInUnipolarVolts = 0.1
 
 	def getCV(self):
-		return self.cv
+		return self.cvInBipolarVolts
 
-	def incrementTime(self, increment):
-		if self.cv > 0:
-			self.cv = self.cv - (increment / self.speed);
+	def incrementTime(self, incrementationLengthInSeconds):
+		if self.cvInBipolarVolts > 0:
+			self.cvInBipolarVolts = self.cvInBipolarVolts - (incrementationLengthInSeconds / self.speedInUnipolarVolts);
 
-	def setGate(self, gate):
-		if self.gate == 0 and gate == 5:
-			self.cv = 5
-			self.gate = 5
+	def setGate(self, gateInUnipolarVolts):
+		if self.gateInUnipolarVolts == 0 and gateInUnipolarVolts == 5:
+			self.cvInBipolarVolts = 5
+			self.gateInUnipolarVolts = 5
 		else:
-			self.gate = gate
+			self.gateInUnipolarVolts = gateInUnipolarVolts
 
-	def setSpeed(self, speed):
-		self.speed = speed
+	def setSpeed(self, speedInUnipolarVolts):
+		self.speedInUnipolarVolts = speedInUnipolarVolts
 
 class Inverter:
-	audio = 0.0                     # -5 to +5, float
+	audioInBipolarVolts = 0.0                     # -5 to +5, float
 
 	def __init__(self):
 		pass
 
 	def getAudio(self):
-		return 0 - self.audio
+		return 0 - self.audioInBipolarVolts
 
-	def setAudio(self, audio):
-		self.audio = audio
+	def setAudio(self, audioInBipolarVolts):
+		self.audioInBipolarVolts = audioInBipolarVolts
 		return True
 
 class Oscillator:
@@ -91,7 +91,7 @@ class Oscillator:
 		if self.pointer < self.pulseWidth:
 			return 5
 		else:
-			return -1
+			return -5
 
 	def getSine(self):
 		pointer = int(floor((self.pointer + 5) * 100))
@@ -100,9 +100,9 @@ class Oscillator:
 	def getSawtooth(self):
 		return self.pointer
 
-	def incrementTime(self, increment):
+	def incrementTime(self, incrementationLengthInSeconds):
 		self.pointer = (self.pointer + 5) / 10 # From [-5 to +5] to [0 to +1]
-		self.pointer = (self.pointer + (self.frequency * increment)) % 1
+		self.pointer = (self.pointer + (self.frequency * incrementationLengthInSeconds)) % 1
 		self.pointer = (self.pointer * 10) - 5 # From [0 to +1] to [-5 to +5]
 
 	def setOctaveOffset(self, octaveOffset):
@@ -406,26 +406,26 @@ class Sequencer:
 		self.eventRowLengthInSeconds = semiquaverLengthInSeconds
 
 class SustainReleaseEnvelopeGenerator:
-	cv = 0.0                        # 0 to +5, float
-	gate = 0.0                      # 0 or +5, float
-	speed = 0.1                     # 0 to +5, float
+	cvInUnipolarVolts = 0.0
+	gateInUnipolarVolts = 0.0
+	speedInUnipolarVolts = 0.1
 
 	def __init__(self):
-		self.gate = 0.0
-		self.speed = 0.1
+		self.gateInUnipolarVolts = 0.0
+		self.speedInUnipolarVolts = 0.1
 
 	def getCV(self):
-		return self.cv
+		return self.cvInUnipolarVolts
 
-	def incrementTime(self, increment):
-		if self.cv > 0 and self.gate == 0:
-			self.cv = self.cv - (increment / self.speed);
+	def incrementTime(self, incrementationLengthInSeconds):
+		if self.cvInUnipolarVolts > 0 and self.gateInUnipolarVolts == 0:
+			self.cvInUnipolarVolts = self.cvInUnipolarVolts - (incrementationLengthInSeconds / self.speedInUnipolarVolts);
 
-	def setGate(self, gate):
-			self.gate = gate
+	def setGate(self, gateInUnipolarVolts):
+			self.gateInUnipolarVolts = gateInUnipolarVolts
 
-			if gate == 5:
-				self.cv = gate
+			if gateInUnipolarVolts == 5:
+				self.cvInUnipolarVolts = gateInUnipolarVolts
 
-	def setSpeed(self, speed):
-		self.speed = speed
+	def setSpeed(self, speedInUnipolarVolts):
+		self.speedInUnipolarVolts = speedInUnipolarVolts
