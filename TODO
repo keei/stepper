@@ -2,7 +2,6 @@ Important, low-level stuff:
 None.
 
 Nice features:
-Add shuffle/swing to the sequencer.
 Make a mixer module with panning and stereo output.
 Make an ADSR envelope genrator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)

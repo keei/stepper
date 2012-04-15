@@ -26,6 +26,7 @@ output.setFilename('walking_in_the_rain.wav')
 
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
+sequencer.setSwing(2.5)
 
 matrix = open('walking_in_the_rain.txt')
 
@@ -76,5 +77,5 @@ while time < trackLength:
 	hihatAttenuator.setCV2(hihatCV1)
 	hihatNoise = hihatAttenuator.getAudio()
 
-	output.setValue(leadPulse, bassPulse)
+	output.setValue(leadPulse, hihatNoise)
 	output.write()

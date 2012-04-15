@@ -11,3 +11,4 @@ To avoid confusion, variable names should end in a description of the unit:
 ...InUnipolarVolts (implying that it's a float in the range of 0 to +5)
 ...InBipolarVolts (implying that it's a float in the range of -5 to +5)
 ...InIterations (implying that it's an int, measuring the number of samples)
+...AsDecimal (implying that it's a float in the range of 0 to 1)

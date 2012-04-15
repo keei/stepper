@@ -177,9 +177,9 @@ class Output:
 		self.buffer.append(valueBinary)
 
 class Sequencer:
+	averageEventRowLengthInSeconds = 0.0
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
-	eventRowLengthInSeconds = 0.0
 	eventRowNumber = 0
 	eventRowPositionInIterations = 0
 	eventRowPositionInSeconds = 0.0
@@ -253,6 +253,7 @@ class Sequencer:
 		'C-6': 5.0
 	}
 
+	swingInBipolarVolts = 0
 	tempo = 120.0
 	matrixPositionInSeconds = 0.0
 
@@ -280,7 +281,7 @@ class Sequencer:
 		return self.pitchInUnipolarVolts[channel]
 
 	def getTrackLength(self):
-		return len(self.matrix) * self.eventRowLengthInSeconds
+		return len(self.matrix) * self.averageEventRowLengthInSeconds
 
 	def getTime(self):
 		return self.matrixPositionInSeconds
@@ -288,9 +289,21 @@ class Sequencer:
 	def incrementTime(self):
 		incrementLengthInSeconds = float(1) / float(44100)
 		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementLengthInSeconds
+		eventRowPairLengthInSeconds = self.averageEventRowLengthInSeconds * 2
 
 		# Work out the current event row
-		eventRowNumber = int(self.matrixPositionInSeconds // self.eventRowLengthInSeconds)
+		eventRowPairNumber = int(self.matrixPositionInSeconds // eventRowPairLengthInSeconds)
+		eventRowNumber = eventRowPairNumber * 2
+
+		swingAsDecimal = (self.swingInBipolarVolts + 5.0) / 10.0
+		firstEventRowLengthInSeconds = self.averageEventRowLengthInSeconds / 0.5 * swingAsDecimal
+		eventRowPairPositionInSeconds = self.matrixPositionInSeconds - (eventRowPairLengthInSeconds * eventRowPairNumber)
+
+		if eventRowPairPositionInSeconds > firstEventRowLengthInSeconds:
+			eventRowNumber = eventRowNumber + 1
+			eventRowLengthInSeconds = eventRowPairLengthInSeconds - firstEventRowLengthInSeconds
+		else:
+			eventRowLengthInSeconds = firstEventRowLengthInSeconds
 
 		if eventRowNumber > len(self.matrix) - 1:
 			eventRowNumber = len(self.matrix) - 1
@@ -329,11 +342,11 @@ class Sequencer:
 
 			# Set the gate length
 			if eventRow[(channel * 16) + 6:(channel * 16) + 8] != '..':
-				gateLengthInSeconds = float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(self.eventRowLengthInSeconds)
+				gateLengthInSeconds = float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(eventRowLengthInSeconds)
 			elif slide == True:
-				gateLengthInSeconds = self.eventRowLengthInSeconds
+				gateLengthInSeconds = eventRowLengthInSeconds
 			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
-				gateLengthInSeconds = self.eventRowLengthInSeconds / 2
+				gateLengthInSeconds = eventRowLengthInSeconds / 2
 			else:
 				gateLengthInSeconds = 0.0
 
@@ -379,14 +392,14 @@ class Sequencer:
 					nextCV2InUnipolarVolts = self.cv2InUnipolarVolts[channel]
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
-				if self.eventRowPositionInSeconds > self.eventRowLengthInSeconds / 2:
+				if self.eventRowPositionInSeconds > eventRowLengthInSeconds / 2:
 					pitchDifference = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
 					cv1Difference = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
 					cv2Difference = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
-					beginningInSeconds = self.eventRowLengthInSeconds / 2
-					endInSeconds = self.eventRowLengthInSeconds
+					beginningInSeconds = eventRowLengthInSeconds / 2
+					endInSeconds = eventRowLengthInSeconds
 					positionInSeconds = self.eventRowPositionInSeconds
 					offsetPositionInSeconds = positionInSeconds - beginningInSeconds
 					offsetEndInSeconds = endInSeconds - beginningInSeconds
@@ -413,11 +426,14 @@ class Sequencer:
 		self.numberOfChannels = numberOfChannels
 		return True
 
+	def setSwing(self, swingInBipolarVolts):
+		self.swingInBipolarVolts = swingInBipolarVolts
+
 	def setTempo(self, tempo):
 		self.tempo = float(tempo)
 		crotchetLengthInSeconds = 60.0 / self.tempo
 		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
-		self.eventRowLengthInSeconds = semiquaverLengthInSeconds
+		self.averageEventRowLengthInSeconds = semiquaverLengthInSeconds
 
 class SustainReleaseEnvelopeGenerator:
 	cvInUnipolarVolts = 0.0
