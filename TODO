@@ -5,6 +5,7 @@ Nice features:
 Make a mixer module with panning and stereo output.
 Make an ADSR envelope genrator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)
+Make a sample and hold module.
 Make a voltage controlled delay / echo module.  (With a set sized array, cycled through at a voltage controlled speed, with a voltage controlled amount of feedback and a voltage controlled dry/wet mix.)
 Have a go at making a chorus.  (I gather this is something like an extremely short delay with only one copy of the signal and a slightly variable speed.)
 
