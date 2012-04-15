@@ -357,8 +357,13 @@ class Sequencer:
 
 			# Do the actual sliding
 			if slide == True:
-				nextNoteName = nextEventRow[(channel * 16) + 0:(channel * 16) + 3]
-				nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextNoteName]
+				nextPitchName = nextEventRow[(channel * 16) + 0:(channel * 16) + 3]
+
+				if nextPitchName != '...':
+					nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
+				else:
+					nextPitchInUnipolarVolts = self.pitchInUnipolarVolts[channel]
+
 				nextEventCV1 = nextEventRow[(channel * 16) + 9:(channel * 16) + 11]
 
 				if nextEventCV1 != '..':
