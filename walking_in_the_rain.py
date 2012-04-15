@@ -23,6 +23,7 @@ hihatAttenuator = surf.Attenuator()
 
 mixer = surf.Mixer()
 mixer.setNumberOfChannels(3)
+mixer.setVolume(2, 3) # Set third channel (channel 2) to 3/5ths volume
 
 output = surf.Output()
 output.setFilename('walking_in_the_rain.wav')

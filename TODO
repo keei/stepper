@@ -2,7 +2,7 @@ Important, low-level stuff:
 None.
 
 Nice features:
-Implement volume and panning in the mixer module.
+Implement panning in the mixer module.
 Make an ADSR envelope genrator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)
 Make a sample and hold module.

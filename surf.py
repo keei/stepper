@@ -87,8 +87,8 @@ class Mixer:
 
 		for channel in range(self.numberOfChannels):
 			# Panning and volume are currently ignored.  I'll implement those later.
-			audio[0] = audio[0] + (self.audioInBipolarVolts[channel] / self.numberOfChannels)
-			audio[1] = audio[1] + (self.audioInBipolarVolts[channel] / self.numberOfChannels)
+			audio[0] = audio[0] + (self.audioInBipolarVolts[channel] / self.numberOfChannels / 5 * self.volumeInUnipolarVolts[channel])
+			audio[1] = audio[1] + (self.audioInBipolarVolts[channel] / self.numberOfChannels / 5 * self.volumeInUnipolarVolts[channel])
 
 		return audio
 
@@ -102,9 +102,9 @@ class Mixer:
 		self.volumeInUnipolarVolts = []
 
 		for channel in range(numberOfChannels):
-			self.audioInBipolarVolts.append(5.0)
+			self.audioInBipolarVolts.append(0.0)
 			self.panningInBipolarVolts.append(0.0)
-			self.volumeInUnipolarVolts.append(0.0)
+			self.volumeInUnipolarVolts.append(5.0)
 
 		self.numberOfChannels = numberOfChannels
 		return True
