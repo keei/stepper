@@ -302,8 +302,10 @@ class Sequencer:
 		if eventRowPairPositionInSeconds > firstEventRowLengthInSeconds:
 			eventRowNumber = eventRowNumber + 1
 			eventRowLengthInSeconds = eventRowPairLengthInSeconds - firstEventRowLengthInSeconds
+			self.eventRowPositionInSeconds = eventRowPairPositionInSeconds - firstEventRowLengthInSeconds
 		else:
 			eventRowLengthInSeconds = firstEventRowLengthInSeconds
+			self.eventRowPositionInSeconds = eventRowPairPositionInSeconds
 
 		if eventRowNumber > len(self.matrix) - 1:
 			eventRowNumber = len(self.matrix) - 1
@@ -314,8 +316,6 @@ class Sequencer:
 			self.eventRowPositionInIterations = 0
 		else:
 			self.eventRowPositionInIterations = self.eventRowPositionInIterations + 1
-
-		self.eventRowPositionInSeconds = self.eventRowPositionInIterations * incrementLengthInSeconds
 
 		# Read in the current and next event rows
 		eventRow = self.matrix[eventRowNumber]
