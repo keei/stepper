@@ -1,5 +1,5 @@
 # Surf, version 0.1, for Python 3.
-# By ZoeB, 2012-04-10 to 2012-04-15.
+# By ZoeB, 2012-04-10 to 2012-04-17.
 
 # This is a software implementation of a basic modular synthesiser.
 # Almost all values should be numbers between either -5 and +5,
@@ -125,11 +125,11 @@ class NoiseGenerator:
 		return uniform(-5, 5)
 
 class Oscillator:
-	centOffset = 0.0                # -5 to +5, float
-	frequency = 0.0                 # 0 to unlimited, float
-	octaveOffset = 0                # -5 to +5, int
-	pointer = 0.0                   # 0 to +5, float
-	pulseWidth = 0.0                # -5 to +5, float
+	centOffsetInBipolarVolts = 0.0
+	frequency = 0.0 # 0 to unlimited, float
+	octaveOffsetInBipolarVolts = 0 # -5 to +5, int recommended
+	pointerInUnipolarVolts = 0.0
+	pulseWidthInBipolarVolts = 0.0
 	sineWaveLookupTable = []
 
 	def __init__(self):
@@ -140,31 +140,31 @@ class Oscillator:
 			i = i + 1
 
 	def getPulse(self):
-		if self.pointer < self.pulseWidth:
+		if self.pointerInUnipolarVolts < self.pulseWidthInBipolarVolts:
 			return 5
 		else:
 			return -5
 
 	def getSine(self):
-		pointer = int(floor((self.pointer + 5) * 100))
+		pointer = int(floor((self.pointerInUnipolarVolts + 5) * 100))
 		return self.sineWaveLookupTable[pointer]
 
 	def getSawtooth(self):
-		return self.pointer
+		return self.pointerInUnipolarVolts
 
 	def incrementTime(self, incrementLengthInSeconds):
-		self.pointer = (self.pointer + 5) / 10 # From [-5 to +5] to [0 to +1]
-		self.pointer = (self.pointer + (self.frequency * incrementLengthInSeconds)) % 1
-		self.pointer = (self.pointer * 10) - 5 # From [0 to +1] to [-5 to +5]
+		self.pointerInUnipolarVolts = (self.pointerInUnipolarVolts + 5) / 10 # From [-5 to +5] to [0 to +1]
+		self.pointerInUnipolarVolts = (self.pointerInUnipolarVolts + (self.frequency * incrementLengthInSeconds)) % 1
+		self.pointerInUnipolarVolts = (self.pointerInUnipolarVolts * 10) - 5 # From [0 to +1] to [-5 to +5]
 
-	def setOctaveOffset(self, octaveOffset):
-		self.octaveOffset = octaveOffset
+	def setOctaveOffset(self, octaveOffsetInBipolarVolts):
+		self.octaveOffsetInBipolarVolts = octaveOffsetInBipolarVolts
 
 	def setPitch(self, pitch):
-		self.frequency = 440 / (2 ** 4.75) * (2 ** (pitch + self.octaveOffset + (self.centOffset / 5 * 100))) # A4 = 440Hz = 4.75v
+		self.frequency = 440 / (2 ** 4.75) * (2 ** (pitch + self.octaveOffsetInBipolarVolts + (self.centOffsetInBipolarVolts / 5 * 100))) # A4 = 440Hz = 4.75v
 
-	def setPulseWidth(self, pulseWidth):
-		self.pulseWidth = pulseWidth
+	def setPulseWidth(self, pulseWidthInBipolarVolts):
+		self.pulseWidthInBipolarVolts = pulseWidthInBipolarVolts
 
 class Output:
 	buffer = []
