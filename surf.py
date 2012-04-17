@@ -169,10 +169,10 @@ class Oscillator:
 class Output:
 	buffer = []
 	filename = 'surf.wav'
-	time = 0                        # 0 to unlimited, int
-	valueLeft = 0.0                 # -5 to +5, float
-	valueRight = 0.0                # -5 to +5, float
-	writing = False                 # Boolean
+	time = 0 # 0 to unlimited, int
+	valueLeftInBipolarVolts = 0.0
+	valueRightInBipolarVolts = 0.0
+	writing = False
 
 	def __del__(self):
 		self.stop()
@@ -183,13 +183,13 @@ class Output:
 	def setFilename(self, filename):
 		self.filename = filename
 
-	def setValue(self, valueLeft, valueRight = None):
-		self.valueLeft = valueLeft
+	def setValue(self, valueLeftInBipolarVolts, valueRightInBipolarVolts = None):
+		self.valueLeftInBipolarVolts = valueLeftInBipolarVolts
 
-		if valueRight != None:
-			self.valueRight = valueRight
+		if valueRightInBipolarVolts != None:
+			self.valueRightInBipolarVolts = valueRightInBipolarVolts
 		else:
-			self.valueRight = valueLeft
+			self.valueRightInBipolarVolts = valueLeftInBipolarVolts
 
 	def start(self):
 		self.buffer = []
@@ -213,10 +213,10 @@ class Output:
 		if self.writing == False:
 			self.start()
 
-		valueLeft = int(floor(self.valueLeft / 5 * 32767)) # 16-bit
+		valueLeft = int(floor(self.valueLeftInBipolarVolts / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueLeft)
 		self.buffer.append(valueBinary)
-		valueRight = int(floor(self.valueRight / 5 * 32767)) # 16-bit
+		valueRight = int(floor(self.valueRightInBipolarVolts / 5 * 32767)) # 16-bit
 		valueBinary = pack('<h', valueRight)
 		self.buffer.append(valueBinary)
 
