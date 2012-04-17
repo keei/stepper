@@ -88,5 +88,5 @@ while time < trackLength:
 
 	mix = mixer.getAudio()
 
-	output.setValue(mix[0], mix[1])
+	output.setAudio(mix[0], mix[1])
 	output.write()

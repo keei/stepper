@@ -2,9 +2,9 @@
 # By ZoeB, 2012-04-10 to 2012-04-17.
 
 # This is a software implementation of a basic modular synthesiser.
-# Almost all values should be numbers between either -5 and +5,
-# or 0 and +5.  Theoretically, it should one day be possible to connect
-# this application to real modular hardware.
+# Almost all values should be numbers between either -5 and +5, or
+# 0 and +5.  Theoretically, it should be possible to connect this
+# application to real modular hardware.
 
 from math import ceil, floor, pi, sin
 from random import uniform
@@ -47,6 +47,7 @@ class DecayEnvelopeGenerator:
 		return self.cvInBipolarVolts
 
 	def incrementTime(self, incrementLengthInSeconds):
+		"""Update attributes to reflect the passing of the specified number of seconds."""
 		if self.cvInBipolarVolts > 0:
 			self.cvInBipolarVolts = self.cvInBipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts);
 
@@ -153,6 +154,7 @@ class Oscillator:
 		return self.pointerInUnipolarVolts
 
 	def incrementTime(self, incrementLengthInSeconds):
+		"""Update attributes to reflect the passing of the specified number of seconds."""
 		self.pointerInUnipolarVolts = (self.pointerInUnipolarVolts + 5) / 10 # From [-5 to +5] to [0 to +1]
 		self.pointerInUnipolarVolts = (self.pointerInUnipolarVolts + (self.frequency * incrementLengthInSeconds)) % 1
 		self.pointerInUnipolarVolts = (self.pointerInUnipolarVolts * 10) - 5 # From [0 to +1] to [-5 to +5]
@@ -170,8 +172,8 @@ class Output:
 	buffer = []
 	filename = 'surf.wav'
 	time = 0 # 0 to unlimited, int
-	valueLeftInBipolarVolts = 0.0
-	valueRightInBipolarVolts = 0.0
+	audioLeftInBipolarVolts = 0.0
+	audioRightInBipolarVolts = 0.0
 	writing = False
 
 	def __del__(self):
@@ -183,13 +185,13 @@ class Output:
 	def setFilename(self, filename):
 		self.filename = filename
 
-	def setValue(self, valueLeftInBipolarVolts, valueRightInBipolarVolts = None):
-		self.valueLeftInBipolarVolts = valueLeftInBipolarVolts
+	def setAudio(self, audioLeftInBipolarVolts, audioRightInBipolarVolts = None):
+		self.audioLeftInBipolarVolts = audioLeftInBipolarVolts
 
-		if valueRightInBipolarVolts != None:
-			self.valueRightInBipolarVolts = valueRightInBipolarVolts
+		if audioRightInBipolarVolts != None:
+			self.audioRightInBipolarVolts = audioRightInBipolarVolts
 		else:
-			self.valueRightInBipolarVolts = valueLeftInBipolarVolts
+			self.audioRightInBipolarVolts = audioLeftInBipolarVolts
 
 	def start(self):
 		self.buffer = []
@@ -202,9 +204,9 @@ class Output:
 		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
 
-		valueBinary = bytes()
-		valueBinary = valueBinary.join(self.buffer)
-		self.outputFile.writeframes(valueBinary)
+		audioBinary = bytes()
+		audioBinary = audioBinary.join(self.buffer)
+		self.outputFile.writeframes(audioBinary)
 
 		self.outputFile.close()
 		self.writing = False
@@ -213,12 +215,12 @@ class Output:
 		if self.writing == False:
 			self.start()
 
-		valueLeft = int(floor(self.valueLeftInBipolarVolts / 5 * 32767)) # 16-bit
-		valueBinary = pack('<h', valueLeft)
-		self.buffer.append(valueBinary)
-		valueRight = int(floor(self.valueRightInBipolarVolts / 5 * 32767)) # 16-bit
-		valueBinary = pack('<h', valueRight)
-		self.buffer.append(valueBinary)
+		audioLeft = int(floor(self.audioLeftInBipolarVolts / 5 * 32767)) # 16-bit
+		audioBinary = pack('<h', audioLeft)
+		self.buffer.append(audioBinary)
+		audioRight = int(floor(self.audioRightInBipolarVolts / 5 * 32767)) # 16-bit
+		audioBinary = pack('<h', audioRight)
+		self.buffer.append(audioBinary)
 
 class Sequencer:
 	averageEventRowLengthInSeconds = 0.0
@@ -306,6 +308,7 @@ class Sequencer:
 		self.eventRowPositionInIterations = 0 # If I ever make a "reset" method, it should do this!
 
 	def addEventRow(self, eventRow):
+		"""Load in values for all channels simultaneously."""
 		if not self.matrix:
 			self.setNumberOfChannels(ceil(len(eventRow) / 16))
 
@@ -491,6 +494,7 @@ class SustainReleaseEnvelopeGenerator:
 		return self.cvInUnipolarVolts
 
 	def incrementTime(self, incrementLengthInSeconds):
+		"""Update attributes to reflect the passing of the specified number of seconds."""
 		if self.cvInUnipolarVolts > 0 and self.gateInUnipolarVolts == 0:
 			self.cvInUnipolarVolts = self.cvInUnipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts);
 

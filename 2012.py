@@ -40,5 +40,5 @@ while time < trackLength:
 	leadAttenuator.setCV2(5)
 	leadSaw = leadAttenuator.getAudio()
 
-	output.setValue(leadSaw)
+	output.setAudio(leadSaw)
 	output.write()
