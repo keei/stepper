@@ -15,6 +15,7 @@ output.setFilename('2012.wav')
 
 sequencer = surf.Sequencer()
 sequencer.setTempo(118)
+sequencer.setLoop(True)
 
 matrix = open('2012.txt')
 
@@ -23,6 +24,7 @@ for eventRow in matrix:
 
 time = 0
 trackLength = sequencer.getTrackLength()
+trackLength = trackLength * 4 # Loop through the tune 4 times
 
 while time < trackLength:
 	time = sequencer.getTime()

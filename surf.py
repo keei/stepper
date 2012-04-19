@@ -231,7 +231,9 @@ class Sequencer:
 	eventRowNumber = 0
 	eventRowPositionInIterations = 0
 	gateInUnipolarVolts = []
+	loop = False
 	matrix = []
+	matrixPositionInSeconds = 0.0
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	numberOfChannels = 4
 	pitchInUnipolarVolts = []
@@ -302,7 +304,7 @@ class Sequencer:
 
 	swingInBipolarVolts = 0
 	tempo = 120.0
-	matrixPositionInSeconds = 0.0
+	timeInSeconds = 0.0
 
 	def __init__(self):
 		self.setTempo(120) # Default to 120BPM
@@ -325,6 +327,9 @@ class Sequencer:
 	def getGate(self, channel):
 		return self.gateInUnipolarVolts[channel]
 
+	def getLoopTime(self):
+		return self.matrixPositionInSeconds
+
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
@@ -332,9 +337,10 @@ class Sequencer:
 		return len(self.matrix) * self.averageEventRowLengthInSeconds
 
 	def getTime(self):
-		return self.matrixPositionInSeconds
+		return self.timeInSeconds
 
 	def incrementTime(self, incrementLengthInSeconds):
+		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
 		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementLengthInSeconds
 		eventRowPairLengthInSeconds = self.averageEventRowLengthInSeconds * 2
 
@@ -355,7 +361,17 @@ class Sequencer:
 			eventRowPositionInSeconds = eventRowPairPositionInSeconds
 
 		if eventRowNumber > len(self.matrix) - 1:
-			eventRowNumber = len(self.matrix) - 1
+			if self.loop == True:
+				self.matrixPositionInSeconds = 0.0
+				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
+
+				# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
+				eventRowNumber = 0
+				eventRowPairNumber = 0
+				eventRowPairPositionInSeconds = 0.0
+				eventRowPositionInSeconds = 0.0
+			else:
+				eventRowNumber = len(self.matrix) - 1
 
 		# See if we're up to a new event row, otherwise advance the iteration
 		if eventRowNumber > self.eventRowNumber:
@@ -457,6 +473,9 @@ class Sequencer:
 					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2Difference / 1 * positionAsDecimal)
 
 		return incrementLengthInSeconds
+
+	def setLoop(self, loop):
+		self.loop = loop
 
 	def setNumberOfChannels(self, numberOfChannels):
 		self.cv1InUnipolarVolts = []
