@@ -11,6 +11,8 @@ from random import uniform
 from struct import pack
 from wave import open
 
+globalIncrementLengthInSeconds = 1.0 / 44100.0
+
 class Attenuator:
 	audioInBipolarVolts = 0.0
 	cv1InBipolarVolts = 0.0
@@ -332,8 +334,7 @@ class Sequencer:
 	def getTime(self):
 		return self.matrixPositionInSeconds
 
-	def incrementTime(self):
-		incrementLengthInSeconds = float(1) / float(44100)
+	def incrementTime(self, incrementLengthInSeconds):
 		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementLengthInSeconds
 		eventRowPairLengthInSeconds = self.averageEventRowLengthInSeconds * 2
 

@@ -26,15 +26,15 @@ trackLength = sequencer.getTrackLength()
 
 while time < trackLength:
 	time = sequencer.getTime()
-	increment = sequencer.incrementTime()
+	sequencer.incrementTime(surf.globalIncrementLengthInSeconds)
 
 	leadGate = sequencer.getGate(0)
 	leadPitch = sequencer.getPitch(0)
 	leadOscillator.setPitch(leadPitch)
-	leadOscillator.incrementTime(increment)
+	leadOscillator.incrementTime(surf.globalIncrementLengthInSeconds)
 	leadSaw = leadOscillator.getSawtooth()
 	leadEnvelope.setGate(leadGate)
-	leadEnvelope.incrementTime(increment)
+	leadEnvelope.incrementTime(surf.globalIncrementLengthInSeconds)
 	leadAttenuator.setAudio(leadSaw)
 	leadAttenuator.setCV1(leadEnvelope.getCV())
 	leadAttenuator.setCV2(5)
