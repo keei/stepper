@@ -474,6 +474,10 @@ class Sequencer:
 
 		return incrementLengthInSeconds
 
+	def removeEventRow(self):
+		"""Remove the last value for all channels."""
+		self.matrix.pop()
+
 	def setLoop(self, loop):
 		self.loop = loop
 
