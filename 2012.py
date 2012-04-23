@@ -17,9 +17,9 @@ sequencer = surf.Sequencer()
 sequencer.setTempo(118)
 sequencer.setLoop(True)
 
-matrix = open('2012.txt')
+pattern = open('2012.txt')
 
-for eventRow in matrix:
+for eventRow in pattern:
 	sequencer.addEventRow(eventRow)
 
 time = 0

@@ -33,9 +33,9 @@ output.setFilename('walking_in_the_rain.wav')
 sequencer = surf.Sequencer()
 sequencer.setTempo(120)
 
-matrix = open('walking_in_the_rain.txt')
+pattern = open('walking_in_the_rain.txt')
 
-for eventRow in matrix:
+for eventRow in pattern:
 	sequencer.addEventRow(eventRow)
 
 time = 0

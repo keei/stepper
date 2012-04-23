@@ -1,10 +1,11 @@
 # Surf, version 0.1, for Python 3.
-# By ZoeB, 2012-04-10 to 2012-04-17.
+# By ZoeB, 2012.
 
-# This is a software implementation of a basic modular synthesiser.
-# Almost all values should be numbers between either -5 and +5, or
-# 0 and +5.  Theoretically, it should be possible to connect this
-# application to real modular hardware.
+# This is a software implementation of a basic modular synthesiser and
+# sequencer.  Almost all values should be numbers between either -5 and
+# +5, or 0 and +5.  Theoretically, it should be possible to connect this
+# application to real modular hardware by converting these values into
+# actual volts.
 
 from math import ceil, floor, pi, sin
 from random import uniform
@@ -232,8 +233,8 @@ class Sequencer:
 	eventRowPositionInIterations = 0
 	gateInUnipolarVolts = []
 	loop = False
-	matrix = []
-	matrixPositionInSeconds = 0.0
+	pattern = []
+	patternPositionInSeconds = 0.0
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	numberOfChannels = 4
 	pitchInUnipolarVolts = []
@@ -313,10 +314,10 @@ class Sequencer:
 
 	def addEventRow(self, eventRow):
 		"""Load in values for all channels simultaneously."""
-		if not self.matrix:
+		if not self.pattern:
 			self.setNumberOfChannels(ceil(len(eventRow) / 16))
 
-		self.matrix.append(eventRow)
+		self.pattern.append(eventRow)
 
 	def getCV1(self, channel):
 		return self.cv1InUnipolarVolts[channel]
@@ -328,29 +329,29 @@ class Sequencer:
 		return self.gateInUnipolarVolts[channel]
 
 	def getLoopTime(self):
-		return self.matrixPositionInSeconds
+		return self.patternPositionInSeconds
 
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
 	def getTrackLength(self):
-		return len(self.matrix) * self.averageEventRowLengthInSeconds
+		return len(self.pattern) * self.averageEventRowLengthInSeconds
 
 	def getTime(self):
 		return self.timeInSeconds
 
 	def incrementTime(self, incrementLengthInSeconds):
 		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
-		self.matrixPositionInSeconds = self.matrixPositionInSeconds + incrementLengthInSeconds
+		self.patternPositionInSeconds = self.patternPositionInSeconds + incrementLengthInSeconds
 		eventRowPairLengthInSeconds = self.averageEventRowLengthInSeconds * 2
 
 		# Work out the current event row
-		eventRowPairNumber = int(self.matrixPositionInSeconds // eventRowPairLengthInSeconds)
+		eventRowPairNumber = int(self.patternPositionInSeconds // eventRowPairLengthInSeconds)
 		eventRowNumber = eventRowPairNumber * 2
 
 		swingAsDecimal = (self.swingInBipolarVolts + 5.0) / 10.0
 		firstEventRowLengthInSeconds = self.averageEventRowLengthInSeconds / 0.5 * swingAsDecimal
-		eventRowPairPositionInSeconds = self.matrixPositionInSeconds - (eventRowPairLengthInSeconds * eventRowPairNumber)
+		eventRowPairPositionInSeconds = self.patternPositionInSeconds - (eventRowPairLengthInSeconds * eventRowPairNumber)
 
 		if eventRowPairPositionInSeconds > firstEventRowLengthInSeconds:
 			eventRowNumber = eventRowNumber + 1
@@ -360,9 +361,9 @@ class Sequencer:
 			eventRowLengthInSeconds = firstEventRowLengthInSeconds
 			eventRowPositionInSeconds = eventRowPairPositionInSeconds
 
-		if eventRowNumber > len(self.matrix) - 1:
+		if eventRowNumber > len(self.pattern) - 1:
 			if self.loop == True:
-				self.matrixPositionInSeconds = 0.0
+				self.patternPositionInSeconds = 0.0
 				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
 
 				# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
@@ -371,7 +372,7 @@ class Sequencer:
 				eventRowPairPositionInSeconds = 0.0
 				eventRowPositionInSeconds = 0.0
 			else:
-				eventRowNumber = len(self.matrix) - 1
+				eventRowNumber = len(self.pattern) - 1
 
 		# See if we're up to a new event row, otherwise advance the iteration
 		if eventRowNumber > self.eventRowNumber:
@@ -381,13 +382,13 @@ class Sequencer:
 			self.eventRowPositionInIterations = self.eventRowPositionInIterations + 1
 
 		# Read in the current and next event rows
-		eventRow = self.matrix[eventRowNumber]
+		eventRow = self.pattern[eventRowNumber]
 		nextEventRowNumber = eventRowNumber + 1
 
-		if nextEventRowNumber > len(self.matrix) - 1:
-			nextEventRowNumber = len(self.matrix) - 1
+		if nextEventRowNumber > len(self.pattern) - 1:
+			nextEventRowNumber = len(self.pattern) - 1
 
-		nextEventRow = self.matrix[nextEventRowNumber]
+		nextEventRow = self.pattern[nextEventRowNumber]
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
@@ -476,7 +477,7 @@ class Sequencer:
 
 	def removeEventRow(self):
 		"""Remove the last value for all channels."""
-		self.matrix.pop()
+		self.pattern.pop()
 
 	def setLoop(self, loop):
 		self.loop = loop
