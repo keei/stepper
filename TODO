@@ -2,7 +2,7 @@ Important, low-level stuff:
 None.
 
 Nice features:
-I need to make a README file.
+I need to improve the README file.
 I should implement the methods necessary to in turn build a realtime interface, eg moving a virtual cursor around, getting and setting the values at that cursor's current event position and so on.
 I should implement multiple patterns, switching between them, chaining them together, copying them and removing them.
 I should work out a song file format, that stores (preferably in XML to make life easier for other people) the song name, artist name, arbitrary information, all events for every channel of each pattern, and the ordering of all the patterns.  I should then get the sequencer to read and write these files.  (The idea being that the hardware implementation could write them to SD cards.)
