@@ -54,10 +54,12 @@ while (True):
 		else:
 			sequencer.setPlaying(True)
 
-	if key == chr(curses.KEY_BACKSPACE):
+	# if key == chr(curses.KEY_BACKSPACE):
+	if key == 'n':
 		sequencer.decrementCurrentEventRowNumber()
 
-	if key == chr(curses.KEY_ENTER):
+	# if key == chr(curses.KEY_ENTER):
+	if key == 'm':
 		sequencer.incrementCurrentEventRowNumber()
 
 	timeInMilliseconds = millis()
