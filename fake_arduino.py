@@ -54,18 +54,21 @@ while (True):
 	sequencer.incrementTime(incrementLengthInSeconds)
 	previousCycleTimeInSeconds = timeInSeconds
 
-	patternLength = sequencer.getPatternLength()
-
 	pitch = sequencer.getPitch(0)
 	cv1 = sequencer.getCV1(0)
 	cv2 = sequencer.getCV2(0)
 	gate = sequencer.getGate(0)
 
+	patternLength = sequencer.getPatternLength()
+	swing = sequencer.getSwing()
+
 	interface.move(0, 0)
 	cursePrint(0, 'Time            ' + str(timeInMilliseconds))
-	cursePrint(1, 'Pattern length  ' + str(patternLength))
 
-	cursePrint(3, 'Pitch           ' + str(pitch))
-	cursePrint(4, 'CV1             ' + str(cv1))
-	cursePrint(5, 'CV2             ' + str(cv2))
-	cursePrint(6, 'Gate            ' + str(gate))
+	cursePrint(2, 'Pitch           ' + str(pitch))
+	cursePrint(3, 'CV1             ' + str(cv1))
+	cursePrint(4, 'CV2             ' + str(cv2))
+	cursePrint(5, 'Gate            ' + str(gate))
+
+	cursePrint(7, 'Pattern length  ' + str(patternLength))
+	cursePrint(8, 'Swing           ' + str(swing))
