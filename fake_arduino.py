@@ -106,9 +106,14 @@ while (True):
 	i = 0
 
 	for eventRow in pattern:
-		if i == currentEventRowNumber:
-			cursePrint(i, 48, eventRow[0]['pitch'], True)
+		if eventRow[0]['slide'] == True:
+			slideCharacter = 'S'
 		else:
-			cursePrint(i, 48, eventRow[0]['pitch'])
+			slideCharacter = '.'
+
+		if i == currentEventRowNumber:
+			cursePrint(i, 36, eventRow[0]['pitch'] + ' ' + slideCharacter + ' ' + eventRow[0]['gate'] + ' ' + eventRow[0]['cv1'] + ' ' + eventRow[0]['cv2'], True)
+		else:
+			cursePrint(i, 36, eventRow[0]['pitch'] + ' ' + slideCharacter + ' ' + eventRow[0]['gate'] + ' ' + eventRow[0]['cv1'] + ' ' + eventRow[0]['cv2'])
 
 		i = i + 1
