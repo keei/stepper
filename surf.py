@@ -229,7 +229,9 @@ class Sequencer:
 	artistEmailAddress = ''
 	artistName = ''
 	averageEventRowLengthInSeconds = 0.0
+	currentChannelNumber = 0
 	currentEventRowNumber = 0
+	currentPatternNumber = 0
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
 	gateInUnipolarVolts = []
@@ -321,14 +323,32 @@ class Sequencer:
 
 		self.pattern.append(eventRow)
 
+	def decrementCurrentChannelNumber(self):
+		if (self.currentChannelNumber > 0):
+			self.currentChannelNumber = self.currentChannelNumber - 1
+
+	def decrementCurrentEventRowNumber(self):
+		if (self.currentEventRowNumber > 0):
+			self.currentEventRowNumber = self.currentEventRowNumber - 1
+
+	def decrementCurrentPatternNumber(self):
+		if (self.currentPatternNumber > 0):
+			self.currentPatternNumber = self.currentPatternNumber - 1
+
 	def getArtistEmailAddress(self, artistEmailAddress):
 		return self.artistEmailAddress
 
 	def getArtistName(self, artistName):
 		return self.artistName
 
+	def getCurrentChannelNumber(self):
+		return self.currentChannelNumber
+
 	def getCurrentEventRowNumber(self):
 		return self.currentEventRowNumber
+
+	def getCurrentPatternNumber(self):
+		return self.currentPatternNumber
 
 	def getCV1(self, channel):
 		return self.cv1InUnipolarVolts[channel]
@@ -362,6 +382,18 @@ class Sequencer:
 
 	def getTime(self):
 		return self.timeInSeconds
+
+	def incrementCurrentChannelNumber(self):
+		if (self.currentChannelNumber < self.numberOfChannels - 1):
+			self.currentChannelNumber = self.currentChannelNumber + 1
+
+	def incrementCurrentEventRowNumber(self):
+		if (self.currentEventRowNumber < len(self.pattern) - 1):
+			self.currentEventRowNumber = self.currentEventRowNumber + 1
+
+	def incrementCurrentPatternNumber(self):
+		if (self.currentPatternNumber < len(self.patterns) - 1):
+			self.currentPatternNumber = self.currentPatternNumber + 1
 
 	def incrementTime(self, incrementLengthInSeconds):
 		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
