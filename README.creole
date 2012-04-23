@@ -1,0 +1,20 @@
+== Surf ==
+
+Surf is a combination of a modular synthesiser and a step sequencer.
+It's currently more of a library than an actual application.
+
+The step sequencer is flexible enough to allow an arbitrary number
+of channels, notes per pattern, and patterns, but rigid enough to
+only encourage you to write completely quantised music (techno,
+house, etc).  It's not good for expressive musicianship.  It is good
+for making something you can dance to.
+
+This step sequencer is designed with an eye towards one day being
+ported to C, and then hooked up to actual hardware synthesisers via
+pitch and gate CV outputs.
+
+The other parts of Surf, the synthesiser modules, are entirely
+separate from the sequencer.  The sequencer can be hooked up to
+control arbitrary parameters of these modules, but which modules are
+used, and how they're set up, are not part of the song format, and
+cannot be saved.

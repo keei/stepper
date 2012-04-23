@@ -7,7 +7,7 @@ I should implement the methods necessary to in turn build a realtime interface, 
 I should implement multiple patterns, switching between them, chaining them together, copying them and removing them.
 I should work out a song file format, that stores (preferably in XML to make life easier for other people) the song name, artist name, arbitrary information, all events for every channel of each pattern, and the ordering of all the patterns.  I should then get the sequencer to read and write these files.  (The idea being that the hardware implementation could write them to SD cards.)
 I'm tempted to make the arbitrary CV values count from 00 to 50 instead of 00 to 99.  That way, making exact half (if not quarter) values is possible (although a range of 00 to 80 would accomplish that better), plus converting into volts is simply a matter of dividing by ten, or picturing a decimal point being there.  000 to 500 (or even 0000 to 5000) would be even better, as it would probably be precise enough to allow CV1 and CV2, if required, to output notes, at a pinch, as a hack.  It wouldn't be intuitive, but it would enable a triad chord to be played on each channel.  And, of course, minimum and maximum values lets you use CV1 and CV2 as event-row-length gates.
-Make an ADSR envelope genrator; use the attenuator with that instead.
+Make an ADSR envelope generator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)
 Make a sample and hold module.
 Make a voltage controlled delay / echo module.  (With a set sized array, cycled through at a voltage controlled speed, with a voltage controlled amount of feedback and a voltage controlled dry/wet mix.)
@@ -17,3 +17,4 @@ Distant dreams:
 A multimode filter would be nice, but is probably beyond my abilities.
 A realtime user interface version of the sequencer, that lets you edit rather than passively play notation, with load and save facilities and audio output (even if just sine waves and white noise) would be great, and pave the way for a hardware version of it.
 A port of this written in C would be great.  It would not only be faster, but could be integrated with hardware via an Arduino board.
+I need to think about whether the software modules should be part of the file format (so songs can include information about which modules are used, and how they're hooked up to the sequencer and each other), or not.  They might work as an extension to the main file format, but the main focus should be on the sequencer, and allowing it to be used with real world synthesisers, not tying it down to a software-only implementation.
