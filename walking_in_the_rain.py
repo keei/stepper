@@ -40,6 +40,7 @@ for eventRow in pattern:
 
 time = 0
 trackLength = sequencer.getTrackLength()
+sequencer.setPlaying(True)
 
 while time < trackLength:
 	time = sequencer.getTime()

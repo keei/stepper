@@ -25,6 +25,7 @@ for eventRow in pattern:
 time = 0
 trackLength = sequencer.getTrackLength()
 trackLength = trackLength * 4 # Loop through the tune 4 times
+sequencer.setPlaying(True)
 
 while time < trackLength:
 	time = sequencer.getTime()
