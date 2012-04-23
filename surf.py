@@ -233,10 +233,10 @@ class Sequencer:
 	eventRowPositionInIterations = 0
 	gateInUnipolarVolts = []
 	loop = False
-	pattern = []
-	patternPositionInSeconds = 0.0
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	numberOfChannels = 4
+	pattern = []
+	patternPositionInSeconds = 0.0
 	pitchInUnipolarVolts = []
 
 	pitchVoltageLookupTable = {
@@ -330,6 +330,9 @@ class Sequencer:
 
 	def getLoopTime(self):
 		return self.patternPositionInSeconds
+
+	def getPatternLength(self):
+		return len(self.pattern)
 
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
