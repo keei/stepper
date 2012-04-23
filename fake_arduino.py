@@ -59,6 +59,7 @@ while (True):
 	cv2 = sequencer.getCV2(0)
 	gate = sequencer.getGate(0)
 
+	currentEventRowNumber = sequencer.getCurrentEventRowNumber()
 	patternLength = sequencer.getPatternLength()
 	swing = sequencer.getSwing()
 
@@ -70,5 +71,6 @@ while (True):
 	cursePrint(4, 'CV2             ' + str(cv2))
 	cursePrint(5, 'Gate            ' + str(gate))
 
-	cursePrint(7, 'Pattern length  ' + str(patternLength))
-	cursePrint(8, 'Swing           ' + str(swing))
+	cursePrint(7, 'Event row       ' + str(currentEventRowNumber))
+	cursePrint(8, 'Pattern length  ' + str(patternLength))
+	cursePrint(9, 'Swing           ' + str(swing))

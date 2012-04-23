@@ -229,10 +229,9 @@ class Sequencer:
 	artistEmailAddress = ''
 	artistName = ''
 	averageEventRowLengthInSeconds = 0.0
-	cursor = [] # Pattern number, event row number, channel number, all starting from 0
+	currentEventRowNumber = 0
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
-	eventRowNumber = 0
 	gateInUnipolarVolts = []
 	loop = False
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
@@ -328,6 +327,9 @@ class Sequencer:
 	def getArtistName(self, artistName):
 		return self.artistName
 
+	def getCurrentEventRowNumber(self):
+		return self.currentEventRowNumber
+
 	def getCV1(self, channel):
 		return self.cv1InUnipolarVolts[channel]
 
@@ -368,40 +370,40 @@ class Sequencer:
 
 		# Work out the current event row
 		eventRowPairNumber = int(self.patternPositionInSeconds // eventRowPairLengthInSeconds)
-		eventRowNumber = eventRowPairNumber * 2
+		currentEventRowNumber = eventRowPairNumber * 2
 
 		swingAsDecimal = (self.swingInBipolarVolts + 5.0) / 10.0
 		firstEventRowLengthInSeconds = self.averageEventRowLengthInSeconds / 0.5 * swingAsDecimal
 		eventRowPairPositionInSeconds = self.patternPositionInSeconds - (eventRowPairLengthInSeconds * eventRowPairNumber)
 
 		if eventRowPairPositionInSeconds > firstEventRowLengthInSeconds:
-			eventRowNumber = eventRowNumber + 1
+			currentEventRowNumber = currentEventRowNumber + 1
 			eventRowLengthInSeconds = eventRowPairLengthInSeconds - firstEventRowLengthInSeconds
 			eventRowPositionInSeconds = eventRowPairPositionInSeconds - firstEventRowLengthInSeconds
 		else:
 			eventRowLengthInSeconds = firstEventRowLengthInSeconds
 			eventRowPositionInSeconds = eventRowPairPositionInSeconds
 
-		if eventRowNumber > len(self.pattern) - 1:
+		if currentEventRowNumber > len(self.pattern) - 1:
 			if self.loop == True:
 				self.patternPositionInSeconds = 0.0
 				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
 
 				# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
-				eventRowNumber = 0
+				currentEventRowNumber = 0
 				eventRowPairNumber = 0
 				eventRowPairPositionInSeconds = 0.0
 				eventRowPositionInSeconds = 0.0
 			else:
-				eventRowNumber = len(self.pattern) - 1
+				currentEventRowNumber = len(self.pattern) - 1
 
 		# See if we're up to a new event row, otherwise advance the iteration
-		if eventRowNumber > self.eventRowNumber:
-			self.eventRowNumber = eventRowNumber
+		if currentEventRowNumber > self.currentEventRowNumber:
+			self.currentEventRowNumber = currentEventRowNumber
 
 		# Read in the current and next event rows
-		eventRow = self.pattern[eventRowNumber]
-		nextEventRowNumber = eventRowNumber + 1
+		eventRow = self.pattern[currentEventRowNumber]
+		nextEventRowNumber = currentEventRowNumber + 1
 
 		if nextEventRowNumber > len(self.pattern) - 1:
 			nextEventRowNumber = len(self.pattern) - 1
