@@ -226,6 +226,8 @@ class Output:
 		self.buffer.append(audioBinary)
 
 class Sequencer:
+	artistEmailAddress = ''
+	artistName = ''
 	averageEventRowLengthInSeconds = 0.0
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
@@ -303,6 +305,8 @@ class Sequencer:
 		'C-6': 5.0
 	}
 
+	songInformation = ''
+	songName = ''
 	swingInBipolarVolts = 0
 	tempo = 120.0
 	timeInSeconds = 0.0
@@ -318,6 +322,12 @@ class Sequencer:
 			self.setNumberOfChannels(ceil(len(eventRow) / 16))
 
 		self.pattern.append(eventRow)
+
+	def getArtistEmailAddress(self, artistEmailAddress):
+		return self.artistEmailAddress
+
+	def getArtistName(self, artistName):
+		return self.artistName
 
 	def getCV1(self, channel):
 		return self.cv1InUnipolarVolts[channel]
@@ -336,6 +346,15 @@ class Sequencer:
 
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
+
+	def getSongInformation(self, songInformation):
+		return self.songInformation
+
+	def getSongName(self, songName):
+		return self.songName
+
+	def getSwing(self):
+		return self.swingInBipolarVolts
 
 	def getTrackLength(self):
 		return len(self.pattern) * self.averageEventRowLengthInSeconds
@@ -482,6 +501,12 @@ class Sequencer:
 		"""Remove the last value for all channels."""
 		self.pattern.pop()
 
+	def setArtistEmailAddress(self, artistEmailAddress):
+		self.artistEmailAddress = artistEmailAddress
+
+	def setArtistName(self, artistName):
+		self.artistName = artistName
+
 	def setLoop(self, loop):
 		self.loop = loop
 
@@ -499,6 +524,12 @@ class Sequencer:
 
 		self.numberOfChannels = numberOfChannels
 		return True
+
+	def setSongInformation(self, songInformation):
+		self.songInformation = songInformation
+
+	def setSongName(self, songName):
+		self.songName = songName
 
 	def setSwing(self, swingInBipolarVolts):
 		self.swingInBipolarVolts = swingInBipolarVolts
