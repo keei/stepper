@@ -43,16 +43,22 @@ while (True):
 	except:
 		key = ''
 
-	if key == 'q':
+	if key == ' ':
 		curses.echo()
 		curses.endwin()
 		exit()
 
 	if key == '	':
-		if (sequencer.getPlaying() == True):
+		if sequencer.getPlaying() == True:
 			sequencer.setPlaying(False)
 		else:
 			sequencer.setPlaying(True)
+
+	if key == chr(curses.KEY_BACKSPACE):
+		sequencer.decrementCurrentEventRowNumber()
+
+	if key == chr(curses.KEY_ENTER):
+		sequencer.incrementCurrentEventRowNumber()
 
 	timeInMilliseconds = millis()
 	timeInSeconds = timeInMilliseconds / 1000.0
@@ -88,8 +94,8 @@ while (True):
 	cursePrint(9, 0, 'Pattern length  ' + str(patternLength))
 	cursePrint(10, 0, 'Swing           ' + str(swing))
 
-	cursePrint(12, 0, 'Tab to toggle play/stop mode.')
-	cursePrint(13, 0, 'Q to quit.')
+	cursePrint(12, 0, 'Tab to toggle play/stop mode')
+	cursePrint(13, 0, 'Space bar to quit')
 
 	i = 0
 

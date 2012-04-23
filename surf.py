@@ -329,15 +329,15 @@ class Sequencer:
 		self.patterns.append([])
 
 	def decrementCurrentChannelNumber(self):
-		if (self.currentChannelNumber > 0):
+		if self.currentChannelNumber > 0:
 			self.currentChannelNumber = self.currentChannelNumber - 1
 
 	def decrementCurrentEventRowNumber(self):
-		if (self.currentEventRowNumber > 0):
+		if self.currentEventRowNumber > 0:
 			self.currentEventRowNumber = self.currentEventRowNumber - 1
 
 	def decrementCurrentPatternNumber(self):
-		if (self.currentPatternNumber > 0):
+		if self.currentPatternNumber > 0:
 			self.currentPatternNumber = self.currentPatternNumber - 1
 
 	def getArtistEmailAddress(self, artistEmailAddress):
@@ -392,19 +392,19 @@ class Sequencer:
 		return self.timeInSeconds
 
 	def incrementCurrentChannelNumber(self):
-		if (self.currentChannelNumber < self.numberOfChannels - 1):
+		if self.currentChannelNumber < self.numberOfChannels - 1:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
 	def incrementCurrentEventRowNumber(self):
-		if (self.currentEventRowNumber < len(self.patterns[self.currentPatternNumber]) - 1):
+		if self.currentEventRowNumber < len(self.patterns[self.currentPatternNumber]) - 1:
 			self.currentEventRowNumber = self.currentEventRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
-		if (self.currentPatternNumber < len(self.patterns) - 1):
+		if self.currentPatternNumber < len(self.patterns) - 1:
 			self.currentPatternNumber = self.currentPatternNumber + 1
 
 	def incrementTime(self, incrementLengthInSeconds):
-		if (self.playing == False):
+		if self.playing == False:
 			return
 
 		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
