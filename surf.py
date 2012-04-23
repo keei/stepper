@@ -229,6 +229,7 @@ class Sequencer:
 	artistEmailAddress = ''
 	artistName = ''
 	averageEventRowLengthInSeconds = 0.0
+	cursor = [] # Pattern number, event row number, channel number, all starting from 0
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
 	eventRowNumber = 0
