@@ -486,7 +486,7 @@ class Sequencer:
 				gateLengthInSeconds = float(gate) / float(99) * float(eventRowLengthInSeconds)
 			elif slide == True:
 				gateLengthInSeconds = eventRowLengthInSeconds
-			elif pitchName == '...':
+			elif pitchName != '...':
 				gateLengthInSeconds = eventRowLengthInSeconds / 2
 			else:
 				gateLengthInSeconds = 0.0
