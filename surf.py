@@ -1,5 +1,4 @@
-# Surf, version 0.1, for Python 3.
-# By ZoeB, 2012.
+# Surf, version 0.1, for Python 3.  # By ZoeB, 2012.
 
 # This is a software implementation of a basic modular synthesiser and
 # sequencer.  Almost all values should be numbers between either -5 and
@@ -464,13 +463,10 @@ class Sequencer:
 		self.currentEventRowNumber = currentEventRowNumber
 
 		# Read in the current and next event rows
-		eventRow = self.patterns[self.currentPatternNumber][currentEventRowNumber]
 		nextEventRowNumber = currentEventRowNumber + 1
 
 		if nextEventRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
 			nextEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
-
-		nextEventRow = self.patterns[self.currentPatternNumber][nextEventRowNumber]
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
@@ -515,21 +511,21 @@ class Sequencer:
 
 			# Do the actual sliding
 			if slide == True:
-				nextPitchName = nextEventRow[channel]['pitch']
+				nextPitchName = self.patterns[self.currentPatternNumber][nextEventRowNumber][channel]['pitch']
 
 				if nextPitchName != '...':
 					nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
 				else:
 					nextPitchInUnipolarVolts = self.pitchInUnipolarVolts[channel]
 
-				nextEventCV1 = nextEventRow[channel]['cv1']
+				nextEventCV1 = self.patterns[self.currentPatternNumber][nextEventRowNumber][channel]['cv1']
 
 				if nextEventCV1 != '..':
 					nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
 				else:
 					nextCV1InUnipolarVolts = self.cv1InUnipolarVolts[channel]
 
-				nextEventCV2 = nextEventRow[channel]['cv2']
+				nextEventCV2 = self.patterns[self.currentPatternNumber][nextEventRowNumber][channel]['cv2']
 
 				if nextEventCV2 != '..':
 					nextCV2InUnipolarVolts = float(nextEventCV2) / float(99) * float(5)
