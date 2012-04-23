@@ -27,8 +27,8 @@ os.system('clear')
 
 startTimeInSeconds = time.time()
 
-def cursePrint(rowNumber, string):
-	columnNumber = 0
+def cursePrint(rowNumber, firstColumnNumber, string):
+	columnNumber = firstColumnNumber
 
 	for char in string:
 		interface.addch(rowNumber, columnNumber, char)
@@ -70,21 +70,29 @@ while (True):
 	patternLength = sequencer.getPatternLength()
 	swing = sequencer.getSwing()
 
+	pattern = sequencer.patterns[sequencer.currentPatternNumber]
+
 	for i in range(14):
-		cursePrint(i, '                                                ')
+		cursePrint(i, 0, '                                                ')
 
 	interface.move(0, 0)
-	cursePrint(0, 'Time            ' + str(timeInMilliseconds))
+	cursePrint(0, 0, 'Time            ' + str(timeInMilliseconds))
 
-	cursePrint(2, 'Pitch           ' + str(pitch))
-	cursePrint(3, 'CV1             ' + str(cv1))
-	cursePrint(4, 'CV2             ' + str(cv2))
-	cursePrint(5, 'Gate            ' + str(gate))
+	cursePrint(2, 0, 'Pitch           ' + str(pitch))
+	cursePrint(3, 0, 'CV1             ' + str(cv1))
+	cursePrint(4, 0, 'CV2             ' + str(cv2))
+	cursePrint(5, 0, 'Gate            ' + str(gate))
 
-	cursePrint(7, 'Playing         ' + str(playing))
-	cursePrint(8, 'Event row       ' + str(currentEventRowNumber))
-	cursePrint(9, 'Pattern length  ' + str(patternLength))
-	cursePrint(10, 'Swing           ' + str(swing))
+	cursePrint(7, 0, 'Playing         ' + str(playing))
+	cursePrint(8, 0, 'Event row       ' + str(currentEventRowNumber))
+	cursePrint(9, 0, 'Pattern length  ' + str(patternLength))
+	cursePrint(10, 0, 'Swing           ' + str(swing))
 
-	cursePrint(12, 'Tab to toggle play/stop mode.')
-	cursePrint(13, 'Q to quit.')
+	cursePrint(12, 0, 'Tab to toggle play/stop mode.')
+	cursePrint(13, 0, 'Q to quit.')
+
+	i = 0
+
+	for note in pattern:
+		cursePrint(i, 48, str(note))
+		i = i + 1
