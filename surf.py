@@ -323,7 +323,28 @@ class Sequencer:
 		if not self.patterns[self.currentPatternNumber]:
 			self.setNumberOfChannels(ceil(len(eventRow) / 16))
 
-		self.patterns[self.currentPatternNumber].append(eventRow)
+		self.patterns[self.currentPatternNumber].append([])
+		self.currentEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
+
+		for channel in range(self.numberOfChannels):
+			self.patterns[self.currentPatternNumber][self.currentEventRowNumber].append({'pitch': '...', 'slide': False, 'gate': '..', 'cv1': '..', 'cv2': '..'})
+
+			pitchName = eventRow[(channel * 16) + 0:(channel * 16) + 3]
+			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['pitch'] = pitchName
+
+			if eventRow[(channel * 16) + 4:(channel * 16) + 5] == 'S':
+				self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['slide'] = True
+			else:
+				self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['slide'] = False
+
+			gate = eventRow[(channel * 16) + 6:(channel * 16) + 8]
+			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['gate'] = gate
+
+			cv1 = eventRow[(channel * 16) + 9:(channel * 16) + 11]
+			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv1'] = cv1
+
+			cv2 = eventRow[(channel * 16) + 12:(channel * 16) + 14]
+			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv2'] = cv2
 
 	def addPattern(self):
 		self.patterns.append([])
@@ -454,23 +475,22 @@ class Sequencer:
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert the pitch to a control voltage, 1v/oct
-			pitchName = eventRow[(channel * 16) + 0:(channel * 16) + 3]
+			pitchName = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['pitch']
 
 			if pitchName != '...':
 				self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[pitchName]
 
 			# Slide if necessary
-			if eventRow[(channel * 16) + 4:(channel * 16) + 5] == 'S':
-				slide = True
-			else:
-				slide = False
+			slide = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['slide']
 
 			# Set the gate length
-			if eventRow[(channel * 16) + 6:(channel * 16) + 8] != '..':
-				gateLengthInSeconds = float(eventRow[(channel * 16) + 6:(channel * 16) + 8]) / float(99) * float(eventRowLengthInSeconds)
+			gate = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['gate']
+
+			if gate != '..':
+				gateLengthInSeconds = float(gate) / float(99) * float(eventRowLengthInSeconds)
 			elif slide == True:
 				gateLengthInSeconds = eventRowLengthInSeconds
-			elif eventRow[(channel * 16) + 0:(channel * 16) + 3] != '...':
+			elif pitchName == '...':
 				gateLengthInSeconds = eventRowLengthInSeconds / 2
 			else:
 				gateLengthInSeconds = 0.0
@@ -482,34 +502,34 @@ class Sequencer:
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
-			eventCV1 = eventRow[(channel * 16) + 9:(channel * 16) + 11]
+			eventCV1 = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv1']
 
 			if eventCV1 != '..':
 				self.cv1InUnipolarVolts[channel] = float(eventCV1) / float(99) * float(5)
 
 			# Set CV2
-			eventCV2 = eventRow[(channel * 16) + 12:(channel * 16) + 14]
+			eventCV2 = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv2']
 
 			if eventCV2 != '..':
 				self.cv2InUnipolarVolts[channel] = float(eventCV2) / float(99) * float(5)
 
 			# Do the actual sliding
 			if slide == True:
-				nextPitchName = nextEventRow[(channel * 16) + 0:(channel * 16) + 3]
+				nextPitchName = nextEventRow[channel]['pitch']
 
 				if nextPitchName != '...':
 					nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
 				else:
 					nextPitchInUnipolarVolts = self.pitchInUnipolarVolts[channel]
 
-				nextEventCV1 = nextEventRow[(channel * 16) + 9:(channel * 16) + 11]
+				nextEventCV1 = nextEventRow[channel]['cv1']
 
 				if nextEventCV1 != '..':
 					nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
 				else:
 					nextCV1InUnipolarVolts = self.cv1InUnipolarVolts[channel]
 
-				nextEventCV2 = nextEventRow[(channel * 16) + 12:(channel * 16) + 14]
+				nextEventCV2 = nextEventRow[channel]['cv2']
 
 				if nextEventCV2 != '..':
 					nextCV2InUnipolarVolts = float(nextEventCV2) / float(99) * float(5)
@@ -546,6 +566,15 @@ class Sequencer:
 	def setArtistName(self, artistName):
 		self.artistName = artistName
 
+	def setCV1(self, cv1):
+		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['cv1'] = cv1
+
+	def setCV2(self, cv2):
+		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['cv2'] = cv2
+
+	def setGate(self, gate):
+		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['gate'] = gate
+
 	def setLoop(self, loop):
 		self.loop = loop
 
@@ -563,6 +592,9 @@ class Sequencer:
 
 		self.numberOfChannels = numberOfChannels
 		return True
+
+	def setPitch(self, pitchName):
+		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['pitch'] = pitchName
 
 	def setPlaying(self, playing):
 		self.playing = playing

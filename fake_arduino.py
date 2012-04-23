@@ -105,10 +105,10 @@ while (True):
 
 	i = 0
 
-	for note in pattern:
+	for eventRow in pattern:
 		if i == currentEventRowNumber:
-			cursePrint(i, 48, str(note), True)
+			cursePrint(i, 48, eventRow[0]['pitch'], True)
 		else:
-			cursePrint(i, 48, str(note))
+			cursePrint(i, 48, eventRow[0]['pitch'])
 
 		i = i + 1
