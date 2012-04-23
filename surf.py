@@ -335,7 +335,6 @@ class Sequencer:
 	def decrementCurrentEventRowNumber(self):
 		if self.currentEventRowNumber > 0:
 			self.currentEventRowNumber = self.currentEventRowNumber - 1
-			# self.patternPositionInSeconds should update accordingly, taking swing into account.
 
 	def decrementCurrentPatternNumber(self):
 		if self.currentPatternNumber > 0:
@@ -399,7 +398,6 @@ class Sequencer:
 	def incrementCurrentEventRowNumber(self):
 		if self.currentEventRowNumber < len(self.patterns[self.currentPatternNumber]) - 1:
 			self.currentEventRowNumber = self.currentEventRowNumber + 1
-			# self.patternPositionInSeconds should update accordingly, taking swing into account.
 
 	def incrementCurrentPatternNumber(self):
 		if self.currentPatternNumber < len(self.patterns) - 1:
@@ -568,6 +566,9 @@ class Sequencer:
 
 	def setPlaying(self, playing):
 		self.playing = playing
+
+		if playing == True:
+			self.patternPositionInSeconds = 0.0
 
 	def setSongInformation(self, songInformation):
 		self.songInformation = songInformation
