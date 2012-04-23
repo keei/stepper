@@ -306,6 +306,7 @@ class Sequencer:
 		'C-6': 5.0
 	}
 
+	playing = False
 	songInformation = ''
 	songName = ''
 	swingInBipolarVolts = 0.0
@@ -372,6 +373,9 @@ class Sequencer:
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
+	def getPlaying(self):
+		return self.playing
+
 	def getSongInformation(self, songInformation):
 		return self.songInformation
 
@@ -400,6 +404,9 @@ class Sequencer:
 			self.currentPatternNumber = self.currentPatternNumber + 1
 
 	def incrementTime(self, incrementLengthInSeconds):
+		if (self.playing == False):
+			return
+
 		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
 		self.patternPositionInSeconds = self.patternPositionInSeconds + incrementLengthInSeconds
 		eventRowPairLengthInSeconds = self.averageEventRowLengthInSeconds * 2
@@ -556,6 +563,9 @@ class Sequencer:
 
 		self.numberOfChannels = numberOfChannels
 		return True
+
+	def setPlaying(self, playing):
+		self.playing = playing
 
 	def setSongInformation(self, songInformation):
 		self.songInformation = songInformation

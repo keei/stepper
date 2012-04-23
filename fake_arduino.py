@@ -48,6 +48,12 @@ while (True):
 		curses.endwin()
 		exit()
 
+	if key == '	':
+		if (sequencer.getPlaying() == True):
+			sequencer.setPlaying(False)
+		else:
+			sequencer.setPlaying(True)
+
 	timeInMilliseconds = millis()
 	timeInSeconds = timeInMilliseconds / 1000.0
 	incrementLengthInSeconds = timeInSeconds - previousCycleTimeInSeconds
@@ -59,11 +65,12 @@ while (True):
 	cv2 = sequencer.getCV2(0)
 	gate = sequencer.getGate(0)
 
+	playing = sequencer.getPlaying()
 	currentEventRowNumber = sequencer.getCurrentEventRowNumber()
 	patternLength = sequencer.getPatternLength()
 	swing = sequencer.getSwing()
 
-	for i in range(10):
+	for i in range(14):
 		cursePrint(i, '                                                ')
 
 	interface.move(0, 0)
@@ -74,6 +81,10 @@ while (True):
 	cursePrint(4, 'CV2             ' + str(cv2))
 	cursePrint(5, 'Gate            ' + str(gate))
 
-	cursePrint(7, 'Event row       ' + str(currentEventRowNumber))
-	cursePrint(8, 'Pattern length  ' + str(patternLength))
-	cursePrint(9, 'Swing           ' + str(swing))
+	cursePrint(7, 'Playing         ' + str(playing))
+	cursePrint(8, 'Event row       ' + str(currentEventRowNumber))
+	cursePrint(9, 'Pattern length  ' + str(patternLength))
+	cursePrint(10, 'Swing           ' + str(swing))
+
+	cursePrint(12, 'Tab to toggle play/stop mode.')
+	cursePrint(13, 'Q to quit.')
