@@ -232,7 +232,6 @@ class Sequencer:
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
 	eventRowNumber = 0
-	eventRowPositionInIterations = 0
 	gateInUnipolarVolts = []
 	loop = False
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
@@ -314,7 +313,6 @@ class Sequencer:
 	def __init__(self):
 		self.setTempo(120) # Default to 120BPM
 		self.setNumberOfChannels(4) # Default to 4 channels
-		self.eventRowPositionInIterations = 0 # If I ever make a "reset" method, it should do this!
 
 	def addEventRow(self, eventRow):
 		"""Load in values for all channels simultaneously."""
@@ -399,9 +397,6 @@ class Sequencer:
 		# See if we're up to a new event row, otherwise advance the iteration
 		if eventRowNumber > self.eventRowNumber:
 			self.eventRowNumber = eventRowNumber
-			self.eventRowPositionInIterations = 0
-		else:
-			self.eventRowPositionInIterations = self.eventRowPositionInIterations + 1
 
 		# Read in the current and next event rows
 		eventRow = self.pattern[eventRowNumber]
