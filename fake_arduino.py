@@ -27,11 +27,15 @@ os.system('clear')
 
 startTimeInSeconds = time.time()
 
-def cursePrint(rowNumber, firstColumnNumber, string):
+def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
 
 	for char in string:
-		interface.addch(rowNumber, columnNumber, char)
+		if invert == True:
+			interface.addch(rowNumber, columnNumber, char, curses.A_REVERSE)
+		else:
+			interface.addch(rowNumber, columnNumber, char)
+
 		columnNumber = columnNumber + 1
 
 def millis():
@@ -102,5 +106,9 @@ while (True):
 	i = 0
 
 	for note in pattern:
-		cursePrint(i, 48, str(note))
+		if i == currentEventRowNumber:
+			cursePrint(i, 48, str(note), True)
+		else:
+			cursePrint(i, 48, str(note))
+
 		i = i + 1
