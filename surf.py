@@ -238,8 +238,8 @@ class Sequencer:
 	loop = False
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	numberOfChannels = 4
-	pattern = []
 	patternPositionInSeconds = 0.0
+	patterns = []
 	pitchInUnipolarVolts = []
 
 	pitchVoltageLookupTable = {
@@ -315,13 +315,17 @@ class Sequencer:
 	def __init__(self):
 		self.setTempo(120) # Default to 120BPM
 		self.setNumberOfChannels(4) # Default to 4 channels
+		self.addPattern() # Add the first pattern, pattern 0
 
 	def addEventRow(self, eventRow):
 		"""Load in values for all channels simultaneously."""
-		if not self.pattern:
+		if not self.patterns[self.currentPatternNumber]:
 			self.setNumberOfChannels(ceil(len(eventRow) / 16))
 
-		self.pattern.append(eventRow)
+		self.patterns[self.currentPatternNumber].append(eventRow)
+
+	def addPattern(self):
+		self.patterns.append([])
 
 	def decrementCurrentChannelNumber(self):
 		if (self.currentChannelNumber > 0):
@@ -363,7 +367,7 @@ class Sequencer:
 		return self.patternPositionInSeconds
 
 	def getPatternLength(self):
-		return len(self.pattern)
+		return len(self.patterns[self.currentPatternNumber])
 
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
@@ -378,7 +382,7 @@ class Sequencer:
 		return self.swingInBipolarVolts
 
 	def getTrackLength(self):
-		return len(self.pattern) * self.averageEventRowLengthInSeconds
+		return len(self.patterns[self.currentPatternNumber]) * self.averageEventRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
 
 	def getTime(self):
 		return self.timeInSeconds
@@ -388,7 +392,7 @@ class Sequencer:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
 	def incrementCurrentEventRowNumber(self):
-		if (self.currentEventRowNumber < len(self.pattern) - 1):
+		if (self.currentEventRowNumber < len(self.patterns[self.currentPatternNumber]) - 1):
 			self.currentEventRowNumber = self.currentEventRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
@@ -416,7 +420,7 @@ class Sequencer:
 			eventRowLengthInSeconds = firstEventRowLengthInSeconds
 			eventRowPositionInSeconds = eventRowPairPositionInSeconds
 
-		if currentEventRowNumber > len(self.pattern) - 1:
+		if currentEventRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
 			if self.loop == True:
 				self.patternPositionInSeconds = 0.0
 				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
@@ -427,20 +431,20 @@ class Sequencer:
 				eventRowPairPositionInSeconds = 0.0
 				eventRowPositionInSeconds = 0.0
 			else:
-				currentEventRowNumber = len(self.pattern) - 1
+				currentEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
 
 		# See if we're up to a new event row, otherwise advance the iteration
 		if currentEventRowNumber > self.currentEventRowNumber:
 			self.currentEventRowNumber = currentEventRowNumber
 
 		# Read in the current and next event rows
-		eventRow = self.pattern[currentEventRowNumber]
+		eventRow = self.patterns[self.currentPatternNumber][currentEventRowNumber]
 		nextEventRowNumber = currentEventRowNumber + 1
 
-		if nextEventRowNumber > len(self.pattern) - 1:
-			nextEventRowNumber = len(self.pattern) - 1
+		if nextEventRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
+			nextEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
 
-		nextEventRow = self.pattern[nextEventRowNumber]
+		nextEventRow = self.patterns[self.currentPatternNumber][nextEventRowNumber]
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
@@ -529,7 +533,7 @@ class Sequencer:
 
 	def removeEventRow(self):
 		"""Remove the last value for all channels."""
-		self.pattern.pop()
+		self.patterns[self.currentPatternNumber].pop()
 
 	def setArtistEmailAddress(self, artistEmailAddress):
 		self.artistEmailAddress = artistEmailAddress
