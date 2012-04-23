@@ -1,5 +1,5 @@
 Important, low-level stuff:
-Nothing.
+I need to make a distinction between getPitch as in what the LED will use and what the CV will be.  The same goes for the other outputs, cv1 and cv2.
 
 Nice features:
 I need to improve the README file.

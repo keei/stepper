@@ -396,6 +396,9 @@ class Sequencer:
 	def getPlaying(self):
 		return self.playing
 
+	def getSlide(self):
+		return self.patterns[self.currentPatternNumber][self.currentEventRowNumber][self.currentChannelNumber]['slide']
+
 	def getSongInformation(self, songInformation):
 		return self.songInformation
 
@@ -597,6 +600,9 @@ class Sequencer:
 
 		if playing == True:
 			self.patternPositionInSeconds = 0.0
+
+	def setSlide(self, slide):
+		self.patterns[self.currentPatternNumber][self.currentEventRowNumber][self.currentChannelNumber]['slide'] = slide
 
 	def setSongInformation(self, songInformation):
 		self.songInformation = songInformation

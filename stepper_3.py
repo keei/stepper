@@ -58,6 +58,60 @@ while (True):
 		else:
 			sequencer.setPlaying(True)
 
+	if key == 'q':
+		pass
+
+	if key == '2':
+		pass
+
+	if key == 'w':
+		pass
+
+	if key == '3':
+		pass
+
+	if key == 'e':
+		pass
+
+	if key == 'r':
+		pass
+
+	if key == '5':
+		pass
+
+	if key == 't':
+		pass
+
+	if key == '6':
+		pass
+
+	if key == 'y':
+		pass
+
+	if key == '7':
+		pass
+
+	if key == 'u':
+		pass
+
+	if key == 'i':
+		pass
+
+	if key == 'o':
+		pass
+
+	if key == 'p':
+		pass
+
+	if key == '[':
+		pass
+
+	if key == ']':
+		if sequencer.getSlide() == True:
+			sequencer.setSlide(False)
+		else:
+			sequencer.setSlide(True)
+
 	# if key == chr(curses.KEY_BACKSPACE):
 	if key == 'n':
 		sequencer.decrementCurrentEventRowNumber()
