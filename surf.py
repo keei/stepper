@@ -308,7 +308,7 @@ class Sequencer:
 
 	songInformation = ''
 	songName = ''
-	swingInBipolarVolts = 0
+	swingInBipolarVolts = 0.0
 	tempo = 120.0
 	timeInSeconds = 0.0
 
@@ -433,9 +433,7 @@ class Sequencer:
 			else:
 				currentEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
 
-		# See if we're up to a new event row, otherwise advance the iteration
-		if currentEventRowNumber > self.currentEventRowNumber:
-			self.currentEventRowNumber = currentEventRowNumber
+		self.currentEventRowNumber = currentEventRowNumber
 
 		# Read in the current and next event rows
 		eventRow = self.patterns[self.currentPatternNumber][currentEventRowNumber]

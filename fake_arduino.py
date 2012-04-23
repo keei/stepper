@@ -63,6 +63,9 @@ while (True):
 	patternLength = sequencer.getPatternLength()
 	swing = sequencer.getSwing()
 
+	for i in range(10):
+		cursePrint(i, '                                                ')
+
 	interface.move(0, 0)
 	cursePrint(0, 'Time            ' + str(timeInMilliseconds))
 
