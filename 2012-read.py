@@ -14,23 +14,12 @@ output = surf.Output()
 output.setFilename('2012.wav')
 
 sequencer = surf.Sequencer()
-sequencer.setTempo(118)
+sequencer.loadSong('2012.xml')
 sequencer.setLoop(True)
-sequencer.setSongName('2012')
-sequencer.setArtistName('Zoë Blade ft. Snowflake')
-sequencer.setArtistEmailAddress('zoe@bytenoise.co.uk')
-sequencer.setSongInformation('Good to test Surf with.')
-
-pattern = open('2012.txt')
-
-for eventRow in pattern:
-	sequencer.addEventRow(eventRow)
 
 time = 0
 trackLength = sequencer.getTrackLength()
 trackLength = trackLength * 4 # Loop through the tune 4 times
-sequencer.saveSong('2012.xml')
-exit()
 sequencer.setPlaying(True)
 
 while time < trackLength:

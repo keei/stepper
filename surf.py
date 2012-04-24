@@ -6,7 +6,7 @@
 # application to real modular hardware by converting these values into
 # actual volts.
 
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree
 from math import ceil, floor, pi, sin
 from random import uniform
 from struct import pack
@@ -556,73 +556,97 @@ class Sequencer:
 
 		return incrementLengthInSeconds
 
+	def loadSong(self, filename):
+		xmlSong = ElementTree.ElementTree()
+		xmlSong.parse(filename)
+		self.songName = xmlSong.find('name').text
+		self.artistName = xmlSong.find('artist-name').text
+		self.artistEmailAddress = xmlSong.find('artist-email-address').text
+		self.songInformation = xmlSong.find('information').text
+		self.songTempo = float(xmlSong.find('tempo').text) # Internally stored as a float so that division works with it.  In XML song files, it's a string pretending to be an int.
+		patterns = list(xmlSong.iter('pattern'))
+
+		for pattern in patterns:
+			patternNumber = pattern.attrib['number']
+			eventRows = list(pattern.iter('row'))
+
+			for eventRow in eventRows:
+				eventRowNumber = eventRow.attrib['number']
+				channels = list(eventRow.iter('channel'))
+
+				for channel in channels:
+					channelNumber = channel.attrib['number']
+
 	def removeEventRow(self):
 		"""Remove the last value for all channels."""
 		self.patterns[self.currentPatternNumber].pop()
 
 	def saveSong(self, filename):
-		xmlSong = ET.Element('song')
+		xmlSong = ElementTree.Element('song')
 
-		xmlSongName = ET.SubElement(xmlSong, 'song-name')
-		xmlSongName.text = self.songName
+		xmlName = ElementTree.SubElement(xmlSong, 'name')
+		xmlName.text = self.songName
 
-		xmlArtistName = ET.SubElement(xmlSong, 'artist-name')
+		xmlArtistName = ElementTree.SubElement(xmlSong, 'artist-name')
 		xmlArtistName.text = self.artistName
 
-		xmlArtistEmailAddress = ET.SubElement(xmlSong, 'artist-email-address')
+		xmlArtistEmailAddress = ElementTree.SubElement(xmlSong, 'artist-email-address')
 		xmlArtistEmailAddress.text = self.artistEmailAddress
 
-		xmlSongInformation = ET.SubElement(xmlSong, 'information')
+		xmlSongInformation = ElementTree.SubElement(xmlSong, 'information')
 		xmlSongInformation.text = self.songInformation
 
-		xmlPatterns = ET.SubElement(xmlSong, 'patterns')
+		xmlTempo = ElementTree.SubElement(xmlSong, 'tempo')
+		xmlTempo.text = str(int(self.tempo))
+
+		xmlPatterns = ElementTree.SubElement(xmlSong, 'patterns')
 		patternNumber = 0
 
 		for pattern in self.patterns:
 			patternNumber = patternNumber + 1
-			xmlPattern = ET.SubElement(xmlPatterns, 'pattern')
+			xmlPattern = ElementTree.SubElement(xmlPatterns, 'pattern')
 			xmlPattern.attrib = {'number': str(patternNumber)}
 			eventRowNumber = 0
 
 			for eventRow in pattern:
 				eventRowNumber = eventRowNumber + 1
-				xmlEventRow = ET.SubElement(xmlPattern, 'row')
+				xmlEventRow = ElementTree.SubElement(xmlPattern, 'row')
 				xmlEventRow.attrib = {'number': str(eventRowNumber)}
 				channelNumber = 0
 
 				for channel in eventRow:
 					channelNumber = channelNumber + 1
-					xmlChannel = ET.SubElement(xmlEventRow, 'channel')
+					xmlChannel = ElementTree.SubElement(xmlEventRow, 'channel')
 					xmlChannel.attrib = {'number': str(channelNumber)}
 
-					xmlPitch = ET.SubElement(xmlChannel, 'pitch')
+					xmlPitch = ElementTree.SubElement(xmlChannel, 'pitch')
 
 					if channel['pitch'] != '...':
 						xmlPitch.text = channel['pitch']
 
-					xmlSlide = ET.SubElement(xmlChannel, 'slide')
+					xmlSlide = ElementTree.SubElement(xmlChannel, 'slide')
 
 					if channel['slide'] == True:
 						xmlSlide.text = 'true'
 					# else:
 						# xmlSlide.text = 'false'
 
-					xmlGate = ET.SubElement(xmlChannel, 'gate')
+					xmlGate = ElementTree.SubElement(xmlChannel, 'gate')
 
 					if channel['gate'] != '..':
 						xmlGate.text = channel['gate']
 
-					xmlCV1 = ET.SubElement(xmlChannel, 'cv1')
+					xmlCV1 = ElementTree.SubElement(xmlChannel, 'cv1')
 
 					if channel['cv1'] != '..':
 						xmlCV1.text = channel['cv1']
 
-					xmlCV2 = ET.SubElement(xmlChannel, 'cv2')
+					xmlCV2 = ElementTree.SubElement(xmlChannel, 'cv2')
 
 					if channel['cv2'] != '..':
 						xmlCV2.text = channel['cv2']
 
-		xmlSong = ET.ElementTree(xmlSong)
+		xmlSong = ElementTree.ElementTree(xmlSong)
 		xmlSong.write(filename) # I should make this auto-increment instead of accepting a filename!
 
 	def setArtistEmailAddress(self, artistEmailAddress):
