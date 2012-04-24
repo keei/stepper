@@ -6,6 +6,7 @@
 # application to real modular hardware by converting these values into
 # actual volts.
 
+from xml.etree import ElementTree as ET
 from math import ceil, floor, pi, sin
 from random import uniform
 from struct import pack
@@ -51,7 +52,7 @@ class DecayEnvelopeGenerator:
 	def incrementTime(self, incrementLengthInSeconds):
 		"""Update attributes to reflect the passing of the specified number of seconds."""
 		if self.cvInBipolarVolts > 0:
-			self.cvInBipolarVolts = self.cvInBipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts);
+			self.cvInBipolarVolts = self.cvInBipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts)
 
 	def setGate(self, gateInUnipolarVolts):
 		if self.gateInUnipolarVolts == 0 and gateInUnipolarVolts == 5:
@@ -559,6 +560,71 @@ class Sequencer:
 		"""Remove the last value for all channels."""
 		self.patterns[self.currentPatternNumber].pop()
 
+	def saveSong(self, filename):
+		xmlSong = ET.Element('song')
+
+		xmlSongName = ET.SubElement(xmlSong, 'song-name')
+		xmlSongName.text = self.songName
+
+		xmlArtistName = ET.SubElement(xmlSong, 'artist-name')
+		xmlArtistName.text = self.artistName
+
+		xmlArtistEmailAddress = ET.SubElement(xmlSong, 'artist-email-address')
+		xmlArtistEmailAddress.text = self.artistEmailAddress
+
+		xmlSongInformation = ET.SubElement(xmlSong, 'information')
+		xmlSongInformation.text = self.songInformation
+
+		xmlPatterns = ET.SubElement(xmlSong, 'patterns')
+		patternNumber = 0
+
+		for pattern in self.patterns:
+			patternNumber = patternNumber + 1
+			xmlPattern = ET.SubElement(xmlPatterns, 'pattern')
+			xmlPattern.attrib = {'number': str(patternNumber)}
+			eventRowNumber = 0
+
+			for eventRow in pattern:
+				eventRowNumber = eventRowNumber + 1
+				xmlEventRow = ET.SubElement(xmlPattern, 'row')
+				xmlEventRow.attrib = {'number': str(eventRowNumber)}
+				channelNumber = 0
+
+				for channel in eventRow:
+					channelNumber = channelNumber + 1
+					xmlChannel = ET.SubElement(xmlEventRow, 'channel')
+					xmlChannel.attrib = {'number': str(channelNumber)}
+
+					xmlPitch = ET.SubElement(xmlChannel, 'pitch')
+
+					if channel['pitch'] != '...':
+						xmlPitch.text = channel['pitch']
+
+					xmlSlide = ET.SubElement(xmlChannel, 'slide')
+
+					if channel['slide'] == True:
+						xmlSlide.text = 'true'
+					# else:
+						# xmlSlide.text = 'false'
+
+					xmlGate = ET.SubElement(xmlChannel, 'gate')
+
+					if channel['gate'] != '..':
+						xmlGate.text = channel['gate']
+
+					xmlCV1 = ET.SubElement(xmlChannel, 'cv1')
+
+					if channel['cv1'] != '..':
+						xmlCV1.text = channel['cv1']
+
+					xmlCV2 = ET.SubElement(xmlChannel, 'cv2')
+
+					if channel['cv2'] != '..':
+						xmlCV2.text = channel['cv2']
+
+		xmlSong = ET.ElementTree(xmlSong)
+		xmlSong.write(filename) # I should make this auto-increment instead of accepting a filename!
+
 	def setArtistEmailAddress(self, artistEmailAddress):
 		self.artistEmailAddress = artistEmailAddress
 
@@ -634,7 +700,7 @@ class SustainReleaseEnvelopeGenerator:
 	def incrementTime(self, incrementLengthInSeconds):
 		"""Update attributes to reflect the passing of the specified number of seconds."""
 		if self.cvInUnipolarVolts > 0 and self.gateInUnipolarVolts == 0:
-			self.cvInUnipolarVolts = self.cvInUnipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts);
+			self.cvInUnipolarVolts = self.cvInUnipolarVolts - (incrementLengthInSeconds / self.speedInUnipolarVolts)
 
 	def setGate(self, gateInUnipolarVolts):
 			self.gateInUnipolarVolts = gateInUnipolarVolts
