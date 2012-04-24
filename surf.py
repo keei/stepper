@@ -228,9 +228,9 @@ class Output:
 class Sequencer:
 	artistEmailAddress = ''
 	artistName = ''
-	averageEventRowLengthInSeconds = 0.0
+	averageRowLengthInSeconds = 0.0
 	currentChannelNumber = 0
-	currentEventRowNumber = 0
+	currentRowNumber = 0
 	currentPatternNumber = 0
 	cv1InUnipolarVolts = []
 	cv2InUnipolarVolts = []
@@ -325,9 +325,9 @@ class Sequencer:
 		if self.currentChannelNumber > 0:
 			self.currentChannelNumber = self.currentChannelNumber - 1
 
-	def decrementCurrentEventRowNumber(self):
-		if self.currentEventRowNumber > 0:
-			self.currentEventRowNumber = self.currentEventRowNumber - 1
+	def decrementCurrentRowNumber(self):
+		if self.currentRowNumber > 0:
+			self.currentRowNumber = self.currentRowNumber - 1
 
 	def decrementCurrentPatternNumber(self):
 		if self.currentPatternNumber > 0:
@@ -342,8 +342,8 @@ class Sequencer:
 	def getCurrentChannelNumber(self):
 		return self.currentChannelNumber
 
-	def getCurrentEventRowNumber(self):
-		return self.currentEventRowNumber
+	def getCurrentRowNumber(self):
+		return self.currentRowNumber
 
 	def getCurrentPatternNumber(self):
 		return self.currentPatternNumber
@@ -370,7 +370,7 @@ class Sequencer:
 		return self.playing
 
 	def getSlide(self):
-		return self.patterns[self.currentPatternNumber][self.currentEventRowNumber][self.currentChannelNumber]['slide']
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide']
 
 	def getSongInformation(self, songInformation):
 		return self.songInformation
@@ -382,7 +382,7 @@ class Sequencer:
 		return self.swingInBipolarVolts
 
 	def getTrackLength(self):
-		return len(self.patterns[self.currentPatternNumber]) * self.averageEventRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
+		return len(self.patterns[self.currentPatternNumber]) * self.averageRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
 
 	def getTime(self):
 		return self.timeInSeconds
@@ -391,9 +391,9 @@ class Sequencer:
 		if self.currentChannelNumber < self.numberOfChannels - 1:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
-	def incrementCurrentEventRowNumber(self):
-		if self.currentEventRowNumber < len(self.patterns[self.currentPatternNumber]) - 1:
-			self.currentEventRowNumber = self.currentEventRowNumber + 1
+	def incrementCurrentRowNumber(self):
+		if self.currentRowNumber < len(self.patterns[self.currentPatternNumber]) - 1:
+			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
 		if self.currentPatternNumber < len(self.patterns) - 1:
@@ -405,103 +405,103 @@ class Sequencer:
 
 		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
 		self.patternPositionInSeconds = self.patternPositionInSeconds + incrementLengthInSeconds
-		eventRowPairLengthInSeconds = self.averageEventRowLengthInSeconds * 2
+		rowPairLengthInSeconds = self.averageRowLengthInSeconds * 2
 
 		# Work out the current event row
-		eventRowPairNumber = int(self.patternPositionInSeconds // eventRowPairLengthInSeconds)
-		currentEventRowNumber = eventRowPairNumber * 2
+		rowPairNumber = int(self.patternPositionInSeconds // rowPairLengthInSeconds)
+		currentRowNumber = rowPairNumber * 2
 
 		swingAsDecimal = (self.swingInBipolarVolts + 5.0) / 10.0
-		firstEventRowLengthInSeconds = self.averageEventRowLengthInSeconds / 0.5 * swingAsDecimal
-		eventRowPairPositionInSeconds = self.patternPositionInSeconds - (eventRowPairLengthInSeconds * eventRowPairNumber)
+		firstRowLengthInSeconds = self.averageRowLengthInSeconds / 0.5 * swingAsDecimal
+		rowPairPositionInSeconds = self.patternPositionInSeconds - (rowPairLengthInSeconds * rowPairNumber)
 
-		if eventRowPairPositionInSeconds > firstEventRowLengthInSeconds:
-			currentEventRowNumber = currentEventRowNumber + 1
-			eventRowLengthInSeconds = eventRowPairLengthInSeconds - firstEventRowLengthInSeconds
-			eventRowPositionInSeconds = eventRowPairPositionInSeconds - firstEventRowLengthInSeconds
+		if rowPairPositionInSeconds > firstRowLengthInSeconds:
+			currentRowNumber = currentRowNumber + 1
+			rowLengthInSeconds = rowPairLengthInSeconds - firstRowLengthInSeconds
+			rowPositionInSeconds = rowPairPositionInSeconds - firstRowLengthInSeconds
 		else:
-			eventRowLengthInSeconds = firstEventRowLengthInSeconds
-			eventRowPositionInSeconds = eventRowPairPositionInSeconds
+			rowLengthInSeconds = firstRowLengthInSeconds
+			rowPositionInSeconds = rowPairPositionInSeconds
 
-		if currentEventRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
+		if currentRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
 			if self.loop == True:
 				self.patternPositionInSeconds = 0.0
 				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
 
 				# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
-				currentEventRowNumber = 0
-				eventRowPairNumber = 0
-				eventRowPairPositionInSeconds = 0.0
-				eventRowPositionInSeconds = 0.0
+				currentRowNumber = 0
+				rowPairNumber = 0
+				rowPairPositionInSeconds = 0.0
+				rowPositionInSeconds = 0.0
 			else:
-				currentEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
+				currentRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
 
-		self.currentEventRowNumber = currentEventRowNumber
+		self.currentRowNumber = currentRowNumber
 
 		# Read in the current and next event rows
-		nextEventRowNumber = currentEventRowNumber + 1
+		nextRowNumber = currentRowNumber + 1
 
-		if nextEventRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
-			nextEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
+		if nextRowNumber > len(self.patterns[self.currentPatternNumber]) - 1:
+			nextRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert the pitch to a control voltage, 1v/oct
-			pitchName = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['pitch']
+			pitchName = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
 
 			if pitchName != '...':
 				self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[pitchName]
 
 			# Slide if necessary
-			slide = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['slide']
+			slide = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
 
 			# Set the gate length
-			gate = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['gate']
+			gate = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
 
 			if gate != '..':
-				gateLengthInSeconds = float(gate) / float(99) * float(eventRowLengthInSeconds)
+				gateLengthInSeconds = float(gate) / float(99) * float(rowLengthInSeconds)
 			elif slide == True:
-				gateLengthInSeconds = eventRowLengthInSeconds
+				gateLengthInSeconds = rowLengthInSeconds
 			elif pitchName != '...':
-				gateLengthInSeconds = eventRowLengthInSeconds / 2
+				gateLengthInSeconds = rowLengthInSeconds / 2
 			else:
 				gateLengthInSeconds = 0.0
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
-			if eventRowPositionInSeconds > gateLengthInSeconds or (eventRowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
+			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
 				self.gateInUnipolarVolts[channel] = 0.0
 			else:
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
-			eventCV1 = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv1']
+			eventCV1 = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
 
 			if eventCV1 != '..':
 				self.cv1InUnipolarVolts[channel] = float(eventCV1) / float(99) * float(5)
 
 			# Set CV2
-			eventCV2 = self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv2']
+			eventCV2 = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
 
 			if eventCV2 != '..':
 				self.cv2InUnipolarVolts[channel] = float(eventCV2) / float(99) * float(5)
 
 			# Do the actual sliding
 			if slide == True:
-				nextPitchName = self.patterns[self.currentPatternNumber][nextEventRowNumber][channel]['pitch']
+				nextPitchName = self.patterns[self.currentPatternNumber][nextRowNumber][channel]['pitch']
 
 				if nextPitchName != '...':
 					nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
 				else:
 					nextPitchInUnipolarVolts = self.pitchInUnipolarVolts[channel]
 
-				nextEventCV1 = self.patterns[self.currentPatternNumber][nextEventRowNumber][channel]['cv1']
+				nextEventCV1 = self.patterns[self.currentPatternNumber][nextRowNumber][channel]['cv1']
 
 				if nextEventCV1 != '..':
 					nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
 				else:
 					nextCV1InUnipolarVolts = self.cv1InUnipolarVolts[channel]
 
-				nextEventCV2 = self.patterns[self.currentPatternNumber][nextEventRowNumber][channel]['cv2']
+				nextEventCV2 = self.patterns[self.currentPatternNumber][nextRowNumber][channel]['cv2']
 
 				if nextEventCV2 != '..':
 					nextCV2InUnipolarVolts = float(nextEventCV2) / float(99) * float(5)
@@ -509,15 +509,15 @@ class Sequencer:
 					nextCV2InUnipolarVolts = self.cv2InUnipolarVolts[channel]
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
-				if eventRowPositionInSeconds > eventRowLengthInSeconds / 2:
+				if rowPositionInSeconds > rowLengthInSeconds / 2:
 					pitchDifference = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
 					cv1Difference = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
 					cv2Difference = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
-					beginningInSeconds = eventRowLengthInSeconds / 2
-					endInSeconds = eventRowLengthInSeconds
-					positionInSeconds = eventRowPositionInSeconds
+					beginningInSeconds = rowLengthInSeconds / 2
+					endInSeconds = rowLengthInSeconds
+					positionInSeconds = rowPositionInSeconds
 					offsetPositionInSeconds = positionInSeconds - beginningInSeconds
 					offsetEndInSeconds = endInSeconds - beginningInSeconds
 					positionAsDecimal = offsetPositionInSeconds / offsetEndInSeconds
@@ -542,15 +542,15 @@ class Sequencer:
 		for pattern in patterns:
 			self.patterns.append([])
 			patternNumber = int(pattern.attrib['number'])
-			eventRows = list(pattern.iter('row'))
+			rows = list(pattern.iter('row'))
 
-			for eventRow in eventRows:
+			for row in rows:
 				self.patterns[patternNumber - 1].append([])
-				eventRowNumber = int(eventRow.attrib['number'])
-				channels = list(eventRow.iter('channel'))
+				rowNumber = int(row.attrib['number'])
+				channels = list(row.iter('channel'))
 
 				for channel in channels:
-					self.patterns[patternNumber - 1][eventRowNumber - 1].append([])
+					self.patterns[patternNumber - 1][rowNumber - 1].append([])
 					channelNumber = int(channel.attrib['number'])
 
 					pitchName = channel.find('pitch').text
@@ -576,11 +576,11 @@ class Sequencer:
 					if not cv2:
 						cv2 = '..'
 
-					self.patterns[patternNumber - 1][eventRowNumber - 1][channelNumber - 1] = {'pitch': pitchName, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
+					self.patterns[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchName, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
 
 		self.numberOfChannels = channelNumber
 
-	def removeEventRow(self):
+	def removeRow(self):
 		"""Remove the last value for all channels."""
 		self.patterns[self.currentPatternNumber].pop()
 
@@ -609,17 +609,17 @@ class Sequencer:
 			patternNumber = patternNumber + 1
 			xmlPattern = ElementTree.SubElement(xmlPatterns, 'pattern')
 			xmlPattern.attrib = {'number': str(patternNumber)}
-			eventRowNumber = 0
+			rowNumber = 0
 
-			for eventRow in pattern:
-				eventRowNumber = eventRowNumber + 1
-				xmlEventRow = ElementTree.SubElement(xmlPattern, 'row')
-				xmlEventRow.attrib = {'number': str(eventRowNumber)}
+			for row in pattern:
+				rowNumber = rowNumber + 1
+				xmlRow = ElementTree.SubElement(xmlPattern, 'row')
+				xmlRow.attrib = {'number': str(rowNumber)}
 				channelNumber = 0
 
-				for channel in eventRow:
+				for channel in row:
 					channelNumber = channelNumber + 1
-					xmlChannel = ElementTree.SubElement(xmlEventRow, 'channel')
+					xmlChannel = ElementTree.SubElement(xmlRow, 'channel')
 					xmlChannel.attrib = {'number': str(channelNumber)}
 
 					xmlPitch = ElementTree.SubElement(xmlChannel, 'pitch')
@@ -659,13 +659,13 @@ class Sequencer:
 		self.artistName = artistName
 
 	def setCV1(self, cv1):
-		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['cv1'] = cv1
+		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv1'] = cv1
 
 	def setCV2(self, cv2):
-		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['cv2'] = cv2
+		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv2'] = cv2
 
 	def setGate(self, gate):
-		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['gate'] = gate
+		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['gate'] = gate
 
 	def setLoop(self, loop):
 		self.loop = loop
@@ -686,7 +686,7 @@ class Sequencer:
 		return True
 
 	def setPitch(self, pitchName):
-		self.patterns[currentPatternNumber][currentEventRowNumber][currentChannelNumber]['pitch'] = pitchName
+		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['pitch'] = pitchName
 
 	def setPlaying(self, playing):
 		self.playing = playing
@@ -695,7 +695,7 @@ class Sequencer:
 			self.patternPositionInSeconds = 0.0
 
 	def setSlide(self, slide):
-		self.patterns[self.currentPatternNumber][self.currentEventRowNumber][self.currentChannelNumber]['slide'] = slide
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
 
 	def setSongInformation(self, songInformation):
 		self.songInformation = songInformation
@@ -710,7 +710,7 @@ class Sequencer:
 		self.tempo = float(tempo)
 		crotchetLengthInSeconds = 60.0 / self.tempo
 		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
-		self.averageEventRowLengthInSeconds = semiquaverLengthInSeconds
+		self.averageRowLengthInSeconds = semiquaverLengthInSeconds
 
 class SustainReleaseEnvelopeGenerator:
 	cvInUnipolarVolts = 0.0

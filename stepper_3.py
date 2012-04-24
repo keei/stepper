@@ -109,11 +109,11 @@ while (True):
 
 	# if key == chr(curses.KEY_BACKSPACE):
 	if key == 'n':
-		sequencer.decrementCurrentEventRowNumber()
+		sequencer.decrementCurrentRowNumber()
 
 	# if key == chr(curses.KEY_ENTER):
 	if key == 'm':
-		sequencer.incrementCurrentEventRowNumber()
+		sequencer.incrementCurrentRowNumber()
 
 	timeInMilliseconds = millis()
 	timeInSeconds = timeInMilliseconds / 1000.0
@@ -127,7 +127,7 @@ while (True):
 	gate = sequencer.getGate(0)
 
 	playing = sequencer.getPlaying()
-	currentEventRowNumber = sequencer.getCurrentEventRowNumber()
+	currentRowNumber = sequencer.getCurrentRowNumber()
 	patternLength = sequencer.getPatternLength()
 	swing = sequencer.getSwing()
 
@@ -145,7 +145,7 @@ while (True):
 	cursePrint(5, 0, 'Gate            ' + str(gate))
 
 	cursePrint(7, 0, 'Playing         ' + str(playing))
-	cursePrint(8, 0, 'Event row       ' + str(currentEventRowNumber))
+	cursePrint(8, 0, 'Current row     ' + str(currentRowNumber))
 	cursePrint(9, 0, 'Pattern length  ' + str(patternLength))
 	cursePrint(10, 0, 'Swing           ' + str(swing))
 
@@ -154,15 +154,15 @@ while (True):
 
 	i = 0
 
-	for eventRow in pattern:
-		if eventRow[0]['slide'] == True:
+	for event in pattern:
+		if event[0]['slide'] == True:
 			slideCharacter = 'S'
 		else:
 			slideCharacter = '.'
 
-		if i == currentEventRowNumber:
-			cursePrint(i, 36, eventRow[0]['pitch'] + ' ' + slideCharacter + ' ' + eventRow[0]['gate'] + ' ' + eventRow[0]['cv1'] + ' ' + eventRow[0]['cv2'], True)
+		if i == currentRowNumber:
+			cursePrint(i, 36, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'], True)
 		else:
-			cursePrint(i, 36, eventRow[0]['pitch'] + ' ' + slideCharacter + ' ' + eventRow[0]['gate'] + ' ' + eventRow[0]['cv1'] + ' ' + eventRow[0]['cv2'])
+			cursePrint(i, 36, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'])
 
 		i = i + 1
