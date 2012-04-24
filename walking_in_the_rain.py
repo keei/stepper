@@ -31,12 +31,7 @@ output = surf.Output()
 output.setFilename('walking_in_the_rain.wav')
 
 sequencer = surf.Sequencer()
-sequencer.setTempo(120)
-
-pattern = open('walking_in_the_rain.txt')
-
-for eventRow in pattern:
-	sequencer.addEventRow(eventRow)
+sequencer.loadSong('walking_in_the_rain.xml')
 
 time = 0
 trackLength = sequencer.getTrackLength()
