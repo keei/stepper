@@ -318,34 +318,6 @@ class Sequencer:
 		self.setNumberOfChannels(4) # Default to 4 channels
 		self.addPattern() # Add the first pattern, pattern 0
 
-	def addEventRow(self, eventRow):
-		"""Load in values for all channels simultaneously."""
-		if not self.patterns[self.currentPatternNumber]:
-			self.setNumberOfChannels(ceil(len(eventRow) / 16))
-
-		self.patterns[self.currentPatternNumber].append([])
-		self.currentEventRowNumber = len(self.patterns[self.currentPatternNumber]) - 1
-
-		for channel in range(self.numberOfChannels):
-			self.patterns[self.currentPatternNumber][self.currentEventRowNumber].append({'pitch': '...', 'slide': False, 'gate': '..', 'cv1': '..', 'cv2': '..'})
-
-			pitchName = eventRow[(channel * 16) + 0:(channel * 16) + 3]
-			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['pitch'] = pitchName
-
-			if eventRow[(channel * 16) + 4:(channel * 16) + 5] == 'S':
-				self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['slide'] = True
-			else:
-				self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['slide'] = False
-
-			gate = eventRow[(channel * 16) + 6:(channel * 16) + 8]
-			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['gate'] = gate
-
-			cv1 = eventRow[(channel * 16) + 9:(channel * 16) + 11]
-			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv1'] = cv1
-
-			cv2 = eventRow[(channel * 16) + 12:(channel * 16) + 14]
-			self.patterns[self.currentPatternNumber][self.currentEventRowNumber][channel]['cv2'] = cv2
-
 	def addPattern(self):
 		self.patterns.append([])
 

@@ -10,13 +10,8 @@ import surf
 import time
 
 sequencer = surf.Sequencer()
-sequencer.setTempo(120)
+sequencer.loadSong('2012.xml')
 sequencer.setLoop(True)
-
-pattern = open('2012.txt')
-
-for eventRow in pattern:
-	sequencer.addEventRow(eventRow)
 
 previousCycleTimeInSeconds = 0
 
