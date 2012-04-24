@@ -570,7 +570,6 @@ class Sequencer:
 		for pattern in patterns:
 			self.patterns.append([])
 			patternNumber = int(pattern.attrib['number'])
-			# self.patterns[patternNumber - 1] = []
 			eventRows = list(pattern.iter('row'))
 
 			for eventRow in eventRows:
