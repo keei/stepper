@@ -557,6 +557,7 @@ class Sequencer:
 		return incrementLengthInSeconds
 
 	def loadSong(self, filename):
+		self.patterns = []
 		xmlSong = ElementTree.ElementTree()
 		xmlSong.parse(filename)
 		self.songName = xmlSong.find('name').text
@@ -567,15 +568,46 @@ class Sequencer:
 		patterns = list(xmlSong.iter('pattern'))
 
 		for pattern in patterns:
-			patternNumber = pattern.attrib['number']
+			self.patterns.append([])
+			patternNumber = int(pattern.attrib['number'])
+			# self.patterns[patternNumber - 1] = []
 			eventRows = list(pattern.iter('row'))
 
 			for eventRow in eventRows:
-				eventRowNumber = eventRow.attrib['number']
+				self.patterns[patternNumber - 1].append([])
+				eventRowNumber = int(eventRow.attrib['number'])
 				channels = list(eventRow.iter('channel'))
 
 				for channel in channels:
-					channelNumber = channel.attrib['number']
+					self.patterns[patternNumber - 1][eventRowNumber - 1].append([])
+					channelNumber = int(channel.attrib['number'])
+
+					pitchName = channel.find('pitch').text
+					slide = channel.find('slide').text
+					gate = channel.find('gate').text
+					cv1 = channel.find('cv1').text
+					cv2 = channel.find('cv2').text
+
+					if not pitchName:
+						pitchName = '...'
+
+					if slide == 'true':
+						slide = True
+					else:
+						slide = False
+
+					if not gate:
+						gate = '..'
+
+					if not cv1:
+						cv1 = '..'
+
+					if not cv2:
+						cv2 = '..'
+
+					self.patterns[patternNumber - 1][eventRowNumber - 1][channelNumber - 1] = {'pitch': pitchName, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
+
+		self.numberOfChannels = channelNumber
 
 	def removeEventRow(self):
 		"""Remove the last value for all channels."""
