@@ -5,6 +5,7 @@
 # and allows realtime testing of what the sequencer would output.
 
 import curses
+import math
 import os
 import surf
 import time
@@ -21,6 +22,8 @@ curses.noecho()
 os.system('clear')
 
 startTimeInSeconds = time.time()
+iterationsPerSecond = 0
+iterationsThisSecond = 0
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
@@ -119,6 +122,12 @@ while (True):
 	timeInSeconds = timeInMilliseconds / 1000.0
 	incrementLengthInSeconds = timeInSeconds - previousCycleTimeInSeconds
 	sequencer.incrementTime(incrementLengthInSeconds)
+	iterationsThisSecond = iterationsThisSecond + 1
+
+	if math.floor(timeInSeconds) != math.floor(previousCycleTimeInSeconds):
+		iterationsPerSecond = iterationsThisSecond
+		iterationsThisSecond = 0
+
 	previousCycleTimeInSeconds = timeInSeconds
 
 	pitch = sequencer.getPitch(0)
@@ -138,19 +147,20 @@ while (True):
 
 	interface.move(0, 0)
 	cursePrint(0, 0, 'Time            ' + str(timeInMilliseconds))
+	cursePrint(1, 0, 'Iterations/sec  ' + str(iterationsPerSecond))
 
-	cursePrint(2, 0, 'Pitch           ' + str(pitch))
-	cursePrint(3, 0, 'CV1             ' + str(cv1))
-	cursePrint(4, 0, 'CV2             ' + str(cv2))
-	cursePrint(5, 0, 'Gate            ' + str(gate))
+	cursePrint(3, 0, 'Pitch           ' + str(pitch))
+	cursePrint(4, 0, 'CV1             ' + str(cv1))
+	cursePrint(5, 0, 'CV2             ' + str(cv2))
+	cursePrint(6, 0, 'Gate            ' + str(gate))
 
-	cursePrint(7, 0, 'Playing         ' + str(playing))
-	cursePrint(8, 0, 'Current row     ' + str(currentRowNumber))
-	cursePrint(9, 0, 'Pattern length  ' + str(patternLength))
-	cursePrint(10, 0, 'Swing           ' + str(swing))
+	cursePrint(8, 0, 'Playing         ' + str(playing))
+	cursePrint(9, 0, 'Current row     ' + str(currentRowNumber))
+	cursePrint(10, 0, 'Pattern length  ' + str(patternLength))
+	cursePrint(11, 0, 'Swing           ' + str(swing))
 
-	cursePrint(12, 0, 'Tab to toggle play/stop mode')
-	cursePrint(13, 0, 'Space bar to quit')
+	cursePrint(13, 0, 'Tab to toggle play/stop mode')
+	cursePrint(14, 0, 'Space bar to quit')
 
 	i = 0
 
