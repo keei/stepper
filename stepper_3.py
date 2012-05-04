@@ -104,7 +104,7 @@ while (True):
 		pass
 
 	if key == 'i':
-		sequencer.setSemitone('C-')
+		sequencer.setPitch('...')
 		pass
 
 	if key == 'o':
