@@ -363,14 +363,14 @@ class Sequencer:
 	def getOctave(self):
 		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][2:]
 
-	def getPitchName(self):
-		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
-
 	def getPatternLength(self):
 		return len(self.patterns[self.currentPatternNumber])
 
 	def getPitch(self, channel):
 		return self.pitchInUnipolarVolts[channel]
+
+	def getPitchName(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
 
 	def getPlaying(self):
 		return self.playing
@@ -695,13 +695,16 @@ class Sequencer:
 		return True
 
 	def setPitch(self, pitchName):
-		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['pitch'] = pitchName
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchName
 
 	def setPlaying(self, playing):
 		self.playing = playing
 
 		if playing == True:
 			self.patternPositionInSeconds = 0.0
+
+	def setSemitone(self, semitone):
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + self.getOctave()
 
 	def setSlide(self, slide):
 		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
