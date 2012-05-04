@@ -704,7 +704,12 @@ class Sequencer:
 			self.patternPositionInSeconds = 0.0
 
 	def setSemitone(self, semitone):
-		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + self.getOctave()
+		octave = self.getOctave()
+
+		if octave == '.':
+			octave = 2 # An appropriately acidic default octave.  Neither "octave down" nor "octave up" are selected, if we have an acidic LED-based interface.
+
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + str(octave)
 
 	def setSlide(self, slide):
 		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
