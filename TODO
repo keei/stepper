@@ -1,5 +1,6 @@
 Important, low-level stuff:
 I need to make a distinction between getPitch as in what the LED will use and what the CV will be.  The same goes for the other outputs, cv1 and cv2.
+Basically, I need to watch my consistency.  Maybe pitchName should become semitoneAndOctave?
 In order to be interface agnostic, I need to program in both getPitch() & setPitch() (to include the octave, as a three-character argument) and also getPitchWithoutOctave(), setPitchWithoutOctave(), getOctave() & setOctave(), to take two-character and single-digit-integer arguments respectively.
 Once loadSong() is implemented, Entirely remove addEventRow() (or at least the data loading part of it).
 

@@ -360,6 +360,12 @@ class Sequencer:
 	def getLoopTime(self):
 		return self.patternPositionInSeconds
 
+	def getOctave(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][2:]
+
+	def getOctaveAndSemitone(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
+
 	def getPatternLength(self):
 		return len(self.patterns[self.currentPatternNumber])
 
@@ -368,6 +374,9 @@ class Sequencer:
 
 	def getPlaying(self):
 		return self.playing
+
+	def getSemitone(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][:2]
 
 	def getSlide(self):
 		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide']

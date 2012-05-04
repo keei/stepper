@@ -135,6 +135,11 @@ while (True):
 	cv2 = sequencer.getCV2(0)
 	gate = sequencer.getGate(0)
 
+	octaveAndSemitone = sequencer.getOctaveAndSemitone()
+	octave = sequencer.getOctave()
+	semitone = sequencer.getSemitone()
+	slide = sequencer.getSlide()
+
 	playing = sequencer.getPlaying()
 	currentRowNumber = sequencer.getCurrentRowNumber()
 	patternLength = sequencer.getPatternLength()
@@ -162,6 +167,7 @@ while (True):
 	cursePrint(13, 0, 'Tab to toggle play/stop mode')
 	cursePrint(14, 0, 'Space bar to quit')
 
+	# Print out the whole current pattern's events
 	i = 0
 
 	for event in pattern:
@@ -176,3 +182,15 @@ while (True):
 			cursePrint(i, 36, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'])
 
 		i = i + 1
+
+	# Print out the current event
+	i = i + 2
+
+	if slide == True:
+		slideCharacter = 'S'
+	else:
+		slideCharacter = '.'
+
+	cursePrint(i, 36, octaveAndSemitone + ' ' + slideCharacter)
+	i = i + 1
+	cursePrint(i, 36, semitone + ' ' + octave + ' (redundant)')
