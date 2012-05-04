@@ -135,7 +135,7 @@ while (True):
 	cv2 = sequencer.getCV2(0)
 	gate = sequencer.getGate(0)
 
-	octaveAndSemitone = sequencer.getOctaveAndSemitone()
+	pitchName = sequencer.getPitchName()
 	octave = sequencer.getOctave()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlide()
@@ -191,6 +191,6 @@ while (True):
 	else:
 		slideCharacter = '.'
 
-	cursePrint(i, 36, octaveAndSemitone + ' ' + slideCharacter)
+	cursePrint(i, 36, pitchName + ' ' + slideCharacter)
 	i = i + 1
 	cursePrint(i, 36, semitone + ' ' + octave + ' (redundant)')

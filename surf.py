@@ -363,7 +363,7 @@ class Sequencer:
 	def getOctave(self):
 		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][2:]
 
-	def getOctaveAndSemitone(self):
+	def getPitchName(self):
 		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
 
 	def getPatternLength(self):
