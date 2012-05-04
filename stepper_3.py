@@ -61,57 +61,51 @@ while (True):
 
 	if key == '2':
 		sequencer.setSemitone('C#')
-		pass
 
 	if key == 'w':
 		sequencer.setSemitone('D-')
-		pass
 
 	if key == '3':
 		sequencer.setSemitone('D#')
-		pass
 
 	if key == 'e':
 		sequencer.setSemitone('E-')
-		pass
 
 	if key == 'r':
 		sequencer.setSemitone('F-')
-		pass
 
 	if key == '5':
 		sequencer.setSemitone('F#')
-		pass
 
 	if key == 't':
 		sequencer.setSemitone('G-')
-		pass
 
 	if key == '6':
 		sequencer.setSemitone('G#')
-		pass
 
 	if key == 'y':
 		sequencer.setSemitone('A-')
-		pass
 
 	if key == '7':
 		sequencer.setSemitone('A#')
-		pass
 
 	if key == 'u':
 		sequencer.setSemitone('B-')
-		pass
 
 	if key == 'i':
 		sequencer.setPitch('...')
-		pass
 
 	if key == 'o':
-		pass
+		if sequencer.getOctave() == '2':
+			sequencer.setOctave(1)
+		else:
+			sequencer.setOctave(2)
 
 	if key == 'p':
-		pass
+		if sequencer.getOctave() == '2':
+			sequencer.setOctave(3)
+		else:
+			sequencer.setOctave(2)
 
 	if key == '[':
 		pass

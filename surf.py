@@ -694,6 +694,14 @@ class Sequencer:
 		self.numberOfChannels = numberOfChannels
 		return True
 
+	def setOctave(self, octave):
+		semitone = self.getSemitone()
+
+		if semitone == '..':
+			semitone = 'C-'
+
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + str(octave)
+
 	def setPitch(self, pitchName):
 		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchName
 
