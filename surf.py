@@ -532,27 +532,14 @@ class Sequencer:
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert the pitch to a control voltage, 1v/oct
-			self.pitchInCharsAndDots[channel] = self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
-
-			if self.pitchInCharsAndDots[channel] != '...':
-				self.pitchInChars[channel] = self.pitchInCharsAndDots[channel]
-				self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[self.pitchInCharsAndDots[channel]]
+			self.pitchInChars[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
+			self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[self.pitchInChars[channel]]
 
 			# Slide if necessary
-			slide = self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
+			slide = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
 
 			# Set the gate length
-			self.gateInCentsAndDots[channel] = self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
-
-			if self.gateInCentsAndDots[channel] != '..':
-				self.gateInCents[channel] = self.gateInCentsAndDots[channel]
-			elif slide == True:
-				self.gateInCents[channel] = 99
-			elif self.pitchInCharsAndDots[channel] != '...':
-				self.gateInCents[channel] = 50 # Really, it should be 49.5
-			else:
-				self.gateInCents[channel] = 0
-
+			self.gateInCents[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
 			gateLengthInSeconds = float(self.gateInCents[channel]) / float(99) * float(rowLengthInSeconds)
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
@@ -562,41 +549,23 @@ class Sequencer:
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
-			self.cv1InCentsAndDots[channel] = self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
-
-			if self.cv1InCentsAndDots[channel] != '..':
-				self.cv1InCents[channel] = self.cv1InCentsAndDots[channel]
-				self.cv1InUnipolarVolts[channel] = float(self.cv1InCents[channel]) / float(99) * float(5)
+			self.cv1InCents[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
+			self.cv1InUnipolarVolts[channel] = float(self.cv1InCents[channel]) / float(99) * float(5)
 
 			# Set CV2
-			self.cv2InCentsAndDots[channel] = self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
-
-			if self.cv2InCentsAndDots[channel] != '..':
-				self.cv2InCents[channel] = self.cv2InCentsAndDots[channel]
-				self.cv2InUnipolarVolts[channel] = float(self.cv2InCents[channel]) / float(99) * float(5)
+			self.cv2InCents[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
+			self.cv2InUnipolarVolts[channel] = float(self.cv2InCents[channel]) / float(99) * float(5)
 
 			# Do the actual sliding
 			if slide == True:
-				nextPitchName = self.patternsInCentsAndDots[self.currentPatternNumber][nextRowNumber][channel]['pitch']
+				nextPitchName = self.patternsInCents[self.currentPatternNumber][nextRowNumber][channel]['pitch']
+				nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
 
-				if nextPitchName != '...':
-					nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
-				else:
-					nextPitchInUnipolarVolts = self.pitchInUnipolarVolts[channel]
+				nextEventCV1 = self.patternsInCents[self.currentPatternNumber][nextRowNumber][channel]['cv1']
+				nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
 
-				nextEventCV1 = self.patternsInCentsAndDots[self.currentPatternNumber][nextRowNumber][channel]['cv1']
-
-				if nextEventCV1 != '..':
-					nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
-				else:
-					nextCV1InUnipolarVolts = self.cv1InUnipolarVolts[channel]
-
-				nextEventCV2 = self.patternsInCentsAndDots[self.currentPatternNumber][nextRowNumber][channel]['cv2']
-
-				if nextEventCV2 != '..':
-					nextCV2InUnipolarVolts = float(nextEventCV2) / float(99) * float(5)
-				else:
-					nextCV2InUnipolarVolts = self.cv2InUnipolarVolts[channel]
+				nextEventCV2 = self.patternsInCents[self.currentPatternNumber][nextRowNumber][channel]['cv2']
+				nextCV2InUnipolarVolts = float(nextEventCV2) / float(99) * float(5)
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
 				if rowPositionInSeconds > rowLengthInSeconds / 2:
