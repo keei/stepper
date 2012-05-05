@@ -487,18 +487,15 @@ class Sequencer:
 
 			if self.gateInCentsAndDots[channel] != '..':
 				self.gateInCents[channel] = self.gateInCentsAndDots[channel]
-				gateLengthInSeconds = float(self.gateInCents[channel]) / float(99) * float(rowLengthInSeconds)
 			elif slide == True:
 				self.gateInCents[channel] = 99
 				gateLengthInSeconds = rowLengthInSeconds
 			elif self.pitchInCharsAndDots[channel] != '...':
 				self.gateInCents[channel] = 50 # Really, it should be 49.5
-				gateLengthInSeconds = rowLengthInSeconds / 2
 			else:
 				self.gateInCents[channel] = 0
-				gateLengthInSeconds = 0.0
 
-			# I should refactor this code so that gateLengthInSeconds is set here!
+			gateLengthInSeconds = float(self.gateInCents[channel]) / float(99) * float(rowLengthInSeconds)
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
 			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
