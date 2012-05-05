@@ -1,4 +1,5 @@
 Important, low-level stuff:
+In Stepper 3, the gate "LED" may be faulty.  The accent one definitely is.  The overall issue is that I decided CVs should be remembered from one event to the next by default (the default being an entry of '..').  Maybe by default they should revert to 00?  I'll need to think about this.  Should I even get rid of '..' defaults altogether and have everything set to a C-2 rest with everything off until overridden?
 Once loadSong() is implemented, Entirely remove addEventRow() (or at least the data loading part of it).
 Stepper 3 should default to a CV1 of '00' (off), not '..' (continue what it was in the last step), because for this one particular interface to Surf, CV1 is being used for the note's accent.
 

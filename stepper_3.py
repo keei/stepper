@@ -185,14 +185,12 @@ while (True):
 
 	cv1 = sequencer.getCV1()
 	gate = sequencer.getGate()
+	octave = sequencer.getOctave()
 	pitchName = sequencer.getPitchName()
+	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlide()
 
-	playing = sequencer.getPlaying()
 	currentRowNumber = sequencer.getCurrentRowNumber()
-	patternLength = sequencer.getPatternLength()
-	swing = sequencer.getSwing()
-
 	pattern = sequencer.patterns[sequencer.currentPatternNumber]
 
 	for i in range(14):
@@ -207,13 +205,17 @@ while (True):
 	cursePrint(5, 0, 'CV2             ' + str(cv2Output))
 	cursePrint(6, 0, 'Gate            ' + str(gateOutput))
 
-	cursePrint(8, 0, 'Playing         ' + str(playing))
-	cursePrint(9, 0, 'Current row     ' + str(currentRowNumber))
-	cursePrint(10, 0, 'Pattern length  ' + str(patternLength))
-	cursePrint(11, 0, 'Swing           ' + str(swing))
+	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo         ')
+	cursePrint(9, 0, 'A S    D                F                G            ')
+	cursePrint(10, 0, '    .     .        .     .     .                     ')
+	cursePrint(11, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
+	cursePrint(12, 0, 'C-  2 D-  3 E- F-  5 G-  6 A-  7 B- NT DN UP AC SL BK')
+	cursePrint(13, 0, ' Q     W     E  R     T     Y     U  I  O  P  [  ]  -')
+	cursePrint(14, 0, '                                                   FW')
+	cursePrint(15, 0, '                                                    =')
 
-	cursePrint(13, 0, 'Tab to toggle play/stop mode')
-	cursePrint(14, 0, 'Space bar to quit')
+	cursePrint(17, 0, 'Tab to toggle play/stop mode')
+	cursePrint(18, 0, 'Space bar to quit')
 
 	# Print out the whole current pattern's events
 	i = 0
@@ -225,18 +227,66 @@ while (True):
 			slideCharacter = '.'
 
 		if i == currentRowNumber:
-			cursePrint(i, 36, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'], True)
+			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'], True)
 		else:
-			cursePrint(i, 36, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'])
+			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'])
 
 		i = i + 1
 
 	# Print out the current event
-	i = i + 2
+
+	if semitone == 'C-':
+		cursePrint(11, 1, 'o')
+	elif semitone == 'C#':
+		cursePrint(10, 4, 'o')
+	elif semitone == 'D-':
+		cursePrint(11, 7, 'o')
+	elif semitone == 'D#':
+		cursePrint(10, 10, 'o')
+	elif semitone == 'E-':
+		cursePrint(11, 13, 'o')
+	elif semitone == 'F-':
+		cursePrint(11, 16, 'o')
+	elif semitone == 'F#':
+		cursePrint(10, 19, 'o')
+	elif semitone == 'G-':
+		cursePrint(11, 22, 'o')
+	elif semitone == 'G#':
+		cursePrint(10, 25, 'o')
+	elif semitone == 'A-':
+		cursePrint(11, 28, 'o')
+	elif semitone == 'A#':
+		cursePrint(10, 31, 'o')
+	elif semitone == 'B-':
+		cursePrint(11, 34, 'o')
+
+	if gate != '00' and (gate != '..' or pitchName != '...'):
+		gateCharacter = 'o'
+	else:
+		gateCharacter = '.'
+
+	if octave == '1':
+		octaveDownCharacter = 'o'
+		octaveUpCharacter = '.'
+	elif octave == '3':
+		octaveDownCharacter = '.'
+		octaveUpCharacter = 'o'
+	else:
+		octaveDownCharacter = '.'
+		octaveUpCharacter = '.'
+
+	if cv1 != '00':
+		cv1Character = 'o'
+	else:
+		cv1Character = '.'
 
 	if slide == True:
-		slideCharacter = 'S'
+		slideCharacter = 'o'
 	else:
 		slideCharacter = '.'
 
-	cursePrint(i, 36, pitchName + ' ' + slideCharacter + ' ' + gate + ' ' + cv1)
+	cursePrint(11, 37, gateCharacter)
+	cursePrint(11, 40, octaveDownCharacter)
+	cursePrint(11, 43, octaveUpCharacter)
+	cursePrint(11, 46, cv1Character)
+	cursePrint(11, 49, slideCharacter)
