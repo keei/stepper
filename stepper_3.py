@@ -191,7 +191,7 @@ while (True):
 	slide = sequencer.getSlide()
 
 	currentRowNumber = sequencer.getCurrentRowNumber()
-	pattern = sequencer.patterns[sequencer.currentPatternNumber]
+	pattern = sequencer.patternsInCentsAndDots[sequencer.currentPatternNumber]
 
 	for i in range(14):
 		cursePrint(i, 0, '                                                ')
