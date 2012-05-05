@@ -159,11 +159,11 @@ while (True):
 			sequencer.setSlide(True)
 
 	# if key == chr(curses.KEY_BACKSPACE):
-	if key == 'n':
+	if key == '-':
 		sequencer.decrementCurrentRowNumber()
 
 	# if key == chr(curses.KEY_ENTER):
-	if key == 'm':
+	if key == '=':
 		sequencer.incrementCurrentRowNumber()
 
 	timeInMilliseconds = millis()
