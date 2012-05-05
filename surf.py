@@ -233,13 +233,10 @@ class Sequencer:
 	currentRowNumber = 0
 	currentPatternNumber = 0
 	cv1InCents = []
-	cv1InCentsAndDots = []
 	cv1InUnipolarVolts = []
 	cv2InCents = []
-	cv2InCentsAndDots = []
 	cv2InUnipolarVolts = []
 	gateInCents = []
-	gateInCentsAndDots = []
 	gateInUnipolarVolts = []
 	loop = False
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
@@ -248,7 +245,6 @@ class Sequencer:
 	patternsInCents = []
 	patternsInCentsAndDots = []
 	pitchInChars = []
-	pitchInCharsAndDots = []
 	pitchInUnipolarVolts = []
 
 	pitchVoltageLookupTable = {
@@ -410,7 +406,7 @@ class Sequencer:
 		return self.cv1InCents[channel]
 
 	def getCV1InCentsAndDots(self, channel):
-		return self.cv1InCentsAndDots[channel]
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
 
 	def getCV1Output(self, channel):
 		return self.cv1InUnipolarVolts[channel]
@@ -419,7 +415,7 @@ class Sequencer:
 		return self.cv2InCents[channel]
 
 	def getCV2InCentsAndDots(self, channel):
-		return self.cv2InCentsAndDots[channel]
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
 
 	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]
@@ -428,7 +424,7 @@ class Sequencer:
 		return self.gateInCents[channel]
 
 	def getGateInCentsAndDots(self, channel):
-		return self.gateInCentsAndDots[channel]
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
 
 	def getGateOutput(self, channel):
 		return self.gateInUnipolarVolts[channel]
@@ -446,7 +442,7 @@ class Sequencer:
 		return self.pitchInUnipolarVolts[channel]
 
 	def getPitchInCharsAndDots(self, channel):
-		return self.pitchInCharsAndDots[channel]
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
 
 	def getPlaying(self):
 		return self.playing
