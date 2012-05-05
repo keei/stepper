@@ -129,7 +129,7 @@ while (True):
 			sequencer.setSemitone('B-')
 
 	if key == 'i':
-		if sequencer.getGateInCentsAndDots(0) == '00':
+		if sequencer.getGateInCents(0) == '00':
 			sequencer.setGate('..')
 		else:
 			sequencer.setGate('00')
@@ -147,7 +147,7 @@ while (True):
 			sequencer.setOctave(2)
 
 	if key == '[':
-		if sequencer.getCV1() == '00':
+		if sequencer.getCV1InCents(0) == '00':
 			sequencer.setCV1('99')
 		else:
 			sequencer.setCV1('00')
@@ -183,7 +183,7 @@ while (True):
 	cv2Output = sequencer.getCV2Output(0)
 	gateOutput = sequencer.getGateOutput(0)
 
-	cv1 = sequencer.getCV1InCentsAndDots(0)
+	cv1 = sequencer.getCV1InCents(0)
 	gate = sequencer.getGateInCentsAndDots(0)
 	octave = sequencer.getOctave()
 	pitchName = sequencer.getPitchInCharsAndDots(0)
