@@ -129,7 +129,10 @@ while (True):
 			sequencer.setSemitone('B-')
 
 	if key == 'i':
-		pass
+		if sequencer.getGate() == '00':
+			sequencer.setGate('..')
+		else:
+			sequencer.setGate('00')
 
 	if key == 'o':
 		if sequencer.getOctave() == '2':
@@ -177,6 +180,7 @@ while (True):
 	cv2 = sequencer.getCV2Output(0)
 	gate = sequencer.getGateOutput(0)
 
+	gate = sequencer.getGate()
 	pitchName = sequencer.getPitchName()
 	slide = sequencer.getSlide()
 
@@ -231,4 +235,4 @@ while (True):
 	else:
 		slideCharacter = '.'
 
-	cursePrint(i, 36, pitchName + ' ' + slideCharacter)
+	cursePrint(i, 36, pitchName + ' ' + slideCharacter + ' ' + gate)

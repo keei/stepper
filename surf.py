@@ -354,6 +354,9 @@ class Sequencer:
 	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]
 
+	def getGate(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
+
 	def getGateOutput(self, channel):
 		return self.gateInUnipolarVolts[channel]
 
@@ -668,13 +671,13 @@ class Sequencer:
 		self.artistName = artistName
 
 	def setCV1(self, cv1):
-		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv1'] = cv1
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1'] = cv1
 
 	def setCV2(self, cv2):
-		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv2'] = cv2
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2'] = cv2
 
 	def setGate(self, gate):
-		self.patterns[currentPatternNumber][currentRowNumber][currentChannelNumber]['gate'] = gate
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate'] = gate
 
 	def setLoop(self, loop):
 		self.loop = loop
