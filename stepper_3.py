@@ -182,10 +182,10 @@ while (True):
 	cv1Output = sequencer.getCV1Output(0)
 	gateOutput = sequencer.getGateOutput(0)
 
-	cv1 = sequencer.getCV1InCents(0)
-	gate = sequencer.getGateInCentsAndDots(0)
+	cv1 = sequencer.getCV1InCents()
+	gate = sequencer.getGateInCentsAndDots()
 	octave = sequencer.getOctave()
-	pitchName = sequencer.getPitchInCharsAndDots(0)
+	pitchName = sequencer.getPitchInCharsAndDots()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlide()
 

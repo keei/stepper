@@ -232,20 +232,12 @@ class Sequencer:
 	currentChannelNumber = 0
 	currentRowNumber = 0
 	currentPatternNumber = 0
-	cv1InCents = []
-	cv1InUnipolarVolts = []
-	cv2InCents = []
-	cv2InUnipolarVolts = []
-	gateInCents = []
-	gateInUnipolarVolts = []
 	loop = False
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	numberOfChannels = 4
 	patternPositionInSeconds = 0.0
 	patternsInCents = []
 	patternsInCentsAndDots = []
-	pitchInChars = []
-	pitchInUnipolarVolts = []
 
 	pitchVoltageLookupTable = {
 		'C-1': 0.0,
@@ -402,29 +394,29 @@ class Sequencer:
 	def getCurrentPatternNumber(self):
 		return self.currentPatternNumber
 
-	def getCV1InCents(self, channel):
-		return self.cv1InCents[channel]
+	def getCV1InCents(self):
+		return self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
 
-	def getCV1InCentsAndDots(self, channel):
-		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
+	def getCV1InCentsAndDots(self):
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
 
 	def getCV1Output(self, channel):
 		return self.cv1InUnipolarVolts[channel]
 
-	def getCV2InCents(self, channel):
-		return self.cv2InCents[channel]
+	def getCV2InCents(self):
+		return self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
 
-	def getCV2InCentsAndDots(self, channel):
-		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
+	def getCV2InCentsAndDots(self):
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
 
 	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]
 
-	def getGateInCents(self, channel):
-		return self.gateInCents[channel]
+	def getGateInCents(self):
+		return self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
 
-	def getGateInCentsAndDots(self, channel):
-		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
+	def getGateInCentsAndDots(self):
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
 
 	def getGateOutput(self, channel):
 		return self.gateInUnipolarVolts[channel]
@@ -433,7 +425,7 @@ class Sequencer:
 		return self.patternPositionInSeconds
 
 	def getOctave(self):
-		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][2:]
+		return self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][2:]
 
 	def getPatternLength(self):
 		return len(self.patternsInCentsAndDots[self.currentPatternNumber])
@@ -441,8 +433,8 @@ class Sequencer:
 	def getPitchOutput(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
-	def getPitchInCharsAndDots(self, channel):
-		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
+	def getPitchInCharsAndDots(self):
+		return self.patternsInCentsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
 
 	def getPlaying(self):
 		return self.playing
@@ -528,15 +520,15 @@ class Sequencer:
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert the pitch to a control voltage, 1v/oct
-			self.pitchInChars[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
-			self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[self.pitchInChars[channel]]
+			pitchInChars = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
+			self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[pitchInChars]
 
 			# Slide if necessary
 			slide = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
 
 			# Set the gate length
-			self.gateInCents[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
-			gateLengthInSeconds = float(self.gateInCents[channel]) / float(99) * float(rowLengthInSeconds)
+			gateInCents = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
+			gateLengthInSeconds = float(gateInCents) / float(99) * float(rowLengthInSeconds)
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
 			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
@@ -545,12 +537,12 @@ class Sequencer:
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
-			self.cv1InCents[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
-			self.cv1InUnipolarVolts[channel] = float(self.cv1InCents[channel]) / float(99) * float(5)
+			cv1InCents = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
+			self.cv1InUnipolarVolts[channel] = float(cv1InCents) / float(99) * float(5)
 
 			# Set CV2
-			self.cv2InCents[channel] = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
-			self.cv2InUnipolarVolts[channel] = float(self.cv2InCents[channel]) / float(99) * float(5)
+			cv2InCents = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
+			self.cv2InUnipolarVolts[channel] = float(cv2InCents) / float(99) * float(5)
 
 			# Do the actual sliding
 			if slide == True:
