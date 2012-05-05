@@ -57,43 +57,79 @@ while (True):
 			sequencer.setPlaying(True)
 
 	if key == 'q':
-		sequencer.setSemitone('C-')
+		if sequencer.getSemitone() == 'C-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('C-')
 
 	if key == '2':
-		sequencer.setSemitone('C#')
+		if sequencer.getSemitone() == 'C#':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('C#')
 
 	if key == 'w':
-		sequencer.setSemitone('D-')
+		if sequencer.getSemitone() == 'D-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('D-')
 
 	if key == '3':
-		sequencer.setSemitone('D#')
+		if sequencer.getSemitone() == 'D#':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('D#')
 
 	if key == 'e':
-		sequencer.setSemitone('E-')
+		if sequencer.getSemitone() == 'E-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('E-')
 
 	if key == 'r':
-		sequencer.setSemitone('F-')
+		if sequencer.getSemitone() == 'F-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('F-')
 
 	if key == '5':
-		sequencer.setSemitone('F#')
+		if sequencer.getSemitone() == 'F#':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('F#')
 
 	if key == 't':
-		sequencer.setSemitone('G-')
+		if sequencer.getSemitone() == 'G-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('G-')
 
 	if key == '6':
-		sequencer.setSemitone('G#')
+		if sequencer.getSemitone() == 'G#':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('G#')
 
 	if key == 'y':
-		sequencer.setSemitone('A-')
+		if sequencer.getSemitone() == 'A-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('A-')
 
 	if key == '7':
-		sequencer.setSemitone('A#')
+		if sequencer.getSemitone() == 'A#':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('A#')
 
 	if key == 'u':
-		sequencer.setSemitone('B-')
+		if sequencer.getSemitone() == 'B-':
+			sequencer.setPitch('...')
+		else:
+			sequencer.setSemitone('B-')
 
 	if key == 'i':
-		sequencer.setPitch('...')
+		pass
 
 	if key == 'o':
 		if sequencer.getOctave() == '2':
