@@ -356,20 +356,29 @@ class Sequencer:
 	def getCurrentPatternNumber(self):
 		return self.currentPatternNumber
 
-	def getCV1(self):
-		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
+	def getCV1InCents(self, channel):
+		return self.cv1InCents[channel]
+
+	def getCV1InCentsAndDots(self, channel):
+		return self.cv1InCentsAndDots[channel]
 
 	def getCV1Output(self, channel):
 		return self.cv1InUnipolarVolts[channel]
 
-	def getCV2(self):
-		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
+	def getCV2InCents(self, channel):
+		return self.cv2InCents[channel]
+
+	def getCV2InCentsAndDots(self, channel):
+		return self.cv2InCentsAndDots[channel]
 
 	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]
 
-	def getGate(self):
-		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
+	def getGateInCents(self, channel):
+		return self.gateInCents[channel]
+
+	def getGateInCentsAndDots(self, channel):
+		return self.gateInCentsAndDots[channel]
 
 	def getGateOutput(self, channel):
 		return self.gateInUnipolarVolts[channel]
@@ -386,8 +395,8 @@ class Sequencer:
 	def getPitchOutput(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
-	def getPitchName(self):
-		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
+	def getPitchInCharsAndDots(self, channel):
+		return self.pitchInCharsAndDots[channel]
 
 	def getPlaying(self):
 		return self.playing

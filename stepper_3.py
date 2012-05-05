@@ -129,7 +129,7 @@ while (True):
 			sequencer.setSemitone('B-')
 
 	if key == 'i':
-		if sequencer.getGate() == '00':
+		if sequencer.getGateInCentsAndDots(0) == '00':
 			sequencer.setGate('..')
 		else:
 			sequencer.setGate('00')
@@ -183,10 +183,10 @@ while (True):
 	cv2Output = sequencer.getCV2Output(0)
 	gateOutput = sequencer.getGateOutput(0)
 
-	cv1 = sequencer.getCV1()
-	gate = sequencer.getGate()
+	cv1 = sequencer.getCV1InCentsAndDots(0)
+	gate = sequencer.getGateInCentsAndDots(0)
 	octave = sequencer.getOctave()
-	pitchName = sequencer.getPitchName()
+	pitchName = sequencer.getPitchInCharsAndDots(0)
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlide()
 
