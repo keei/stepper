@@ -180,7 +180,6 @@ while (True):
 
 	pitchOutput = sequencer.getPitchOutput(0)
 	cv1Output = sequencer.getCV1Output(0)
-	cv2Output = sequencer.getCV2Output(0)
 	gateOutput = sequencer.getGateOutput(0)
 
 	cv1 = sequencer.getCV1InCents(0)
@@ -202,7 +201,7 @@ while (True):
 
 	cursePrint(3, 0, 'Pitch           ' + str(pitchOutput))
 	cursePrint(4, 0, 'CV1             ' + str(cv1Output))
-	cursePrint(5, 0, 'CV2             ' + str(cv2Output))
+	cursePrint(5, 0, 'CV2             N/A')
 	cursePrint(6, 0, 'Gate            ' + str(gateOutput))
 
 	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo         ')
@@ -227,9 +226,9 @@ while (True):
 			slideCharacter = '.'
 
 		if i == currentRowNumber:
-			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'], True)
+			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'], True)
 		else:
-			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'] + ' ' + event[0]['cv2'])
+			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'])
 
 		i = i + 1
 
