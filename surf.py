@@ -233,76 +233,12 @@ class Sequencer:
 	currentRowNumber = 0
 	currentPatternNumber = 0
 	loop = False
-	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
+	noteNameLookupTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
+	# noteCvLookupTable = [0.0, 0.083, 0.166, 0.25, 0.333, 0.416, 0.5, 0.583, 0.666, 0.75, 0.833, 0.916] # I should use this
 	numberOfChannels = 4
 	patternPositionInSeconds = 0.0
 	patternsInCents = []
 	patternsInCentsAndDots = []
-
-	pitchVoltageLookupTable = {
-		'C-1': 0.0,
-		'C#1': 0.083,
-		'D-1': 0.166,
-		'D#1': 0.25,
-		'E-1': 0.333,
-		'F-1': 0.416,
-		'F#1': 0.5,
-		'G-1': 0.583,
-		'G#1': 0.666,
-		'A-1': 0.75,
-		'A#1': 0.833,
-		'B-1': 0.916,
-		'C-2': 1.0,
-		'C#2': 1.083,
-		'D-2': 1.166,
-		'D#2': 1.25,
-		'E-2': 1.333,
-		'F-2': 1.416,
-		'F#2': 1.5,
-		'G-2': 1.583,
-		'G#2': 1.666,
-		'A-2': 1.75,
-		'A#2': 1.833,
-		'B-2': 1.916,
-		'C-3': 2.0,
-		'C#3': 2.083,
-		'D-3': 2.166,
-		'D#3': 2.25,
-		'E-3': 2.333,
-		'F-3': 2.416,
-		'F#3': 2.5,
-		'G-3': 2.583,
-		'G#3': 2.666,
-		'A-3': 2.75,
-		'A#3': 2.833,
-		'B-3': 2.916,
-		'C-4': 3.0,
-		'C#4': 3.083,
-		'D-4': 3.166,
-		'D#4': 3.25,
-		'E-4': 3.333,
-		'F-4': 3.416,
-		'F#4': 3.5,
-		'G-4': 3.583,
-		'G#4': 3.666,
-		'A-4': 3.75,
-		'A#4': 3.833,
-		'B-4': 3.916,
-		'C-5': 4.0,
-		'C#5': 4.083,
-		'D-5': 4.166,
-		'D#5': 4.25,
-		'E-5': 4.333,
-		'F-5': 4.416,
-		'F#5': 4.5,
-		'G-5': 4.583,
-		'G#5': 4.666,
-		'A-5': 4.75,
-		'A#5': 4.833,
-		'B-5': 4.916,
-		'C-6': 5.0
-	}
-
 	playing = False
 	songInformation = ''
 	songName = ''
@@ -325,7 +261,7 @@ class Sequencer:
 		cv1 = '00'
 		cv2 = '00'
 		gate = '00'
-		pitch = 'C-2'
+		pitch = '12'
 		slide = False
 
 		patternNumber = 0
@@ -341,7 +277,7 @@ class Sequencer:
 				for channel in row:
 					channelNumber = channelNumber + 1
 
-					if channel['pitch'] != '...':
+					if channel['pitch'] != '..':
 						pitch = channel['pitch']
 
 					slide = channel['slide']
@@ -350,7 +286,7 @@ class Sequencer:
 						gate = channel['gate']
 					elif slide == True:
 						gate = 99
-					elif channel['pitch'] != '...':
+					elif channel['pitch'] != '..':
 						gate = 50 # Really, it should be 49.5
 					else:
 						gate = 0
@@ -425,7 +361,7 @@ class Sequencer:
 		return self.patternPositionInSeconds
 
 	def getOctave(self):
-		return self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'][2:]
+		return floor(float(self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']) / 12.0)
 
 	def getPatternLength(self):
 		return len(self.patternsInCentsAndDots[self.currentPatternNumber])
@@ -520,8 +456,8 @@ class Sequencer:
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert the pitch to a control voltage, 1v/oct
-			pitchInChars = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
-			self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[pitchInChars]
+			pitchInCents = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
+			self.pitchInUnipolarVolts[channel] = float(pitchInCents) * 0.083 # I should improve this
 
 			# Slide if necessary
 			slide = self.patternsInCents[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
@@ -546,8 +482,8 @@ class Sequencer:
 
 			# Do the actual sliding
 			if slide == True:
-				nextPitchName = self.patternsInCents[self.currentPatternNumber][nextRowNumber][channel]['pitch']
-				nextPitchInUnipolarVolts = self.pitchVoltageLookupTable[nextPitchName]
+				nextPitchInCents = self.patternsInCents[self.currentPatternNumber][nextRowNumber][channel]['pitch']
+				nextPitchInUnipolarVolts = float(nextPitchInCents) * 0.083 # I should improve this
 
 				nextEventCV1 = self.patternsInCents[self.currentPatternNumber][nextRowNumber][channel]['cv1']
 				nextCV1InUnipolarVolts = float(nextEventCV1) / float(99) * float(5)
@@ -610,7 +546,19 @@ class Sequencer:
 					cv2 = channel.find('cv2').text
 
 					if not pitchInCharsAndDots:
-						pitchInCharsAndDots = '...'
+						pitchInCentsAndDots = '..'
+					else:
+						pitchInCentsAndDots = '12' # Default to C-2 in case they entered a nonsensical pitch
+						semitone = pitchInCharsAndDots[:2]
+						semitoneNumber = 0
+
+						for knownSemitone in self.noteNameLookupTable:
+							if semitone == knownSemitone:
+								octave = pitchInCharsAndDots[2:]
+								pitchInCentsAndDots = '%02d' % (semitoneNumber + ((int(octave) - 1) * 12)) # Force two decimal places.  C-1 is note 00, F#2 is 18 etc.
+								break
+
+							semitoneNumber = semitoneNumber + 1
 
 					if slide == 'true':
 						slide = True
@@ -626,8 +574,8 @@ class Sequencer:
 					if not cv2:
 						cv2 = '..'
 
-					self.patternsInCents[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInCharsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2} # This will all be overwritten soon enough
-					self.patternsInCentsAndDots[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInCharsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
+					self.patternsInCents[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInCentsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2} # This will all be overwritten soon enough
+					self.patternsInCentsAndDots[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInCentsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
 
 		self.numberOfChannels = channelNumber
 		self.convertPatterns()
