@@ -348,8 +348,14 @@ class Sequencer:
 	def getCurrentPatternNumber(self):
 		return self.currentPatternNumber
 
+	def getCV1(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
+
 	def getCV1Output(self, channel):
 		return self.cv1InUnipolarVolts[channel]
+
+	def getCV2(self):
+		return self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
 
 	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]

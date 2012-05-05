@@ -1,5 +1,6 @@
 Important, low-level stuff:
 Once loadSong() is implemented, Entirely remove addEventRow() (or at least the data loading part of it).
+Stepper 3 should default to a CV1 of '00' (off), not '..' (continue what it was in the last step), because for this one particular interface to Surf, CV1 is being used for the note's accent.
 
 Nice features:
 I need to improve the README file.
