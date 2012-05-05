@@ -232,14 +232,22 @@ class Sequencer:
 	currentChannelNumber = 0
 	currentRowNumber = 0
 	currentPatternNumber = 0
+	cv1InCents = []
+	cv1InCentsAndDots = []
 	cv1InUnipolarVolts = []
+	cv2InCents = []
+	cv2InCentsAndDots = []
 	cv2InUnipolarVolts = []
+	gateInCents = []
+	gateInCentsAndDots = []
 	gateInUnipolarVolts = []
 	loop = False
 	noteTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	numberOfChannels = 4
 	patternPositionInSeconds = 0.0
 	patterns = []
+	pitchInChars = []
+	pitchInCharsAndDots = []
 	pitchInUnipolarVolts = []
 
 	pitchVoltageLookupTable = {
@@ -465,25 +473,32 @@ class Sequencer:
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):
 			# Convert the pitch to a control voltage, 1v/oct
-			pitchName = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
+			self.pitchInCharsAndDots[channel] = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
 
-			if pitchName != '...':
-				self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[pitchName]
+			if self.pitchInCharsAndDots[channel] != '...':
+				self.pitchInChars[channel] = self.pitchInCharsAndDots[channel]
+				self.pitchInUnipolarVolts[channel] = self.pitchVoltageLookupTable[self.pitchInCharsAndDots[channel]]
 
 			# Slide if necessary
 			slide = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
 
 			# Set the gate length
-			gate = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
+			self.gateInCentsAndDots[channel] = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
 
-			if gate != '..':
-				gateLengthInSeconds = float(gate) / float(99) * float(rowLengthInSeconds)
+			if self.gateInCentsAndDots[channel] != '..':
+				self.gateInCents[channel] = self.gateInCentsAndDots[channel]
+				gateLengthInSeconds = float(self.gateInCents[channel]) / float(99) * float(rowLengthInSeconds)
 			elif slide == True:
+				self.gateInCents[channel] = 99
 				gateLengthInSeconds = rowLengthInSeconds
-			elif pitchName != '...':
+			elif self.pitchInCharsAndDots[channel] != '...':
+				self.gateInCents[channel] = 50 # Really, it should be 49.5
 				gateLengthInSeconds = rowLengthInSeconds / 2
 			else:
+				self.gateInCents[channel] = 0
 				gateLengthInSeconds = 0.0
+
+			# I should refactor this code so that gateLengthInSeconds is set here!
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
 			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
@@ -492,16 +507,18 @@ class Sequencer:
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
-			eventCV1 = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
+			self.cv1InCentsAndDots[channel] = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
 
-			if eventCV1 != '..':
-				self.cv1InUnipolarVolts[channel] = float(eventCV1) / float(99) * float(5)
+			if self.cv1InCentsAndDots[channel] != '..':
+				self.cv1InCents[channel] = self.cv1InCentsAndDots[channel]
+				self.cv1InUnipolarVolts[channel] = float(self.cv1InCents[channel]) / float(99) * float(5)
 
 			# Set CV2
-			eventCV2 = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
+			self.cv2InCentsAndDots[channel] = self.patterns[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
 
-			if eventCV2 != '..':
-				self.cv2InUnipolarVolts[channel] = float(eventCV2) / float(99) * float(5)
+			if self.cv2InCentsAndDots[channel] != '..':
+				self.cv2InCents[channel] = self.cv2InCentsAndDots[channel]
+				self.cv2InUnipolarVolts[channel] = float(self.cv2InCents[channel]) / float(99) * float(5)
 
 			# Do the actual sliding
 			if slide == True:
@@ -571,14 +588,14 @@ class Sequencer:
 					self.patterns[patternNumber - 1][rowNumber - 1].append([])
 					channelNumber = int(channel.attrib['number'])
 
-					pitchName = channel.find('pitch').text
+					pitchInCharsAndDots = channel.find('pitch').text
 					slide = channel.find('slide').text
 					gate = channel.find('gate').text
 					cv1 = channel.find('cv1').text
 					cv2 = channel.find('cv2').text
 
-					if not pitchName:
-						pitchName = '...'
+					if not pitchInCharsAndDots:
+						pitchInCharsAndDots = '...'
 
 					if slide == 'true':
 						slide = True
@@ -594,7 +611,7 @@ class Sequencer:
 					if not cv2:
 						cv2 = '..'
 
-					self.patterns[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchName, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
+					self.patterns[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInCharsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
 
 		self.numberOfChannels = channelNumber
 
@@ -689,15 +706,31 @@ class Sequencer:
 		self.loop = loop
 
 	def setNumberOfChannels(self, numberOfChannels):
+		self.cv1InCents = []
+		self.cv1InCentsAndDots = []
 		self.cv1InUnipolarVolts = []
+		self.cv2InCents = []
+		self.cv2InCentsAndDots = []
 		self.cv2InUnipolarVolts = []
+		self.gateInCents = []
+		self.gateInCentsAndDots = []
 		self.gateInUnipolarVolts = []
+		self.pitchInChars = []
+		self.pitchInCharsAndDots = []
 		self.pitchInUnipolarVolts = []
 
 		for channel in range(numberOfChannels):
+			self.cv1InCents.append('00')
+			self.cv1InCentsAndDots.append('..')
 			self.cv1InUnipolarVolts.append(0.0)
+			self.cv2InCents.append('00')
+			self.cv2InCentsAndDots.append('..')
 			self.cv2InUnipolarVolts.append(0.0)
+			self.gateInCents.append('00')
+			self.gateInCentsAndDots.append('..')
 			self.gateInUnipolarVolts.append(0.0)
+			self.pitchInChars.append('C-2')
+			self.pitchInCharsAndDots.append('...')
 			self.pitchInUnipolarVolts.append(0.0)
 
 		self.numberOfChannels = numberOfChannels
@@ -711,8 +744,8 @@ class Sequencer:
 
 		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + str(octave)
 
-	def setPitch(self, pitchName):
-		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchName
+	def setPitch(self, pitchInCharsAndDots):
+		self.patterns[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchInCharsAndDots
 
 	def setPlaying(self, playing):
 		self.playing = playing
