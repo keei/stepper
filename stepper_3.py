@@ -172,10 +172,10 @@ while (True):
 
 	previousCycleTimeInSeconds = timeInSeconds
 
-	pitch = sequencer.getPitch(0)
-	cv1 = sequencer.getCV1(0)
-	cv2 = sequencer.getCV2(0)
-	gate = sequencer.getGate(0)
+	pitch = sequencer.getPitchOutput(0)
+	cv1 = sequencer.getCV1Output(0)
+	cv2 = sequencer.getCV2Output(0)
+	gate = sequencer.getGateOutput(0)
 
 	pitchName = sequencer.getPitchName()
 	slide = sequencer.getSlide()

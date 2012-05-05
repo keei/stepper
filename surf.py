@@ -348,13 +348,13 @@ class Sequencer:
 	def getCurrentPatternNumber(self):
 		return self.currentPatternNumber
 
-	def getCV1(self, channel):
+	def getCV1Output(self, channel):
 		return self.cv1InUnipolarVolts[channel]
 
-	def getCV2(self, channel):
+	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]
 
-	def getGate(self, channel):
+	def getGateOutput(self, channel):
 		return self.gateInUnipolarVolts[channel]
 
 	def getLoopTime(self):
@@ -366,7 +366,7 @@ class Sequencer:
 	def getPatternLength(self):
 		return len(self.patterns[self.currentPatternNumber])
 
-	def getPitch(self, channel):
+	def getPitchOutput(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
 	def getPitchName(self):

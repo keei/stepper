@@ -1,5 +1,4 @@
 Important, low-level stuff:
-I need to make more of a distinction between getPitchName as in what the LED will use and getPitch as in what the CV will be.  The same goes for the other outputs, cv1 and cv2.  getPitchName takes the cursor's position into account to work out which channel we're accessing, because it's to be used by a user interface.  Conversely, getPitch has the channel specified, because it's to be used as a raw output on the device, to be connected to a synth.  Their names don't make this obvious.  For the pitch in particular, we're currently getting away with this naming inconsistency as the UI uses the pitch's human-readable name and the CV doesn't, narrowly avoiding a clash, but that's not the case for the CVs.
 In order to be interface agnostic, I need to program in both getPitch() & setPitch() (to include the octave, as a three-character argument) and also getPitchWithoutOctave(), setPitchWithoutOctave(), getOctave() & setOctave(), to take two-character and single-digit-integer arguments respectively.
 Once loadSong() is implemented, Entirely remove addEventRow() (or at least the data loading part of it).
 

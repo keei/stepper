@@ -26,8 +26,8 @@ while time < trackLength:
 	time = sequencer.getTime()
 	sequencer.incrementTime(surf.globalIncrementLengthInSeconds)
 
-	leadGate = sequencer.getGate(0)
-	leadPitch = sequencer.getPitch(0)
+	leadGate = sequencer.getGateOutput(0)
+	leadPitch = sequencer.getPitchOutput(0)
 	leadOscillator.setPitch(leadPitch)
 	leadOscillator.incrementTime(surf.globalIncrementLengthInSeconds)
 	leadSaw = leadOscillator.getSawtooth()
