@@ -350,7 +350,7 @@ class Sequencer:
 						gate = channel['gate']
 					elif slide == True:
 						gate = 99
-					elif channel['gate'] != '...':
+					elif channel['pitch'] != '...':
 						gate = 50 # Really, it should be 49.5
 					else:
 						gate = 0
