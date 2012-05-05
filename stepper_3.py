@@ -1,4 +1,4 @@
-# Arduino emulator, for Python 3.
+# Stepper 3 prototype, for Python 3.
 # By ZoeB.
 
 # This isn't a real Arduino emulator.  It just emulates millis(),
