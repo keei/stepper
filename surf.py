@@ -385,7 +385,7 @@ class Sequencer:
 		return self.playing
 
 	def getSemitone(self):
-		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] % 12
+		return self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] % 12
 
 	def getSlide(self):
 		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide']
@@ -715,11 +715,7 @@ class Sequencer:
 
 	def setOctave(self, octave):
 		semitone = self.getSemitone()
-
-		if semitone == 61:
-			semitone = 0
-
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = str(int(semitone) + int(octave))
+		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + ((octave - 1) * 12)
 		self.convertPatterns()
 
 	def setPitch(self, pitchInSixtiethsAndDots):
