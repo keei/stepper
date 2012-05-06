@@ -464,7 +464,7 @@ class Sequencer:
 
 			# Set the gate length
 			gateInSixtieths = self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][channel]['gate']
-			gateLengthInSeconds = float(gateInSixtieths) / float(60) * float(rowLengthInSeconds)
+			gateLengthInSeconds = float(gateInSixtieths) / 60.0 * float(rowLengthInSeconds)
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
 			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
@@ -474,22 +474,22 @@ class Sequencer:
 
 			# Set CV1
 			cv1InSixtieths = self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][channel]['cv1']
-			self.cv1InUnipolarVolts[channel] = float(cv1InSixtieths) / float(60) * float(5)
+			self.cv1InUnipolarVolts[channel] = float(cv1InSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Set CV2
 			cv2InSixtieths = self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][channel]['cv2']
-			self.cv2InUnipolarVolts[channel] = float(cv2InSixtieths) / float(60) * float(5)
+			self.cv2InUnipolarVolts[channel] = float(cv2InSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Do the actual sliding
 			if slide == True:
 				nextPitchInSixtieths = self.patternsInSixtieths[self.currentPatternNumber][nextRowNumber][channel]['pitch']
-				nextPitchInUnipolarVolts = float(nextPitchInSixtieths) * 0.083 # I should improve this
+				nextPitchInUnipolarVolts = float(nextPitchInSixtieths) * 0.08333 # I should improve this
 
 				nextEventCV1 = self.patternsInSixtieths[self.currentPatternNumber][nextRowNumber][channel]['cv1']
-				nextCV1InUnipolarVolts = float(nextEventCV1) / float(60) * float(5)
+				nextCV1InUnipolarVolts = float(nextEventCV1) / 12.0 # / 60.0 * 5.0
 
 				nextEventCV2 = self.patternsInSixtieths[self.currentPatternNumber][nextRowNumber][channel]['cv2']
-				nextCV2InUnipolarVolts = float(nextEventCV2) / float(60) * float(5)
+				nextCV2InUnipolarVolts = float(nextEventCV2) / 12.0 # / 60.0 * 5.0
 
 				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
 				if rowPositionInSeconds > rowLengthInSeconds / 2:
