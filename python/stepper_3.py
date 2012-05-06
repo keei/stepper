@@ -135,16 +135,16 @@ while (True):
 			sequencer.setGate(0)
 
 	if key == 'o':
-		if sequencer.getOctave() == 2:
-			sequencer.setOctave(1)
+		if sequencer.getOctave() == 1:
+			sequencer.setOctave(0)
 		else:
-			sequencer.setOctave(2)
+			sequencer.setOctave(1)
 
 	if key == 'p':
-		if sequencer.getOctave() == 2:
-			sequencer.setOctave(3)
-		else:
+		if sequencer.getOctave() == 1:
 			sequencer.setOctave(2)
+		else:
+			sequencer.setOctave(1)
 
 	if key == '[':
 		if sequencer.getCV1InSixtieths(0) == 0:
@@ -279,10 +279,10 @@ while (True):
 	else:
 		gateCharacter = '.'
 
-	if octave == 1:
+	if octave == 0:
 		octaveDownCharacter = 'o'
 		octaveUpCharacter = '.'
-	elif octave == 3:
+	elif octave == 2:
 		octaveDownCharacter = '.'
 		octaveUpCharacter = 'o'
 	else:
