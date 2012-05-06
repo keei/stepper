@@ -1,7 +1,11 @@
 == Surf ==
 
 Surf is a combination of a modular synthesiser and a step sequencer.
-It's currently more of a library than an actual application.
+The main core of Surf is a library, rather than an actual application.
+This allows the same parts to be re-used by different user interfaces.
+The library is open ended, whereas some of the actual applications
+importing the library are much more specific, some of them roughly
+emulating vintage hardware synthesisers, for instance.
 
 The step sequencer is flexible enough to allow an arbitrary number
 of channels, notes per pattern, and patterns, but rigid enough to
@@ -10,8 +14,10 @@ house, etc).  It's not good for expressive musicianship.  It is good
 for making something you can dance to.
 
 This step sequencer is designed with an eye towards one day being
-ported to C, and then hooked up to actual hardware synthesisers via
-pitch and gate CV outputs.
+ported to C or C++, and then hooked up to actual hardware synthesisers
+via pitch and gate CV outputs.  To this end, many of the variables
+are floats in the range of 0 to +5, representing volts, to ease
+integration with hardware synthesisers.
 
 The other parts of Surf, the synthesiser modules, are entirely
 separate from the sequencer.  The sequencer can be hooked up to
