@@ -249,29 +249,29 @@ while (True):
 		i = i + 1
 
 	# Print out the current event
-	if semitone == 'C-':
+	if semitone == 0 and pitchName != 61:
 		cursePrint(11, 1, 'o')
-	elif semitone == 'C#':
+	elif semitone == 1:
 		cursePrint(10, 4, 'o')
-	elif semitone == 'D-':
+	elif semitone == 2:
 		cursePrint(11, 7, 'o')
-	elif semitone == 'D#':
+	elif semitone == 3:
 		cursePrint(10, 10, 'o')
-	elif semitone == 'E-':
+	elif semitone == 4:
 		cursePrint(11, 13, 'o')
-	elif semitone == 'F-':
+	elif semitone == 5:
 		cursePrint(11, 16, 'o')
-	elif semitone == 'F#':
+	elif semitone == 6:
 		cursePrint(10, 19, 'o')
-	elif semitone == 'G-':
+	elif semitone == 7:
 		cursePrint(11, 22, 'o')
-	elif semitone == 'G#':
+	elif semitone == 8:
 		cursePrint(10, 25, 'o')
-	elif semitone == 'A-':
+	elif semitone == 9:
 		cursePrint(11, 28, 'o')
-	elif semitone == 'A#':
+	elif semitone == 10:
 		cursePrint(10, 31, 'o')
-	elif semitone == 'B-':
+	elif semitone == 11:
 		cursePrint(11, 34, 'o')
 
 	if gate != 0 and (gate != 61 or pitchName != 61):
