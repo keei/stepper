@@ -730,7 +730,7 @@ class Sequencer:
 
 	def setSemitone(self, semitone):
 		octave = self.getOctave()
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + octave
+		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + ((octave - 1) * 12)
 		self.convertPatterns()
 
 	def setSlide(self, slide):
