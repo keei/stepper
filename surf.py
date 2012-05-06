@@ -708,9 +708,9 @@ class Sequencer:
 		semitone = self.getSemitone()
 
 		if semitone == '..':
-			semitone = 'C-'
+			semitone = '00'
 
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + str(octave)
+		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = str(int(semitone) + int(octave))
 		self.convertPatterns()
 
 	def setPitch(self, pitchInCharsAndDots):

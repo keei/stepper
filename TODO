@@ -1,5 +1,6 @@
 Important, low-level stuff:
 Stepper 3 should default to a CV1 of '00' (off), not '..' (continue what it was in the last step), because for this one particular interface to Surf, CV1 is being used for the note's accent.
+Store everything internally as ints between 0 and 60, and only convert to chars between '00' and '60' when saving files and viewing diagnostics info.
 
 Nice features:
 I need to improve the README file.

@@ -57,76 +57,76 @@ while (True):
 			sequencer.setPlaying(True)
 
 	if key == 'q':
-		if sequencer.getSemitone() == 'C-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '00':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('C-')
+			sequencer.setSemitone('00')
 
 	if key == '2':
-		if sequencer.getSemitone() == 'C#':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '01':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('C#')
+			sequencer.setSemitone('01')
 
 	if key == 'w':
-		if sequencer.getSemitone() == 'D-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '02':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('D-')
+			sequencer.setSemitone('02')
 
 	if key == '3':
-		if sequencer.getSemitone() == 'D#':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '03':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('D#')
+			sequencer.setSemitone('03')
 
 	if key == 'e':
-		if sequencer.getSemitone() == 'E-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '04':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('E-')
+			sequencer.setSemitone('04')
 
 	if key == 'r':
-		if sequencer.getSemitone() == 'F-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '05':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('F-')
+			sequencer.setSemitone('05')
 
 	if key == '5':
-		if sequencer.getSemitone() == 'F#':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '06':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('F#')
+			sequencer.setSemitone('06')
 
 	if key == 't':
-		if sequencer.getSemitone() == 'G-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '07':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('G-')
+			sequencer.setSemitone('07')
 
 	if key == '6':
-		if sequencer.getSemitone() == 'G#':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '08':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('G#')
+			sequencer.setSemitone('08')
 
 	if key == 'y':
-		if sequencer.getSemitone() == 'A-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '09':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('A-')
+			sequencer.setSemitone('09')
 
 	if key == '7':
-		if sequencer.getSemitone() == 'A#':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '10':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('A#')
+			sequencer.setSemitone('10')
 
 	if key == 'u':
-		if sequencer.getSemitone() == 'B-':
-			sequencer.setPitch('...')
+		if sequencer.getSemitone() == '11':
+			sequencer.setPitch('..')
 		else:
-			sequencer.setSemitone('B-')
+			sequencer.setSemitone('11')
 
 	if key == 'i':
 		if sequencer.getGateInSixtieths() == '00':
