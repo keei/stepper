@@ -57,100 +57,100 @@ while (True):
 			sequencer.setPlaying(True)
 
 	if key == 'q':
-		if sequencer.getSemitone() == '00':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 0:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('00')
+			sequencer.setSemitone(0)
 
 	if key == '2':
-		if sequencer.getSemitone() == '01':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 1:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('01')
+			sequencer.setSemitone(1)
 
 	if key == 'w':
-		if sequencer.getSemitone() == '02':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 2:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('02')
+			sequencer.setSemitone(2)
 
 	if key == '3':
-		if sequencer.getSemitone() == '03':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 3:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('03')
+			sequencer.setSemitone(3)
 
 	if key == 'e':
-		if sequencer.getSemitone() == '04':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 4:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('04')
+			sequencer.setSemitone(4)
 
 	if key == 'r':
-		if sequencer.getSemitone() == '05':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 5:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('05')
+			sequencer.setSemitone(5)
 
 	if key == '5':
-		if sequencer.getSemitone() == '06':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 6:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('06')
+			sequencer.setSemitone(6)
 
 	if key == 't':
-		if sequencer.getSemitone() == '07':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 7:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('07')
+			sequencer.setSemitone(7)
 
 	if key == '6':
-		if sequencer.getSemitone() == '08':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 8:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('08')
+			sequencer.setSemitone(8)
 
 	if key == 'y':
-		if sequencer.getSemitone() == '09':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 9:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('09')
+			sequencer.setSemitone(9)
 
 	if key == '7':
-		if sequencer.getSemitone() == '10':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 10:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('10')
+			sequencer.setSemitone(10)
 
 	if key == 'u':
-		if sequencer.getSemitone() == '11':
-			sequencer.setPitch('..')
+		if sequencer.getSemitone() == 11:
+			sequencer.setPitch(61)
 		else:
-			sequencer.setSemitone('11')
+			sequencer.setSemitone(11)
 
 	if key == 'i':
-		if sequencer.getGateInSixtieths() == '00':
-			sequencer.setGate('..')
+		if sequencer.getGateInSixtieths() == 0:
+			sequencer.setGate(61)
 		else:
-			sequencer.setGate('00')
+			sequencer.setGate(0)
 
 	if key == 'o':
-		if sequencer.getOctave() == '2':
+		if sequencer.getOctave() == 2:
 			sequencer.setOctave(1)
 		else:
 			sequencer.setOctave(2)
 
 	if key == 'p':
-		if sequencer.getOctave() == '2':
+		if sequencer.getOctave() == 2:
 			sequencer.setOctave(3)
 		else:
 			sequencer.setOctave(2)
 
 	if key == '[':
-		if sequencer.getCV1InSixtieths(0) == '00':
-			sequencer.setCV1('99')
+		if sequencer.getCV1InSixtieths(0) == 0:
+			sequencer.setCV1(60)
 		else:
-			sequencer.setCV1('00')
+			sequencer.setCV1(0)
 
 	if key == ']':
 		if sequencer.getSlide() == True:
@@ -274,22 +274,22 @@ while (True):
 	elif semitone == 'B-':
 		cursePrint(11, 34, 'o')
 
-	if gate != '00' and (gate != '..' or pitchName != '...'):
+	if gate != 0 and (gate != 61 or pitchName != 61):
 		gateCharacter = 'o'
 	else:
 		gateCharacter = '.'
 
-	if octave == '1':
+	if octave == 1:
 		octaveDownCharacter = 'o'
 		octaveUpCharacter = '.'
-	elif octave == '3':
+	elif octave == 3:
 		octaveDownCharacter = '.'
 		octaveUpCharacter = 'o'
 	else:
 		octaveDownCharacter = '.'
 		octaveUpCharacter = '.'
 
-	if cv1 != '00':
+	if cv1 != 0:
 		cv1Character = 'o'
 	else:
 		cv1Character = '.'
