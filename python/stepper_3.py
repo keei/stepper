@@ -57,7 +57,7 @@ while (True):
 			sequencer.setPlaying(True)
 
 	if key == 'q':
-		if sequencer.getSemitone() == 0:
+		if sequencer.getSemitone() == 0 and sequencer.getPitchInSixtiethsAndDots() != 61:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(0)
