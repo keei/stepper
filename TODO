@@ -1,6 +1,6 @@
 Important, low-level stuff:
 Stepper 3 should default to a CV1 of '00' (off), not '..' (continue what it was in the last step), because for this one particular interface to Surf, CV1 is being used for the note's accent.
-Store everything internally as ints between 0 and 60, and only convert to chars between '00' and '60' when saving files and viewing diagnostics info.
+I need to think about the implication about these sixtieths.  I believe it means we can actually go ahead and make no distinction whatsoever between pitches and anything else: CVs only increment in semitones, if you'd like to think of them as such.  So calling the pitch a pitch, and calling CV1 and CV2 anything other than a pitch, is quite possibly an arbitrary distinction.  This sounds like it might need to novel applications if I encourage that sort of thinking.
 
 Nice features:
 I need to improve the README file.

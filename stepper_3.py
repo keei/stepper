@@ -185,7 +185,7 @@ while (True):
 	cv1 = sequencer.getCV1InSixtieths()
 	gate = sequencer.getGateInSixtiethsAndDots()
 	octave = sequencer.getOctave()
-	pitchName = sequencer.getPitchInCharsAndDots()
+	pitchName = sequencer.getPitchInSixtiethsAndDots()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlide()
 
@@ -227,9 +227,9 @@ while (True):
 			slideCharacter = '.'
 
 		if i == currentRowNumber:
-			cursePrint(i, 55, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'], True)
+			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
 		else:
-			cursePrint(i, 55, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'])
+			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
 
 		i = i + 1
 
@@ -242,9 +242,9 @@ while (True):
 			slideCharacter = '.'
 
 		if i == currentRowNumber:
-			cursePrint(i, 67, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'], True)
+			cursePrint(i, 67, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
 		else:
-			cursePrint(i, 67, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'])
+			cursePrint(i, 67, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
 
 		i = i + 1
 
