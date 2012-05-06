@@ -147,7 +147,7 @@ while (True):
 			sequencer.setOctave(1)
 
 	if key == '[':
-		if sequencer.getCV1InSixtieths(0) == 0:
+		if sequencer.getCV1InSixtieths() == 0:
 			sequencer.setCV1(60)
 		else:
 			sequencer.setCV1(0)
