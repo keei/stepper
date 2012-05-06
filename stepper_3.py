@@ -129,7 +129,7 @@ while (True):
 			sequencer.setSemitone('B-')
 
 	if key == 'i':
-		if sequencer.getGateInCents(0) == '00':
+		if sequencer.getGateInSixtieths(0) == '00':
 			sequencer.setGate('..')
 		else:
 			sequencer.setGate('00')
@@ -147,7 +147,7 @@ while (True):
 			sequencer.setOctave(2)
 
 	if key == '[':
-		if sequencer.getCV1InCents(0) == '00':
+		if sequencer.getCV1InSixtieths(0) == '00':
 			sequencer.setCV1('99')
 		else:
 			sequencer.setCV1('00')
@@ -182,15 +182,15 @@ while (True):
 	cv1Output = sequencer.getCV1Output(0)
 	gateOutput = sequencer.getGateOutput(0)
 
-	cv1 = sequencer.getCV1InCents()
-	gate = sequencer.getGateInCentsAndDots()
+	cv1 = sequencer.getCV1InSixtieths()
+	gate = sequencer.getGateInSixtiethsAndDots()
 	octave = sequencer.getOctave()
 	pitchName = sequencer.getPitchInCharsAndDots()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlide()
 
 	currentRowNumber = sequencer.getCurrentRowNumber()
-	pattern = sequencer.patternsInCentsAndDots[sequencer.currentPatternNumber]
+	pattern = sequencer.patternsInSixtiethsAndDots[sequencer.currentPatternNumber]
 
 	for i in range(14):
 		cursePrint(i, 0, '                                                ')
