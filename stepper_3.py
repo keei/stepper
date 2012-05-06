@@ -129,7 +129,7 @@ while (True):
 			sequencer.setSemitone('B-')
 
 	if key == 'i':
-		if sequencer.getGateInSixtieths(0) == '00':
+		if sequencer.getGateInSixtieths() == '00':
 			sequencer.setGate('..')
 		else:
 			sequencer.setGate('00')
@@ -190,7 +190,8 @@ while (True):
 	slide = sequencer.getSlide()
 
 	currentRowNumber = sequencer.getCurrentRowNumber()
-	pattern = sequencer.patternsInSixtiethsAndDots[sequencer.currentPatternNumber]
+	patternInSixtiethsAndDots = sequencer.patternsInSixtiethsAndDots[sequencer.currentPatternNumber]
+	patternInSixtieths = sequencer.patternsInSixtieths[sequencer.currentPatternNumber]
 
 	for i in range(14):
 		cursePrint(i, 0, '                                                ')
@@ -219,21 +220,35 @@ while (True):
 	# Print out the whole current pattern's events
 	i = 0
 
-	for event in pattern:
+	for event in patternInSixtiethsAndDots:
 		if event[0]['slide'] == True:
 			slideCharacter = 'S'
 		else:
 			slideCharacter = '.'
 
 		if i == currentRowNumber:
-			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'], True)
+			cursePrint(i, 55, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'], True)
 		else:
-			cursePrint(i, 60, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'])
+			cursePrint(i, 55, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'])
+
+		i = i + 1
+
+	i = 0
+
+	for event in patternInSixtieths:
+		if event[0]['slide'] == True:
+			slideCharacter = 'S'
+		else:
+			slideCharacter = '.'
+
+		if i == currentRowNumber:
+			cursePrint(i, 67, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'], True)
+		else:
+			cursePrint(i, 67, event[0]['pitch'] + ' ' + slideCharacter + ' ' + event[0]['gate'] + ' ' + event[0]['cv1'])
 
 		i = i + 1
 
 	# Print out the current event
-
 	if semitone == 'C-':
 		cursePrint(11, 1, 'o')
 	elif semitone == 'C#':

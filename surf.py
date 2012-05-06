@@ -285,11 +285,11 @@ class Sequencer:
 					if channel['gate'] != '..':
 						gate = channel['gate']
 					elif slide == True:
-						gate = 60
+						gate = '60'
 					elif channel['pitch'] != '..':
-						gate = 30
+						gate = '30'
 					else:
-						gate = 0
+						gate = '00'
 
 					if channel['cv1'] != '..':
 						cv1 = channel['cv1']
