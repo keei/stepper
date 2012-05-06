@@ -548,22 +548,22 @@ class Sequencer:
 					self.patternsInSixtiethsAndDots[patternNumber - 1][rowNumber - 1].append([])
 					channelNumber = int(channel.attrib['number'])
 
-					pitchInSixtiethsAndDots = channel.find('pitch').text
+					pitchInCharsAndDots = channel.find('pitch').text
 					slide = channel.find('slide').text
 					gate = channel.find('gate').text
 					cv1 = channel.find('cv1').text
 					cv2 = channel.find('cv2').text
 
-					if not pitchInSixtiethsAndDots:
+					if not pitchInCharsAndDots:
 						pitchInSixtiethsAndDots = 61
 					else:
 						pitchInSixtiethsAndDots = 12 # Default to C-2 in case they entered a nonsensical pitch
-						semitone = pitchInSixtiethsAndDots % 12
+						semitone = pitchInCharsAndDots[:2]
 						semitoneNumber = 0
 
 						for knownSemitone in self.noteNameLookupTable:
 							if semitone == knownSemitone:
-								octave = floor(pitchInSixtiethsAndDots / 12)
+								octave = pitchInCharsAndDots[2:]
 								pitchInSixtiethsAndDots = semitoneNumber + ((int(octave) - 1) * 12) # C-1 is note 0, F#2 is 18 etc.
 								break
 
