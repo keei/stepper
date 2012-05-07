@@ -1,5 +1,6 @@
 Important, low-level stuff:
 XML's beginning to look overkill again compared to plain text matrices, especially if we don't need a pattern sequence, we just keep copying them.  At any rate, make sure saving and loading files still works!
+Using floats in the range of 0 to 5 may be straightforward to look at, but we're going to turn these software values into analogue signals via reasonably cheap 12-bit DACs, so the 0 to 60 range integers will NOT be divided by 12 to form 0 to 5 range floats.  Instead, they'll be multiplied by 68.25 to form 0 to 4095 range integers.
 
 Essential features:
 There should be looping options: loop through current pattern forever; cycle through playing all (non-blank) patterns forever; cycle through playing all (non-blank) patterns once, then stop.  (Pattern loop, song loop, song one-shot.)
