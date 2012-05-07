@@ -303,7 +303,14 @@ class Sequencer:
 					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['cv1'] = cv1
 					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['cv2'] = cv2
 
+	def convertNumberIntoChars(self, number):
+		"""Convert a number into three characters, suitable for display on an LCD."""
+		number = int(number)
+		number = '%03d' % number
+		return number
+
 	def convertSixtiethIntoChars(self, sixtieth):
+		"""Convert a number between 0 and 60 into two characters, suitable for display on a screen with a fixed width font.  Convert the number 61 into two dots."""
 		sixtieth = int(sixtieth) # This should be unnecessary.  It may be a sign that things need to be debugged.
 		sixtieth = '%02d' % sixtieth
 
@@ -399,11 +406,14 @@ class Sequencer:
 	def getSwing(self):
 		return self.swingInBipolarVolts
 
-	def getTrackLength(self):
-		return len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) * self.averageRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
+	def getTempo(self):
+		return int(self.tempo)
 
 	def getTime(self):
 		return self.timeInSeconds
+
+	def getTrackLength(self):
+		return len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) * self.averageRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
 
 	def incrementCurrentChannelNumber(self):
 		if self.currentChannelNumber < self.numberOfChannels - 1:

@@ -58,10 +58,20 @@ while (True):
 			sequencer.setPlaying(True)
 
 	if key == 'a':
-		pass
+		if lcdMode == 'patternSelect':
+			pass
+		elif lcdMode == 'patternLength':
+			pass
+		elif lcdMode == 'tempo':
+			pass
 
 	if key == 's':
-		pass
+		if lcdMode == 'patternSelect':
+			pass
+		elif lcdMode == 'patternLength':
+			pass
+		elif lcdMode == 'tempo':
+			pass
 
 	if key == 'd':
 		lcdMode = 'patternSelect'
@@ -266,10 +276,13 @@ while (True):
 
 	# Print out the LCD area's settings
 	if lcdMode == 'patternSelect':
+		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 		cursePrint(8, 4, 'o')
 	elif lcdMode == 'patternLength':
+		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
 		cursePrint(8, 21, 'o')
 	elif lcdMode == 'tempo':
+		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getTempo()))
 		cursePrint(8, 38, 'o')
 
 	# Print out the current event
