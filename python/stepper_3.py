@@ -24,6 +24,7 @@ os.system('clear')
 startTimeInSeconds = time.time()
 iterationsPerSecond = 0
 iterationsThisSecond = 0
+lcdMode = 'tempo'
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
@@ -55,6 +56,21 @@ while (True):
 			sequencer.setPlaying(False)
 		else:
 			sequencer.setPlaying(True)
+
+	if key == 'a':
+		pass
+
+	if key == 's':
+		pass
+
+	if key == 'd':
+		lcdMode = 'patternSelect'
+
+	if key == 'f':
+		lcdMode = 'patternLength'
+
+	if key == 'g':
+		lcdMode = 'tempo'
 
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getPitchInSixtiethsAndDots() != 61:
@@ -247,6 +263,14 @@ while (True):
 			cursePrint(i, 67, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
 
 		i = i + 1
+
+	# Print out the LCD area's settings
+	if lcdMode == 'patternSelect':
+		cursePrint(8, 4, 'o')
+	elif lcdMode == 'patternLength':
+		cursePrint(8, 21, 'o')
+	elif lcdMode == 'tempo':
+		cursePrint(8, 38, 'o')
 
 	# Print out the current event
 	if semitone == 0 and pitchName != 61:
