@@ -11,7 +11,7 @@ import surf
 import time
 
 sequencer = surf.Sequencer()
-sequencer.loadSong('2012.xml')
+# sequencer.loadSong('2012.xml')
 sequencer.setLoop(True)
 
 previousCycleTimeInSeconds = 0
@@ -89,11 +89,15 @@ while (True):
 		else:
 			sequencer.setSemitone(0)
 
+		sequencer.incrementCurrentRowNumber()
+
 	if key == '2':
 		if sequencer.getSemitone() == 1:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(1)
+
+		sequencer.incrementCurrentRowNumber()
 
 	if key == 'w':
 		if sequencer.getSemitone() == 2:
@@ -101,11 +105,15 @@ while (True):
 		else:
 			sequencer.setSemitone(2)
 
+		sequencer.incrementCurrentRowNumber()
+
 	if key == '3':
 		if sequencer.getSemitone() == 3:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(3)
+
+		sequencer.incrementCurrentRowNumber()
 
 	if key == 'e':
 		if sequencer.getSemitone() == 4:
@@ -113,11 +121,15 @@ while (True):
 		else:
 			sequencer.setSemitone(4)
 
+		sequencer.incrementCurrentRowNumber()
+
 	if key == 'r':
 		if sequencer.getSemitone() == 5:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(5)
+
+		sequencer.incrementCurrentRowNumber()
 
 	if key == '5':
 		if sequencer.getSemitone() == 6:
@@ -125,11 +137,15 @@ while (True):
 		else:
 			sequencer.setSemitone(6)
 
+		sequencer.incrementCurrentRowNumber()
+
 	if key == 't':
 		if sequencer.getSemitone() == 7:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(7)
+
+		sequencer.incrementCurrentRowNumber()
 
 	if key == '6':
 		if sequencer.getSemitone() == 8:
@@ -137,11 +153,15 @@ while (True):
 		else:
 			sequencer.setSemitone(8)
 
+		sequencer.incrementCurrentRowNumber()
+
 	if key == 'y':
 		if sequencer.getSemitone() == 9:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(9)
+
+		sequencer.incrementCurrentRowNumber()
 
 	if key == '7':
 		if sequencer.getSemitone() == 10:
@@ -149,11 +169,15 @@ while (True):
 		else:
 			sequencer.setSemitone(10)
 
+		sequencer.incrementCurrentRowNumber()
+
 	if key == 'u':
 		if sequencer.getSemitone() == 11:
 			sequencer.setPitch(61)
 		else:
 			sequencer.setSemitone(11)
+
+		sequencer.incrementCurrentRowNumber()
 
 	if key == 'i':
 		if sequencer.getGateInSixtieths() == 0:
