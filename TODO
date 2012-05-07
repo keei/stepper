@@ -1,9 +1,10 @@
 Important, low-level stuff:
-Should row adding and removing be done at the end of the array, or at the cursor's current position?
+Should row adding and removing be done at the end of the array, or at the cursor's current position?  (The end is probably fine; "insert at cursor position" only would mean you couldn't append after the last row.  It would be too confusing to users to implement both insert and append via a button-and-LED interface.)
+Check how well pattern copying works.  It seems to leave vestigial traces of CV and/or gate settings.
 
 Nice features:
+There should be looping options: loop through current pattern forever; cycle through playing all (non-blank) patterns forever; cycle through playing all (non-blank) patterns once, then stop.  (Pattern loop, song loop, song one-shot.)
 I need to improve the README file.
-I should implement chaining patterns together, copying them and wiping them.  Thinking about this, a "copy pattern" button and "paste pattern" button (and maybe a "clipboard full" LED) would make the chaining somewhat unnecessary (simply copy and paste the pattern if you'd like to play it again), along with wiping (simply copy and paste a blank pattern).  (Actually, a single "copy" button would suffice: press once to copy; press again to paste.  So it could have a single "copy" LED to go with it.)
 XML's beginning to look overkill again compared to plain text matrices, especially if we don't need a pattern sequence, we just keep copying them.
 Make an ADSR envelope generator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)

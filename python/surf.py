@@ -229,6 +229,7 @@ class Sequencer:
 	artistEmailAddress = ''
 	artistName = ''
 	averageRowLengthInSeconds = 0.0
+	clipboard = []
 	clipboardFull = False
 	currentChannelNumber = 0
 	currentRowNumber = 0
@@ -364,6 +365,7 @@ class Sequencer:
 		return sixtieth
 
 	def copyPattern(self):
+		self.clipboard = self.patternsInSixtiethsAndDots[self.currentPatternNumber]
 		self.clipboardFull = True
 
 	def decrementCurrentChannelNumber(self):
@@ -668,6 +670,8 @@ class Sequencer:
 		self.convertPatterns()
 
 	def pastePattern(self):
+		self.patternsInSixtiethsAndDots[self.currentPatternNumber] = self.clipboard
+		self.clipboard = []
 		self.clipboardFull = False
 
 	def removeRow(self):
