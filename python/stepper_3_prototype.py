@@ -20,6 +20,7 @@ interface = curses.initscr()
 interface.nodelay(True)
 curses.noecho()
 os.system('clear')
+ttySize = interface.getmaxyx()
 
 startTimeInSeconds = time.time()
 iterationsPerSecond = 0
@@ -259,7 +260,8 @@ while (True):
 
 		i = i + 1
 
-	cursePrint(i, 55, '                      ') # In case a row's just been removed
+	for i in range(i, ttySize[0]):
+		cursePrint(i, 55, '                      ') # In case a row's just been removed, or the pattern's just been changed
 	i = 0
 
 	for event in patternInSixtieths:
