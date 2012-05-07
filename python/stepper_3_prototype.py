@@ -59,7 +59,7 @@ while (True):
 
 	if key == 'a':
 		if lcdMode == 'patternSelect':
-			pass
+			sequencer.decrementCurrentPatternNumber()
 		elif lcdMode == 'patternLength':
 			pass
 		elif lcdMode == 'tempo':
@@ -67,7 +67,7 @@ while (True):
 
 	if key == 's':
 		if lcdMode == 'patternSelect':
-			pass
+			sequencer.incrementCurrentPatternNumber()
 		elif lcdMode == 'patternLength':
 			pass
 		elif lcdMode == 'tempo':

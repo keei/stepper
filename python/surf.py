@@ -252,8 +252,23 @@ class Sequencer:
 		self.addPattern() # Add the first pattern, pattern 0
 
 	def addPattern(self):
+		"""Add a blank pattern to the end of the array."""
 		self.patternsInSixtieths.append([])
 		self.patternsInSixtiethsAndDots.append([])
+		pattern = len(self.patternsInSixtieths) - 1
+
+		for row in range(16):
+			self.patternsInSixtieths[pattern].append([])
+			self.patternsInSixtiethsAndDots[pattern].append([])
+
+			for channel in range(self.numberOfChannels):
+				self.patternsInSixtieths[pattern][row].append([])
+				self.patternsInSixtiethsAndDots[pattern][row].append([])
+
+				self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
+				self.patternsInSixtiethsAndDots[pattern][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
+
+		self.convertPatterns()
 
 	def convertPatterns(self):
 		"""Convert self.patternsInSixtiethsAndDots to self.patternsInSixtieths."""
@@ -424,8 +439,10 @@ class Sequencer:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
-		if self.currentPatternNumber < len(self.patternsInSixtiethsAndDots) - 1:
-			self.currentPatternNumber = self.currentPatternNumber + 1
+		if self.currentPatternNumber == len(self.patternsInSixtiethsAndDots) - 1:
+			self.addPattern()
+
+		self.currentPatternNumber = self.currentPatternNumber + 1
 
 	def incrementTime(self, incrementLengthInSeconds):
 		if self.playing == False:
@@ -531,6 +548,11 @@ class Sequencer:
 		return incrementLengthInSeconds
 
 	def loadSong(self, filename):
+		# Wipe the old song
+		self.patternsInSixtieths = []
+		self.patternsInSixtiethsAndDots = []
+
+		# Load in the new song
 		self.patternsInSixtiethsAndDots = []
 		xmlSong = ElementTree.ElementTree()
 		xmlSong.parse(filename)
