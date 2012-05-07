@@ -309,6 +309,9 @@ class Sequencer:
 
 					if channel['pitch'] != 61:
 						pitch = channel['pitch']
+						note = True
+					else:
+						note = False
 
 					slide = channel['slide']
 
@@ -316,16 +319,20 @@ class Sequencer:
 						gate = channel['gate']
 					elif slide == True:
 						gate = 60
-					elif channel['pitch'] != 61:
+					elif note == True:
 						gate = 30
 					else:
 						gate = 0
 
 					if channel['cv1'] != 61:
 						cv1 = channel['cv1']
+					elif note == True: # By default, new notes have CV1 set to 0
+						cv1 = 0
 
 					if channel['cv2'] != 61:
 						cv2 = channel['cv2']
+					elif note == True: # By default, new notes have CV2 set to 0
+						cv2 = 0
 
 					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['pitch'] = pitch
 					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['slide'] = slide
