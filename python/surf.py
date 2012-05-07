@@ -229,6 +229,7 @@ class Sequencer:
 	artistEmailAddress = ''
 	artistName = ''
 	averageRowLengthInSeconds = 0.0
+	clipboardFull = False
 	currentChannelNumber = 0
 	currentRowNumber = 0
 	currentPatternNumber = 0
@@ -362,6 +363,9 @@ class Sequencer:
 
 		return sixtieth
 
+	def copyPattern(self):
+		self.clipboardFull = True
+
 	def decrementCurrentChannelNumber(self):
 		if self.currentChannelNumber > 0:
 			self.currentChannelNumber = self.currentChannelNumber - 1
@@ -383,6 +387,9 @@ class Sequencer:
 
 	def getArtistName(self, artistName):
 		return self.artistName
+
+	def getClipboardStatus(self):
+		return self.clipboardFull
 
 	def getCurrentChannelNumber(self):
 		return self.currentChannelNumber
@@ -659,6 +666,9 @@ class Sequencer:
 
 		self.numberOfChannels = channelNumber
 		self.convertPatterns()
+
+	def pastePattern(self):
+		self.clipboardFull = False
 
 	def removeRow(self):
 		"""Remove the last value for all channels."""

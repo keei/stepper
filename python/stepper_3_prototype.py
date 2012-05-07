@@ -83,6 +83,12 @@ while (True):
 	if key == 'g':
 		lcdMode = 'tempo'
 
+	if key == 'h':
+		if clipboardFull == True:
+			sequencer.pastePattern()
+		else:
+			sequencer.copyPattern()
+
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getPitchInSixtiethsAndDots() != 61:
 			sequencer.setPitch(61)
@@ -233,6 +239,7 @@ while (True):
 	cv1Output = sequencer.getCV1Output(0)
 	gateOutput = sequencer.getGateOutput(0)
 
+	clipboardFull = sequencer.getClipboardStatus()
 	cv1 = sequencer.getCV1InSixtieths()
 	gate = sequencer.getGateInSixtiethsAndDots()
 	octave = sequencer.getOctave()
@@ -256,8 +263,8 @@ while (True):
 	cursePrint(5, 0, 'CV2             N/A')
 	cursePrint(6, 0, 'Gate            ' + str(gateOutput))
 
-	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo         ')
-	cursePrint(9, 0, 'A S    D                F                G            ')
+	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
+	cursePrint(9, 0, 'A S    D                F                G         H  ')
 	cursePrint(10, 0, '    .     .        .     .     .                     ')
 	cursePrint(11, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
 	cursePrint(12, 0, 'C-  2 D-  3 E- F-  5 G-  6 A-  7 B- NT DN UP AC SL BK')
@@ -317,6 +324,9 @@ while (True):
 	elif lcdMode == 'tempo':
 		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getTempo()))
 		cursePrint(8, 38, 'o')
+
+	if clipboardFull == True:
+		cursePrint(8, 48, 'o')
 
 	# Print out the current event
 	if semitone == 0 and pitchName != 61:
