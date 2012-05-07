@@ -255,7 +255,7 @@ class Sequencer:
 		"""Add a blank pattern to the end of the array."""
 		self.patternsInSixtieths.append([])
 		self.patternsInSixtiethsAndDots.append([])
-		pattern = len(self.patternsInSixtieths) - 1
+		pattern = len(self.patternsInSixtiethsAndDots) - 1
 
 		for row in range(16):
 			self.patternsInSixtieths[pattern].append([])
@@ -267,6 +267,21 @@ class Sequencer:
 
 				self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
 				self.patternsInSixtiethsAndDots[pattern][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
+
+		self.convertPatterns()
+
+	def addRow(self):
+		"""Add a blank row to the end of the pattern."""
+		self.patternsInSixtieths[self.currentPatternNumber].append([])
+		self.patternsInSixtiethsAndDots[self.currentPatternNumber].append([])
+		row = len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1
+
+		for channel in range(self.numberOfChannels):
+			self.patternsInSixtieths[self.currentPatternNumber][row].append([])
+			self.patternsInSixtiethsAndDots[self.currentPatternNumber][row].append([])
+
+			self.patternsInSixtieths[self.currentPatternNumber][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
+			self.patternsInSixtiethsAndDots[self.currentPatternNumber][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
 
 		self.convertPatterns()
 
@@ -631,7 +646,9 @@ class Sequencer:
 
 	def removeRow(self):
 		"""Remove the last value for all channels."""
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber].pop()
+		if len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) > 1:
+			self.patternsInSixtiethsAndDots[self.currentPatternNumber].pop()
+			self.patternsInSixtieths[self.currentPatternNumber].pop()
 
 	def saveSong(self, filename):
 		xmlSong = ElementTree.Element('song')

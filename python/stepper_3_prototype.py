@@ -61,7 +61,7 @@ while (True):
 		if lcdMode == 'patternSelect':
 			sequencer.decrementCurrentPatternNumber()
 		elif lcdMode == 'patternLength':
-			pass
+			sequencer.removeRow()
 		elif lcdMode == 'tempo':
 			sequencer.decrementTempo()
 
@@ -69,7 +69,7 @@ while (True):
 		if lcdMode == 'patternSelect':
 			sequencer.incrementCurrentPatternNumber()
 		elif lcdMode == 'patternLength':
-			pass
+			sequencer.addRow()
 		elif lcdMode == 'tempo':
 			sequencer.incrementTempo()
 
@@ -259,6 +259,7 @@ while (True):
 
 		i = i + 1
 
+	cursePrint(i, 55, '                      ') # In case a row's just been removed
 	i = 0
 
 	for event in patternInSixtieths:
