@@ -272,6 +272,9 @@ while (True):
 	i = 0
 
 	for event in patternInSixtiethsAndDots:
+		if i == ttySize[0]:
+			break
+
 		if event[0]['slide'] == True:
 			slideCharacter = 'S'
 		else:
@@ -289,6 +292,9 @@ while (True):
 	i = 0
 
 	for event in patternInSixtieths:
+		if i == ttySize[0]:
+			break
+
 		if event[0]['slide'] == True:
 			slideCharacter = 'S'
 		else:
