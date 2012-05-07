@@ -243,7 +243,7 @@ class Sequencer:
 	songInformation = ''
 	songName = ''
 	swingInBipolarVolts = 0.0
-	tempo = 120.0
+	tempo = 120
 	timeInSeconds = 0.0
 
 	def __init__(self):
@@ -346,6 +346,10 @@ class Sequencer:
 		if self.currentPatternNumber > 0:
 			self.currentPatternNumber = self.currentPatternNumber - 1
 
+	def decrementTempo(self):
+		if self.tempo > 1:
+			self.setTempo(self.tempo - 1)
+
 	def getArtistEmailAddress(self, artistEmailAddress):
 		return self.artistEmailAddress
 
@@ -422,7 +426,7 @@ class Sequencer:
 		return self.swingInBipolarVolts
 
 	def getTempo(self):
-		return int(self.tempo)
+		return self.tempo
 
 	def getTime(self):
 		return self.timeInSeconds
@@ -443,6 +447,10 @@ class Sequencer:
 			self.addPattern()
 
 		self.currentPatternNumber = self.currentPatternNumber + 1
+
+	def incrementTempo(self):
+		if self.tempo < 300:
+			self.setTempo(self.tempo + 1)
 
 	def incrementTime(self, incrementLengthInSeconds):
 		if self.playing == False:
@@ -560,7 +568,7 @@ class Sequencer:
 		self.artistName = xmlSong.find('artist-name').text
 		self.artistEmailAddress = xmlSong.find('artist-email-address').text
 		self.songInformation = xmlSong.find('information').text
-		self.songTempo = float(xmlSong.find('tempo').text) # Internally stored as a float so that division works with it.  In XML song files, it's a string pretending to be an int.
+		self.songTempo = int(xmlSong.find('tempo').text)
 		patternsInSixtiethsAndDots = list(xmlSong.iter('pattern'))
 
 		for pattern in patternsInSixtiethsAndDots:
@@ -641,7 +649,7 @@ class Sequencer:
 		xmlSongInformation.text = self.songInformation
 
 		xmlTempo = ElementTree.SubElement(xmlSong, 'tempo')
-		xmlTempo.text = str(int(self.tempo))
+		xmlTempo.text = str(self.tempo)
 
 		xmlPatterns = ElementTree.SubElement(xmlSong, 'patternsInSixtiethsAndDots')
 		patternNumber = 0
@@ -779,8 +787,8 @@ class Sequencer:
 		self.swingInBipolarVolts = swingInBipolarVolts
 
 	def setTempo(self, tempo):
-		self.tempo = float(tempo)
-		crotchetLengthInSeconds = 60.0 / self.tempo
+		self.tempo = int(tempo)
+		crotchetLengthInSeconds = 60.0 / float(self.tempo)
 		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
 		self.averageRowLengthInSeconds = semiquaverLengthInSeconds
 
