@@ -1,6 +1,6 @@
 Important, low-level stuff:
+It appears to currently be impossible to have the same note twice in a row for some reason.
 Should row adding and removing be done at the end of the array, or at the cursor's current position?  (The end is probably fine; "insert at cursor position" only would mean you couldn't append after the last row.  It would be too confusing to users to implement both insert and append via a button-and-LED interface.)
-Check how well pattern copying works.  It seems to leave vestigial traces of CV and/or gate settings.
 
 Nice features:
 There should be looping options: loop through current pattern forever; cycle through playing all (non-blank) patterns forever; cycle through playing all (non-blank) patterns once, then stop.  (Pattern loop, song loop, song one-shot.)

@@ -672,6 +672,7 @@ class Sequencer:
 	def pastePattern(self):
 		self.patternsInSixtiethsAndDots[self.currentPatternNumber] = self.clipboard
 		self.clipboard = []
+		self.convertPatterns()
 		self.clipboardFull = False
 
 	def removeRow(self):
