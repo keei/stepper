@@ -1,5 +1,4 @@
 Important, low-level stuff:
-It appears to currently be impossible to have the same note twice in a row for some reason.
 XML's beginning to look overkill again compared to plain text matrices, especially if we don't need a pattern sequence, we just keep copying them.  At any rate, make sure saving and loading files still works!
 
 Essential features:
