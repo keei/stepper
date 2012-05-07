@@ -1,4 +1,7 @@
 #include "Sequencer.cpp"
 
-int main() {
+void setup() {
+}
+
+void loop() {
 }
