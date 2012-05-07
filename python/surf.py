@@ -510,7 +510,7 @@ class Sequencer:
 		nextRowNumber = currentRowNumber + 1
 
 		if nextRowNumber > len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1:
-			nextRowNumber = len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1
+			nextRowNumber = 0 # Wrap around from the last note in the pattern to the first note in the pattern.  Slide to that.  Let's not worry for now about whether the selected pattern will change.
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
 		for channel in range(self.numberOfChannels):

@@ -1,5 +1,4 @@
 Important, low-level stuff:
-I have a feeling slide doesn't work on the last note because I probably told it to never look further ahead than the last note.  When on the last note, it should look back to the first one.
 Stepper 3 should default to a CV1 of '00' (off), not '..' (continue what it was in the last step), because for this one particular interface to Surf, CV1 is being used for the note's accent.
 I need to think about the implication about these sixtieths.  I believe it means we can actually go ahead and make no distinction whatsoever between pitches and anything else: CVs only increment in semitones, if you'd like to think of them as such.  So calling the pitch a pitch, and calling CV1 and CV2 anything other than a pitch, is quite possibly an arbitrary distinction.  This sounds like it might need to novel applications if I encourage that sort of thinking.
 Should row adding and removing be done at the end of the array, or at the cursor's current position?
