@@ -253,6 +253,9 @@ class Sequencer:
 
 	def addPattern(self):
 		"""Add a blank pattern to the end of the array."""
+		if len(self.patternsInSixtiethsAndDots) == 256: # I'm setting an arbitrary limit of 256 patterns in a song.
+			return
+
 		self.patternsInSixtieths.append([])
 		self.patternsInSixtiethsAndDots.append([])
 		pattern = len(self.patternsInSixtiethsAndDots) - 1
@@ -468,6 +471,9 @@ class Sequencer:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
+		if self.currentPatternNumber == 255: # I'm setting an arbitrary limit of 256 patterns in a song, starting with pattern number 0.
+			return
+
 		if self.currentPatternNumber == len(self.patternsInSixtiethsAndDots) - 1:
 			self.addPattern()
 
