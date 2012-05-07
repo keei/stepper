@@ -272,6 +272,9 @@ class Sequencer:
 
 	def addRow(self):
 		"""Add a blank row to the end of the pattern."""
+		if len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) == 64: # I'm setting an arbitrary limit of 64 rows in a pattern.
+			return
+
 		self.patternsInSixtieths[self.currentPatternNumber].append([])
 		self.patternsInSixtiethsAndDots[self.currentPatternNumber].append([])
 		row = len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1
