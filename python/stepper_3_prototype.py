@@ -16,6 +16,7 @@ surf.NUMBER_OF_CHANNELS = 1
 
 sequencer = surf.Sequencer()
 sequencer.loadSong('memory.stepper3')
+# sequencer.saveSong('memory.stepper3')
 sequencer.setLoop(True)
 
 previousCycleTimeInSeconds = 0
@@ -342,18 +343,18 @@ while (True):
 	cursePrint(17, 0, 'Tab to toggle play/stop mode')
 	cursePrint(18, 0, 'Space bar to quit')
 
-	# Print out the whole current pattern's events
+	# Print out the whole current pattern's rows
 	cursePrint(0, 55, 'NT SL GT AC')
 	i = 1
 
-	for event in patternInSixtieths:
+	for row in patternInSixtieths:
 		if i == ttySize[0]:
 			break
 
 		if i - 1 == currentRowNumber:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
+			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
 		else:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
+			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
 
 		i = i + 1
 
@@ -374,7 +375,7 @@ while (True):
 	if clipboardFull == True:
 		cursePrint(8, 48, 'o')
 
-	# Print out the current event
+	# Print out the current row
 	if semitone == 0 and pitchName != 61:
 		cursePrint(11, 1, 'o')
 	elif semitone == 1:

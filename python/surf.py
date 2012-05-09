@@ -581,7 +581,35 @@ class Sequencer:
 					self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
 
 	def saveSong(self, filename):
-		file = open(filename)
+		# Save the current song
+		song = open(filename, 'w')
+		currentPatternNumber = 0
+		# currentRowNumber = 0
+
+		for pattern in self.patternsInSixtieths:
+			currentPatternNumber = currentPatternNumber + 1
+
+			for row in pattern:
+				# currentRowNumber = currentRowNumber + 1
+
+				for channel in range(NUMBER_OF_CHANNELS):
+					# In C, we'd use self.patternsInSixtieths[pattern][row][channel]['pitch'] etc.
+					pitch = self.convertSixtiethIntoChars(row[channel]['pitch'])
+					slide = self.convertSixtiethIntoChars(row[channel]['slide'])
+					gate = self.convertSixtiethIntoChars(row[channel]['gate'])
+					cv1 = self.convertSixtiethIntoChars(row[channel]['cv1'])
+					cv2 = self.convertSixtiethIntoChars(row[channel]['cv2'])
+					song.write(pitch + ' ' + slide + ' ' + gate + ' ' + cv1 + ' ' + cv2)
+
+					if channel != NUMBER_OF_CHANNELS - 1:
+						song.write('  ')
+					else:
+						song.write('\n') # I'm arbitrarily adding each row's \n here...
+
+				# ...We could just as easily put each row's \n here unconditionally.
+
+			if currentPatternNumber != MAX_NUMBER_OF_PATTERNS - 1: # This isn't working yet.
+				song.write('\n')
 
 	def setArtistEmailAddress(self, artistEmailAddress):
 		self.artistEmailAddress = artistEmailAddress

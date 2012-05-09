@@ -1,5 +1,6 @@
 Important, low-level stuff:
-Make sure saving and loading files still works!
+Make sure saving and loading files works!  Saving has a stray \n at the end for some reason.
+Implement binary loading and saving.  (If I add 48 to each number, it will even be half readable in ASCII.  OK, maybe a quarter readable.)
 Using floats in the range of 0 to 5 may be straightforward to look at, but we're going to turn these software values into analogue signals via reasonably cheap 12-bit DACs, so the 0 to 60 range integers will NOT be divided by 12 to form 0 to 5 range floats.  Instead, they'll be multiplied by 68.25 to form 0 to 4095 range integers.
 Should (even if it's just nominal rather than fully implemented for now) each event have a specific duration, allowing the channels to be fully independent of one another timing wise?  If implemented (and I'm not yet sure if it's a good idea or not), it would allow the library to power not just step sequencer interfaces but also fully fledged (albeit likely difficult to program) freehand sequencer ones.  For example, two extra 0-60 values could store the note duration as the number of semiquaver lengths the note lasts (0 to 60) plus the fraction of a single semiquaver length it lasts (0/60th to 60/60ths).  Of course, this would mean the longest note couldn't be four bars long, but that sounds reasonable for a hobbyist sequencer.
 
