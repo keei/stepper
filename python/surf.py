@@ -256,7 +256,6 @@ class Sequencer:
 	gateInSixtieths = []
 	gateInUnipolarVolts = []
 	loop = False
-	# noteCvLookupTable = [0.0, 0.083, 0.166, 0.25, 0.333, 0.416, 0.5, 0.583, 0.666, 0.75, 0.833, 0.916] # I should use this
 	numberOfPatterns = 1
 	numberOfRows = []
 	patternPositionInSeconds = 0.0
@@ -470,7 +469,7 @@ class Sequencer:
 		for channel in range(NUMBER_OF_CHANNELS):
 			# Convert the pitch to a control voltage, 1v/oct
 			pitchInSixtieths = self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][channel]['pitch']
-			self.pitchInUnipolarVolts[channel] = float(pitchInSixtieths) * 0.083 # I should improve this
+			self.pitchInUnipolarVolts[channel] = float(pitchInSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Slide if necessary
 			slide = self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][channel]['slide']
@@ -496,7 +495,7 @@ class Sequencer:
 			# Do the actual sliding
 			if slide == 60:
 				nextPitchInSixtieths = self.patternsInSixtieths[self.currentPatternNumber][nextRowNumber][channel]['pitch']
-				nextPitchInUnipolarVolts = float(nextPitchInSixtieths) * 0.08333 # I should improve this
+				nextPitchInUnipolarVolts = float(nextPitchInSixtieths) / 12.0 # / 60.0 * 5.0
 
 				nextEventCV1 = self.patternsInSixtieths[self.currentPatternNumber][nextRowNumber][channel]['cv1']
 				nextCV1InUnipolarVolts = float(nextEventCV1) / 12.0 # / 60.0 * 5.0
