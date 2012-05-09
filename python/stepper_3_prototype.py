@@ -276,13 +276,14 @@ while (True):
 	cursePrint(18, 0, 'Space bar to quit')
 
 	# Print out the whole current pattern's events
-	i = 0
+	cursePrint(0, 55, 'NT SL GT AC  NT SL GT AC')
+	i = 1
 
 	for event in patternInSixtiethsAndGaps:
 		if i == ttySize[0]:
 			break
 
-		if i == currentRowNumber:
+		if i - 1 == currentRowNumber:
 			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
 		else:
 			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
@@ -291,13 +292,13 @@ while (True):
 
 	for i in range(i, ttySize[0]):
 		cursePrint(i, 55, '                      ') # In case a row's just been removed, or the pattern's just been changed
-	i = 0
+	i = 1
 
 	for event in patternInSixtieths:
 		if i == ttySize[0]:
 			break
 
-		if i == currentRowNumber:
+		if i - 1 == currentRowNumber:
 			cursePrint(i, 68, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
 		else:
 			cursePrint(i, 68, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
