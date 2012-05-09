@@ -235,6 +235,8 @@ class Sequencer:
 	loop = False
 	# noteCvLookupTable = [0.0, 0.083, 0.166, 0.25, 0.333, 0.416, 0.5, 0.583, 0.666, 0.75, 0.833, 0.916] # I should use this
 	numberOfChannels = 4
+	numberOfPatterns = 4
+	numberOfRows = []
 	patternPositionInSeconds = 0.0
 	patternsInSixtieths = []
 	playing = False
@@ -247,32 +249,12 @@ class Sequencer:
 		self.reset()
 
 	def addPattern(self):
-		"""Add a blank pattern to the end of the array."""
-		if len(self.patternsInSixtieths) == 16: # I'm setting an arbitrary limit of 16 patterns in a song.
-			return
-
-		self.patternsInSixtieths.append([])
-		pattern = len(self.patternsInSixtieths) - 1
-
-		for row in range(16):
-			self.patternsInSixtieths[pattern].append([])
-
-			for channel in range(self.numberOfChannels):
-				self.patternsInSixtieths[pattern][row].append([])
-				self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0}
+		if self.numberOfPatterns < 16:
+			self.numberOfPatterns = self.numberOfPatterns + 1
 
 	def addRow(self):
-		"""Add a blank row to the end of the pattern."""
-		if len(self.patternsInSixtieths[self.currentPatternNumber]) == 16: # I'm setting an arbitrary limit of 16 rows in a pattern.
-			return
-
-		self.patternsInSixtieths[self.currentPatternNumber].append([])
-		row = len(self.patternsInSixtieths[self.currentPatternNumber]) - 1
-
-		for channel in range(self.numberOfChannels):
-			self.patternsInSixtieths[self.currentPatternNumber][row].append([])
-
-			self.patternsInSixtieths[self.currentPatternNumber][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0}
+		if self.numberOfRows[self.currentPatternNumber] < 16:
+			self.numberOfRows[self.currentPatternNumber] = self.numberOfRows[self.currentPatternNumber] + 1
 
 	def convertNumberIntoChars(self, number):
 		"""Convert a number into three characters, suitable for display on an LCD."""
@@ -531,17 +513,34 @@ class Sequencer:
 		self.clipboard = []
 		self.clipboardFull = False
 
+	def removePattern(self):
+		if self.numberOfPatterns > 1:
+			self.numberOfPatterns = self.numberOfPatterns - 1
+
+			for row in range(16):
+				for channel in numberOfChannels:
+					self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber] + 1][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed pattern to defaults, namely silent Cs
+
 	def removeRow(self):
-		"""Remove the last value for all channels."""
-		if len(self.patternsInSixtieths[self.currentPatternNumber]) > 1:
-			self.patternsInSixtieths[self.currentPatternNumber].pop()
+		if self.numberOfRows[self.currentPatternNumber] > 1:
+			self.numberOfRows[self.currentPatternNumber] = self.numberOfRows[self.currentPatternNumber] - 1
+
+			for channel in numberOfChannels:
+				self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber] + 1][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
 
 	def reset(self):
 		self.setTempo(120) # Default to 120BPM
 		self.patternsInSixtieths = []
 
-		for i in range(16):
-			self.addPattern() # Add the first pattern, pattern 0
+		for pattern in range(16): # 16 patterns maximum
+			self.patternsInSixtieths.append([])
+
+			for row in range(16): # 16 rows per pattern maximum
+				self.patternsInSixtieths[pattern].append([])
+
+				for channel in range(self.numberOfChannels):
+					self.patternsInSixtieths[pattern][row].append([])
+					self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
 
 	def saveSong(self, filename):
 		file = open(filename)
