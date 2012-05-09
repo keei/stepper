@@ -210,10 +210,10 @@ while (True):
 			sequencer.setCV1(0)
 
 	if key == ']':
-		if sequencer.getSlide() == True:
-			sequencer.setSlide(False)
+		if sequencer.getSlide() == 60:
+			sequencer.setSlide(0)
 		else:
-			sequencer.setSlide(True)
+			sequencer.setSlide(60)
 
 	# if key == chr(curses.KEY_BACKSPACE):
 	if key == '-':
@@ -282,15 +282,10 @@ while (True):
 		if i == ttySize[0]:
 			break
 
-		if event[0]['slide'] == True:
-			slideCharacter = 'S'
-		else:
-			slideCharacter = '.'
-
 		if i == currentRowNumber:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
+			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
 		else:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
+			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
 
 		i = i + 1
 
@@ -302,15 +297,10 @@ while (True):
 		if i == ttySize[0]:
 			break
 
-		if event[0]['slide'] == True:
-			slideCharacter = 'S'
-		else:
-			slideCharacter = '.'
-
 		if i == currentRowNumber:
-			cursePrint(i, 67, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
+			cursePrint(i, 68, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
 		else:
-			cursePrint(i, 67, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + slideCharacter + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
+			cursePrint(i, 68, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
 
 		i = i + 1
 
@@ -374,7 +364,7 @@ while (True):
 	else:
 		cv1Character = '.'
 
-	if slide == True:
+	if slide == 60:
 		slideCharacter = 'o'
 	else:
 		slideCharacter = '.'

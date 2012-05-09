@@ -270,8 +270,8 @@ class Sequencer:
 				self.patternsInSixtieths[pattern][row].append([])
 				self.patternsInSixtiethsAndGaps[pattern][row].append([])
 
-				self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
-				self.patternsInSixtiethsAndGaps[pattern][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
+				self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
+				self.patternsInSixtiethsAndGaps[pattern][row][channel] = {'pitch': 61, 'slide': 0, 'gate': 61, 'cv1': 61, 'cv2': 61}
 
 		self.convertPatterns()
 
@@ -288,8 +288,8 @@ class Sequencer:
 			self.patternsInSixtieths[self.currentPatternNumber][row].append([])
 			self.patternsInSixtiethsAndGaps[self.currentPatternNumber][row].append([])
 
-			self.patternsInSixtieths[self.currentPatternNumber][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
-			self.patternsInSixtiethsAndGaps[self.currentPatternNumber][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
+			self.patternsInSixtieths[self.currentPatternNumber][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
+			self.patternsInSixtiethsAndGaps[self.currentPatternNumber][row][channel] = {'pitch': 61, 'slide': 0, 'gate': 61, 'cv1': 61, 'cv2': 61}
 
 		self.convertPatterns()
 
@@ -300,7 +300,7 @@ class Sequencer:
 		cv2 = 0
 		gate = 0
 		pitch = 12
-		slide = False
+		slide = 0
 
 		patternNumber = 0
 
@@ -325,7 +325,7 @@ class Sequencer:
 
 					if channel['gate'] != 61:
 						gate = channel['gate']
-					elif slide == True:
+					elif slide == 60:
 						gate = 60
 					elif note == True:
 						gate = 30
@@ -565,7 +565,7 @@ class Sequencer:
 			self.cv2InUnipolarVolts[channel] = float(cv2InSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Do the actual sliding
-			if slide == True:
+			if slide == 60:
 				nextPitchInSixtieths = self.patternsInSixtieths[self.currentPatternNumber][nextRowNumber][channel]['pitch']
 				nextPitchInUnipolarVolts = float(nextPitchInSixtieths) * 0.08333 # I should improve this
 
@@ -650,9 +650,9 @@ class Sequencer:
 							semitoneNumber = semitoneNumber + 1
 
 					if slide == 'true':
-						slide = True
+						slide = 60
 					else:
-						slide = False
+						slide = 0
 
 					if not gate:
 						gate = 61
@@ -726,7 +726,7 @@ class Sequencer:
 
 					xmlSlide = ElementTree.SubElement(xmlChannel, 'slide')
 
-					if channel['slide'] == True:
+					if channel['slide'] == 60:
 						xmlSlide.text = 'true'
 					# else:
 						# xmlSlide.text = 'false'
