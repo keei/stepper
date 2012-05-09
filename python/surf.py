@@ -240,7 +240,7 @@ class Sequencer:
 	numberOfChannels = 4
 	patternPositionInSeconds = 0.0
 	patternsInSixtieths = []
-	patternsInSixtiethsAndDots = []
+	patternsInSixtiethsAndGaps = []
 	playing = False
 	songInformation = ''
 	songName = ''
@@ -255,46 +255,46 @@ class Sequencer:
 
 	def addPattern(self):
 		"""Add a blank pattern to the end of the array."""
-		if len(self.patternsInSixtiethsAndDots) == 16: # I'm setting an arbitrary limit of 16 patterns in a song.
+		if len(self.patternsInSixtiethsAndGaps) == 16: # I'm setting an arbitrary limit of 16 patterns in a song.
 			return
 
 		self.patternsInSixtieths.append([])
-		self.patternsInSixtiethsAndDots.append([])
-		pattern = len(self.patternsInSixtiethsAndDots) - 1
+		self.patternsInSixtiethsAndGaps.append([])
+		pattern = len(self.patternsInSixtiethsAndGaps) - 1
 
 		for row in range(16):
 			self.patternsInSixtieths[pattern].append([])
-			self.patternsInSixtiethsAndDots[pattern].append([])
+			self.patternsInSixtiethsAndGaps[pattern].append([])
 
 			for channel in range(self.numberOfChannels):
 				self.patternsInSixtieths[pattern][row].append([])
-				self.patternsInSixtiethsAndDots[pattern][row].append([])
+				self.patternsInSixtiethsAndGaps[pattern][row].append([])
 
 				self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
-				self.patternsInSixtiethsAndDots[pattern][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
+				self.patternsInSixtiethsAndGaps[pattern][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
 
 		self.convertPatterns()
 
 	def addRow(self):
 		"""Add a blank row to the end of the pattern."""
-		if len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) == 16: # I'm setting an arbitrary limit of 16 rows in a pattern.
+		if len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) == 16: # I'm setting an arbitrary limit of 16 rows in a pattern.
 			return
 
 		self.patternsInSixtieths[self.currentPatternNumber].append([])
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber].append([])
-		row = len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber].append([])
+		row = len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) - 1
 
 		for channel in range(self.numberOfChannels):
 			self.patternsInSixtieths[self.currentPatternNumber][row].append([])
-			self.patternsInSixtiethsAndDots[self.currentPatternNumber][row].append([])
+			self.patternsInSixtiethsAndGaps[self.currentPatternNumber][row].append([])
 
 			self.patternsInSixtieths[self.currentPatternNumber][row][channel] = {'pitch': 12, 'slide': False, 'gate': 0, 'cv1': 0, 'cv2': 0} # This will all be overwritten soon enough
-			self.patternsInSixtiethsAndDots[self.currentPatternNumber][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
+			self.patternsInSixtiethsAndGaps[self.currentPatternNumber][row][channel] = {'pitch': 61, 'slide': False, 'gate': 61, 'cv1': 61, 'cv2': 61}
 
 		self.convertPatterns()
 
 	def convertPatterns(self):
-		"""Convert self.patternsInSixtiethsAndDots to self.patternsInSixtieths."""
+		"""Convert self.patternsInSixtiethsAndGaps to self.patternsInSixtieths."""
 		# Defaults for the very first note only
 		cv1 = 0
 		cv2 = 0
@@ -304,7 +304,7 @@ class Sequencer:
 
 		patternNumber = 0
 
-		for pattern in self.patternsInSixtiethsAndDots:
+		for pattern in self.patternsInSixtiethsAndGaps:
 			patternNumber = patternNumber + 1
 			rowNumber = 0
 
@@ -365,7 +365,7 @@ class Sequencer:
 		return sixtieth
 
 	def copyPattern(self):
-		self.clipboard = self.patternsInSixtiethsAndDots[self.currentPatternNumber]
+		self.clipboard = self.patternsInSixtiethsAndGaps[self.currentPatternNumber]
 		self.clipboardFull = True
 
 	def decrementCurrentChannelNumber(self):
@@ -405,8 +405,8 @@ class Sequencer:
 	def getCV1InSixtieths(self):
 		return self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
 
-	def getCV1InSixtiethsAndDots(self):
-		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
+	def getCV1InSixtiethsAndGaps(self):
+		return self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1']
 
 	def getCV1Output(self, channel):
 		return self.cv1InUnipolarVolts[channel]
@@ -414,8 +414,8 @@ class Sequencer:
 	def getCV2InSixtieths(self):
 		return self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
 
-	def getCV2InSixtiethsAndDots(self):
-		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
+	def getCV2InSixtiethsAndGaps(self):
+		return self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2']
 
 	def getCV2Output(self, channel):
 		return self.cv2InUnipolarVolts[channel]
@@ -423,8 +423,8 @@ class Sequencer:
 	def getGateInSixtieths(self):
 		return self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
 
-	def getGateInSixtiethsAndDots(self):
-		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
+	def getGateInSixtiethsAndGaps(self):
+		return self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate']
 
 	def getGateOutput(self, channel):
 		return self.gateInUnipolarVolts[channel]
@@ -436,13 +436,13 @@ class Sequencer:
 		return floor(float(self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']) / 12.0)
 
 	def getPatternLength(self):
-		return len(self.patternsInSixtiethsAndDots[self.currentPatternNumber])
+		return len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber])
 
 	def getPitchOutput(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
-	def getPitchInSixtiethsAndDots(self):
-		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
+	def getPitchInSixtiethsAndGaps(self):
+		return self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch']
 
 	def getPlaying(self):
 		return self.playing
@@ -451,7 +451,7 @@ class Sequencer:
 		return self.patternsInSixtieths[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] % 12
 
 	def getSlide(self):
-		return self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide']
+		return self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide']
 
 	def getSongInformation(self, songInformation):
 		return self.songInformation
@@ -469,21 +469,21 @@ class Sequencer:
 		return self.timeInSeconds
 
 	def getTrackLength(self):
-		return len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) * self.averageRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
+		return len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) * self.averageRowLengthInSeconds # This is now grossly oversimplifying, for only having one pattern!
 
 	def incrementCurrentChannelNumber(self):
 		if self.currentChannelNumber < self.numberOfChannels - 1:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
 	def incrementCurrentRowNumber(self):
-		if self.currentRowNumber < len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1:
+		if self.currentRowNumber < len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) - 1:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
 		if self.currentPatternNumber == 15: # I'm setting an arbitrary limit of 16 patterns in a song, starting with pattern number 0.
 			return
 
-		if self.currentPatternNumber == len(self.patternsInSixtiethsAndDots) - 1:
+		if self.currentPatternNumber == len(self.patternsInSixtiethsAndGaps) - 1:
 			self.addPattern()
 
 		self.currentPatternNumber = self.currentPatternNumber + 1
@@ -516,7 +516,7 @@ class Sequencer:
 			rowLengthInSeconds = firstRowLengthInSeconds
 			rowPositionInSeconds = rowPairPositionInSeconds
 
-		if currentRowNumber > len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1:
+		if currentRowNumber > len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) - 1:
 			if self.loop == True:
 				self.patternPositionInSeconds = 0.0
 				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
@@ -527,14 +527,14 @@ class Sequencer:
 				rowPairPositionInSeconds = 0.0
 				rowPositionInSeconds = 0.0
 			else:
-				currentRowNumber = len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1
+				currentRowNumber = len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) - 1
 
 		self.currentRowNumber = currentRowNumber
 
 		# Read in the current and next event rows
 		nextRowNumber = currentRowNumber + 1
 
-		if nextRowNumber > len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) - 1:
+		if nextRowNumber > len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) - 1:
 			nextRowNumber = 0 # Wrap around from the last note in the pattern to the first note in the pattern.  Slide to that.  Let's not worry for now about whether the selected pattern will change.
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
@@ -598,10 +598,10 @@ class Sequencer:
 	def loadSong(self, filename):
 		# Wipe the old song
 		self.patternsInSixtieths = []
-		self.patternsInSixtiethsAndDots = []
+		self.patternsInSixtiethsAndGaps = []
 
 		# Load in the new song
-		self.patternsInSixtiethsAndDots = []
+		self.patternsInSixtiethsAndGaps = []
 		xmlSong = ElementTree.ElementTree()
 		xmlSong.parse(filename)
 		self.songName = xmlSong.find('name').text
@@ -609,42 +609,42 @@ class Sequencer:
 		self.artistEmailAddress = xmlSong.find('artist-email-address').text
 		self.songInformation = xmlSong.find('information').text
 		self.songTempo = int(xmlSong.find('tempo').text)
-		patternsInSixtiethsAndDots = list(xmlSong.iter('pattern'))
+		patternsInSixtiethsAndGaps = list(xmlSong.iter('pattern'))
 
-		for pattern in patternsInSixtiethsAndDots:
+		for pattern in patternsInSixtiethsAndGaps:
 			self.patternsInSixtieths.append([])
-			self.patternsInSixtiethsAndDots.append([])
+			self.patternsInSixtiethsAndGaps.append([])
 			patternNumber = int(pattern.attrib['number'])
 			rows = list(pattern.iter('row'))
 
 			for row in rows:
 				self.patternsInSixtieths[patternNumber - 1].append([])
-				self.patternsInSixtiethsAndDots[patternNumber - 1].append([])
+				self.patternsInSixtiethsAndGaps[patternNumber - 1].append([])
 				rowNumber = int(row.attrib['number'])
 				channels = list(row.iter('channel'))
 
 				for channel in channels:
 					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1].append([])
-					self.patternsInSixtiethsAndDots[patternNumber - 1][rowNumber - 1].append([])
+					self.patternsInSixtiethsAndGaps[patternNumber - 1][rowNumber - 1].append([])
 					channelNumber = int(channel.attrib['number'])
 
-					pitchInCharsAndDots = channel.find('pitch').text
+					pitchInCharsAndGaps = channel.find('pitch').text
 					slide = channel.find('slide').text
 					gate = channel.find('gate').text
 					cv1 = channel.find('cv1').text
 					cv2 = channel.find('cv2').text
 
-					if not pitchInCharsAndDots:
-						pitchInSixtiethsAndDots = 61
+					if not pitchInCharsAndGaps:
+						pitchInSixtiethsAndGaps = 61
 					else:
-						pitchInSixtiethsAndDots = 12 # Default to C-2 in case they entered a nonsensical pitch
-						semitone = pitchInCharsAndDots[:2]
+						pitchInSixtiethsAndGaps = 12 # Default to C-2 in case they entered a nonsensical pitch
+						semitone = pitchInCharsAndGaps[:2]
 						semitoneNumber = 0
 
 						for knownSemitone in self.noteNameLookupTable:
 							if semitone == knownSemitone:
-								octave = pitchInCharsAndDots[2:]
-								pitchInSixtiethsAndDots = semitoneNumber + ((int(octave) - 1) * 12) # C-1 is note 0, F#2 is 18 etc.
+								octave = pitchInCharsAndGaps[2:]
+								pitchInSixtiethsAndGaps = semitoneNumber + ((int(octave) - 1) * 12) # C-1 is note 0, F#2 is 18 etc.
 								break
 
 							semitoneNumber = semitoneNumber + 1
@@ -663,22 +663,22 @@ class Sequencer:
 					if not cv2:
 						cv2 = 61
 
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInSixtiethsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2} # This will all be overwritten soon enough
-					self.patternsInSixtiethsAndDots[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInSixtiethsAndDots, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
+					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInSixtiethsAndGaps, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2} # This will all be overwritten soon enough
+					self.patternsInSixtiethsAndGaps[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInSixtiethsAndGaps, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
 
 		self.numberOfChannels = channelNumber
 		self.convertPatterns()
 
 	def pastePattern(self):
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber] = self.clipboard
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber] = self.clipboard
 		self.clipboard = []
 		self.convertPatterns()
 		self.clipboardFull = False
 
 	def removeRow(self):
 		"""Remove the last value for all channels."""
-		if len(self.patternsInSixtiethsAndDots[self.currentPatternNumber]) > 1:
-			self.patternsInSixtiethsAndDots[self.currentPatternNumber].pop()
+		if len(self.patternsInSixtiethsAndGaps[self.currentPatternNumber]) > 1:
+			self.patternsInSixtiethsAndGaps[self.currentPatternNumber].pop()
 			self.patternsInSixtieths[self.currentPatternNumber].pop()
 
 	def saveSong(self, filename):
@@ -699,10 +699,10 @@ class Sequencer:
 		xmlTempo = ElementTree.SubElement(xmlSong, 'tempo')
 		xmlTempo.text = str(self.tempo)
 
-		xmlPatterns = ElementTree.SubElement(xmlSong, 'patternsInSixtiethsAndDots')
+		xmlPatterns = ElementTree.SubElement(xmlSong, 'patternsInSixtiethsAndGaps')
 		patternNumber = 0
 
-		for pattern in self.patternsInSixtiethsAndDots:
+		for pattern in self.patternsInSixtiethsAndGaps:
 			patternNumber = patternNumber + 1
 			xmlPattern = ElementTree.SubElement(xmlPatterns, 'pattern')
 			xmlPattern.attrib = {'number': str(patternNumber)}
@@ -756,15 +756,15 @@ class Sequencer:
 		self.artistName = artistName
 
 	def setCV1(self, cv1):
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1'] = cv1
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv1'] = cv1
 		self.convertPatterns()
 
 	def setCV2(self, cv2):
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2'] = cv2
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['cv2'] = cv2
 		self.convertPatterns()
 
 	def setGate(self, gate):
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate'] = gate
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['gate'] = gate
 		self.convertPatterns()
 
 	def setLoop(self, loop):
@@ -772,30 +772,30 @@ class Sequencer:
 
 	def setNumberOfChannels(self, numberOfChannels):
 		self.cv1InSixtieths = []
-		self.cv1InSixtiethsAndDots = []
+		self.cv1InSixtiethsAndGaps = []
 		self.cv1InUnipolarVolts = []
 		self.cv2InSixtieths = []
-		self.cv2InSixtiethsAndDots = []
+		self.cv2InSixtiethsAndGaps = []
 		self.cv2InUnipolarVolts = []
 		self.gateInSixtieths = []
-		self.gateInSixtiethsAndDots = []
+		self.gateInSixtiethsAndGaps = []
 		self.gateInUnipolarVolts = []
 		self.pitchInSixtieths = []
-		self.pitchInSixtiethsAndDots = []
+		self.pitchInSixtiethsAndGaps = []
 		self.pitchInUnipolarVolts = []
 
 		for channel in range(numberOfChannels):
 			self.cv1InSixtieths.append(0)
-			self.cv1InSixtiethsAndDots.append(61)
+			self.cv1InSixtiethsAndGaps.append(61)
 			self.cv1InUnipolarVolts.append(0.0)
 			self.cv2InSixtieths.append(0)
-			self.cv2InSixtiethsAndDots.append(61)
+			self.cv2InSixtiethsAndGaps.append(61)
 			self.cv2InUnipolarVolts.append(0.0)
 			self.gateInSixtieths.append(0)
-			self.gateInSixtiethsAndDots.append(61)
+			self.gateInSixtiethsAndGaps.append(61)
 			self.gateInUnipolarVolts.append(0.0)
 			self.pitchInSixtieths.append(12)
-			self.pitchInSixtiethsAndDots.append(61)
+			self.pitchInSixtiethsAndGaps.append(61)
 			self.pitchInUnipolarVolts.append(0.0)
 
 		self.numberOfChannels = numberOfChannels
@@ -803,11 +803,11 @@ class Sequencer:
 
 	def setOctave(self, octave):
 		semitone = self.getSemitone()
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
 		self.convertPatterns()
 
-	def setPitch(self, pitchInSixtiethsAndDots):
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchInSixtiethsAndDots
+	def setPitch(self, pitchInSixtiethsAndGaps):
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchInSixtiethsAndGaps
 		self.convertPatterns()
 
 	def setPlaying(self, playing):
@@ -818,11 +818,11 @@ class Sequencer:
 
 	def setSemitone(self, semitone):
 		octave = self.getOctave()
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
 		self.convertPatterns()
 
 	def setSlide(self, slide):
-		self.patternsInSixtiethsAndDots[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
+		self.patternsInSixtiethsAndGaps[self.currentPatternNumber][self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
 		self.convertPatterns()
 
 	def setSongInformation(self, songInformation):
