@@ -11,7 +11,7 @@ import surf
 import time
 
 sequencer = surf.Sequencer()
-# sequencer.loadSong('2012.xml')
+sequencer.loadSong('2012.stepper3')
 sequencer.setLoop(True)
 
 previousCycleTimeInSeconds = 0

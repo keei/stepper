@@ -280,61 +280,6 @@ class Sequencer:
 
 			self.patternsInSixtieths[self.currentPatternNumber][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0}
 
-	def convertPatterns(self):
-		"""Convert self.patternsInSixtiethsAndGaps to self.patternsInSixtieths."""
-		# Defaults for the very first note only
-		cv1 = 0
-		cv2 = 0
-		gate = 0
-		pitch = 12
-		slide = 0
-
-		patternNumber = 0
-
-		for pattern in self.patternsInSixtiethsAndGaps:
-			patternNumber = patternNumber + 1
-			rowNumber = 0
-
-			for row in pattern:
-				rowNumber = rowNumber + 1
-				channelNumber = 0
-
-				for channel in row:
-					channelNumber = channelNumber + 1
-
-					if channel['pitch'] != 61:
-						pitch = channel['pitch']
-						note = True
-					else:
-						note = False
-
-					slide = channel['slide']
-
-					if channel['gate'] != 61:
-						gate = channel['gate']
-					elif slide == 60:
-						gate = 60
-					elif note == True:
-						gate = 30
-					else:
-						gate = 0
-
-					if channel['cv1'] != 61:
-						cv1 = channel['cv1']
-					elif note == True: # By default, new notes have CV1 set to 0
-						cv1 = 0
-
-					if channel['cv2'] != 61:
-						cv2 = channel['cv2']
-					elif note == True: # By default, new notes have CV2 set to 0
-						cv2 = 0
-
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['pitch'] = pitch
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['slide'] = slide
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['gate'] = gate
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['cv1'] = cv1
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1]['cv2'] = cv2
-
 	def convertNumberIntoChars(self, number):
 		"""Convert a number into three characters, suitable for display on an LCD."""
 		number = int(number)
