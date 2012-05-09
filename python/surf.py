@@ -529,23 +529,28 @@ class Sequencer:
 		self.reset()
 
 		# Load in the new song
-		song = open(filename)
-		currentPatternNumber = 0
-		currentRowNumber = 0
+		song = open(filename, 'r')
+		currentPatternNumber = -1
+		currentRowNumber = -1
 
-		for row in song:
-			if row == '\n':
-				currentPatternNumber = currentPatternNumber + 1
-				currentRowNumber = 0
-				continue
+		for pattern in self.patternsInSixtieths:
+			currentPatternNumber = currentPatternNumber + 1
 
-			for channel in range(NUMBER_OF_CHANNELS):
-				offset = channel * 16
-				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['pitch'] = int(row[offset + 0:offset + 2])
-				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['slide'] = int(row[offset + 3:offset + 5])
-				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['gate'] = int(row[offset + 6:offset + 8])
-				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['cv1'] = int(row[offset + 9:offset + 11])
-				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['cv1'] = int(row[offset + 12:offset + 14])
+			for row in pattern:
+				currentRowNumber = currentRowNumber + 1
+
+				for currentChannelNumber in range(NUMBER_OF_CHANNELS):
+					pitch = ord(song.read(1)) - 48
+					slide = ord(song.read(1)) - 48
+					gate = ord(song.read(1)) - 48
+					cv1 = ord(song.read(1)) - 48
+					cv2 = ord(song.read(1)) - 48
+
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['pitch'] = pitch
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['slide'] = slide
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['gate'] = gate
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv1'] = cv1
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv2'] = cv2
 
 			currentRowNumber = currentRowNumber + 1
 
@@ -592,14 +597,14 @@ class Sequencer:
 			for row in pattern:
 				# currentRowNumber = currentRowNumber + 1
 
-				for channel in range(NUMBER_OF_CHANNELS):
-					# In C, we'd use self.patternsInSixtieths[pattern][row][channel]['pitch'] etc.
+				for currentChannelNumber in range(NUMBER_OF_CHANNELS):
+					# In C, we'd use self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['pitch'] etc.
 					# I'm only adding 48 to everything to make the output happen to be printable ASCII.  As we're only using 61 numbers anyway, we might as well choose the pretty ones.
-					pitch = chr(row[channel]['pitch'] + 48)
-					slide = chr(row[channel]['slide'] + 48)
-					gate = chr(row[channel]['gate'] + 48)
-					cv1 = chr(row[channel]['cv1'] + 48)
-					cv2 = chr(row[channel]['cv2'] + 48)
+					pitch = chr(row[currentChannelNumber]['pitch'] + 48)
+					slide = chr(row[currentChannelNumber]['slide'] + 48)
+					gate = chr(row[currentChannelNumber]['gate'] + 48)
+					cv1 = chr(row[currentChannelNumber]['cv1'] + 48)
+					cv2 = chr(row[currentChannelNumber]['cv2'] + 48)
 					song.write(pitch + slide + gate + cv1 + cv2)
 
 	def setArtistEmailAddress(self, artistEmailAddress):
