@@ -15,7 +15,12 @@ surf.MAX_NUMBER_OF_ROWS = 16
 surf.NUMBER_OF_CHANNELS = 1
 
 sequencer = surf.Sequencer()
-sequencer.loadSong('memory.stepper3')
+
+try:
+	sequencer.loadSong('memory.stepper3')
+except:
+	pass
+
 sequencer.setLoop(True)
 
 previousCycleTimeInSeconds = 0
