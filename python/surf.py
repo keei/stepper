@@ -233,8 +233,13 @@ class Sequencer:
 	currentRowNumber = 0
 	currentPatternNumber = 0
 	loop = False
+	maxNumberOfChannels = 4
+	maxNumberOfPatterns = 4
+	maxNumberOfRows = 16
 	# noteCvLookupTable = [0.0, 0.083, 0.166, 0.25, 0.333, 0.416, 0.5, 0.583, 0.666, 0.75, 0.833, 0.916] # I should use this
 	numberOfChannels = 4
+	numberOfPatterns = 16
+	numberOfRows = [16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 4]
 	patternPositionInSeconds = 0.0
 	patternsInSixtieths = []
 	playing = False
@@ -248,13 +253,13 @@ class Sequencer:
 
 	def addPattern(self):
 		"""Add a blank pattern to the end of the array."""
-		if len(self.patternsInSixtieths) == 16: # I'm setting an arbitrary limit of 16 patterns in a song.
+		if len(self.patternsInSixtieths) == self.maxNumberOfPatterns:
 			return
 
 		self.patternsInSixtieths.append([])
 		pattern = len(self.patternsInSixtieths) - 1
 
-		for row in range(16):
+		for row in range(self.numberOfRows[pattern]):
 			self.patternsInSixtieths[pattern].append([])
 
 			for channel in range(self.numberOfChannels):
@@ -540,8 +545,8 @@ class Sequencer:
 		self.setTempo(120) # Default to 120BPM
 		self.patternsInSixtieths = []
 
-		for i in range(16):
-			self.addPattern() # Add the first pattern, pattern 0
+		for i in range(self.numberOfPatterns):
+			self.addPattern()
 
 	def saveSong(self, filename):
 		file = open(filename)
