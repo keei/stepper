@@ -10,7 +10,7 @@ from xml.etree import ElementTree
 from math import ceil, floor, pi, sin
 from random import uniform
 from struct import pack
-from wave import open
+import wave
 
 globalIncrementLengthInSeconds = 1.0 / 44100.0
 
@@ -202,7 +202,7 @@ class Output:
 
 	def stop(self):
 		# Only make CD quality files
-		self.outputFile = open(self.filename, 'w')
+		self.outputFile = wave.open(self.filename, 'w')
 		self.outputFile.setnchannels(2) # Stereo
 		self.outputFile.setsampwidth(2) # 16-bit
 		self.outputFile.setframerate(44100)
@@ -226,8 +226,6 @@ class Output:
 		self.buffer.append(audioBinary)
 
 class Sequencer:
-	artistEmailAddress = ''
-	artistName = ''
 	averageRowLengthInSeconds = 0.0
 	clipboard = []
 	clipboardFull = False
@@ -235,22 +233,18 @@ class Sequencer:
 	currentRowNumber = 0
 	currentPatternNumber = 0
 	loop = False
-	noteNameLookupTable = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 	# noteCvLookupTable = [0.0, 0.083, 0.166, 0.25, 0.333, 0.416, 0.5, 0.583, 0.666, 0.75, 0.833, 0.916] # I should use this
 	numberOfChannels = 4
 	patternPositionInSeconds = 0.0
 	patternsInSixtieths = []
 	playing = False
-	songInformation = ''
-	songName = ''
 	swingInBipolarVolts = 0.0
 	tempo = 120
 	timeInSeconds = 0.0
 
 	def __init__(self):
-		self.setTempo(120) # Default to 120BPM
-		self.setNumberOfChannels(4) # Default to 4 channels
-		self.addPattern() # Add the first pattern, pattern 0
+		self.setNumberOfChannels(4)
+		self.reset()
 
 	def addPattern(self):
 		"""Add a blank pattern to the end of the array."""
@@ -517,70 +511,20 @@ class Sequencer:
 
 	def loadSong(self, filename):
 		# Wipe the old song
-		self.patternsInSixtieths = []
+		self.reset()
 
 		# Load in the new song
-		xmlSong = ElementTree.ElementTree()
-		xmlSong.parse(filename)
-		self.songName = xmlSong.find('name').text
-		self.artistName = xmlSong.find('artist-name').text
-		self.artistEmailAddress = xmlSong.find('artist-email-address').text
-		self.songInformation = xmlSong.find('information').text
-		self.songTempo = int(xmlSong.find('tempo').text)
-		patternsInSixtieths = list(xmlSong.iter('pattern'))
+		song = open(filename)
+		pattern = song # Patterns should be separated by single blank lines.  If a pattern's less than 16 rows, the unused rows should be padded with 12,0,0,0,0 just in case.
+		rowNumber = 0
 
-		for pattern in patternsInSixtieths:
-			self.patternsInSixtieths.append([])
-			patternNumber = int(pattern.attrib['number'])
-			rows = list(pattern.iter('row'))
-
-			for row in rows:
-				self.patternsInSixtieths[patternNumber - 1].append([])
-				rowNumber = int(row.attrib['number'])
-				channels = list(row.iter('channel'))
-
-				for channel in channels:
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1].append([])
-					channelNumber = int(channel.attrib['number'])
-
-					pitchInCharsAndGaps = channel.find('pitch').text
-					slide = channel.find('slide').text
-					gate = channel.find('gate').text
-					cv1 = channel.find('cv1').text
-					cv2 = channel.find('cv2').text
-
-					if not pitchInCharsAndGaps:
-						pitchInSixtiethsAndGaps = 61
-					else:
-						pitchInSixtiethsAndGaps = 12 # Default to C-2 in case they entered a nonsensical pitch
-						semitone = pitchInCharsAndGaps[:2]
-						semitoneNumber = 0
-
-						for knownSemitone in self.noteNameLookupTable:
-							if semitone == knownSemitone:
-								octave = pitchInCharsAndGaps[2:]
-								pitchInSixtiethsAndGaps = semitoneNumber + ((int(octave) - 1) * 12) # C-1 is note 0, F#2 is 18 etc.
-								break
-
-							semitoneNumber = semitoneNumber + 1
-
-					if slide == 'true':
-						slide = 60
-					else:
-						slide = 0
-
-					if not gate:
-						gate = 61
-
-					if not cv1:
-						cv1 = 61
-
-					if not cv2:
-						cv2 = 61
-
-					self.patternsInSixtieths[patternNumber - 1][rowNumber - 1][channelNumber - 1] = {'pitch': pitchInSixtieths, 'slide': slide, 'gate': gate, 'cv1': cv1, 'cv2': cv2}
-
-		self.numberOfChannels = channelNumber
+		for row in pattern:
+			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['pitch'] = int(row[0:2])
+			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['slide'] = int(row[3:5])
+			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['gate'] = int(row[6:8])
+			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['cv1'] = int(row[9:11])
+			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['cv1'] = int(row[12:14])
+			rowNumber = rowNumber + 1
 
 	def pastePattern(self):
 		self.patternsInSixtieths[self.currentPatternNumber] = self.clipboard
@@ -591,6 +535,13 @@ class Sequencer:
 		"""Remove the last value for all channels."""
 		if len(self.patternsInSixtieths[self.currentPatternNumber]) > 1:
 			self.patternsInSixtieths[self.currentPatternNumber].pop()
+
+	def reset(self):
+		self.setTempo(120) # Default to 120BPM
+		self.patternsInSixtieths = []
+
+		for i in range(16):
+			self.addPattern() # Add the first pattern, pattern 0
 
 	def saveSong(self, filename):
 		xmlSong = ElementTree.Element('song')
