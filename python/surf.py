@@ -532,6 +532,10 @@ class Sequencer:
 		song = open(filename, 'r')
 
 		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
+			numberOfRows = ord(song.read(1)) - 48
+			self.numberOfRows[currentPatternNumber] = numberOfRows
+
+		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
 			for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
 				for currentChannelNumber in range(NUMBER_OF_CHANNELS):
 					pitch = ord(song.read(1)) - 48
@@ -582,6 +586,10 @@ class Sequencer:
 	def saveSong(self, filename):
 		# Save the current song
 		song = open(filename, 'w')
+
+		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
+			numberOfRows = chr(self.numberOfRows[currentPatternNumber] + 48)
+			song.write(numberOfRows)
 
 		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
 			for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
