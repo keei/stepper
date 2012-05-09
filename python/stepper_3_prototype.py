@@ -16,7 +16,6 @@ surf.NUMBER_OF_CHANNELS = 1
 
 sequencer = surf.Sequencer()
 sequencer.loadSong('memory.stepper3')
-sequencer.saveSong('memory2.stepper3')
 sequencer.setLoop(True)
 
 previousCycleTimeInSeconds = 0
@@ -68,6 +67,7 @@ while (True):
 			sequencer.decrementCurrentPatternNumber()
 		elif lcdMode == 'patternLength':
 			sequencer.removeRow()
+			sequencer.saveSong('memory.stepper3')
 		elif lcdMode == 'tempo':
 			sequencer.decrementTempo()
 
@@ -76,6 +76,7 @@ while (True):
 			sequencer.incrementCurrentPatternNumber()
 		elif lcdMode == 'patternLength':
 			sequencer.addRow()
+			sequencer.saveSong('memory.stepper3')
 		elif lcdMode == 'tempo':
 			sequencer.incrementTempo()
 
@@ -91,6 +92,7 @@ while (True):
 	if key == 'h':
 		if clipboardFull == True:
 			sequencer.pastePattern()
+			sequencer.saveSong('memory.stepper3')
 		else:
 			sequencer.copyPattern()
 
@@ -106,6 +108,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == '2':
 		if sequencer.getSemitone() == 1 and sequencer.getGateInSixtieths() != 0:
@@ -119,6 +122,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'w':
 		if sequencer.getSemitone() == 2 and sequencer.getGateInSixtieths() != 0:
@@ -132,6 +136,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == '3':
 		if sequencer.getSemitone() == 3 and sequencer.getGateInSixtieths() != 0:
@@ -145,6 +150,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'e':
 		if sequencer.getSemitone() == 4 and sequencer.getGateInSixtieths() != 0:
@@ -158,6 +164,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'r':
 		if sequencer.getSemitone() == 5 and sequencer.getGateInSixtieths() != 0:
@@ -171,6 +178,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == '5':
 		if sequencer.getSemitone() == 6 and sequencer.getGateInSixtieths() != 0:
@@ -184,6 +192,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 't':
 		if sequencer.getSemitone() == 7 and sequencer.getGateInSixtieths() != 0:
@@ -197,6 +206,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == '6':
 		if sequencer.getSemitone() == 8 and sequencer.getGateInSixtieths() != 0:
@@ -210,6 +220,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'y':
 		if sequencer.getSemitone() == 9 and sequencer.getGateInSixtieths() != 0:
@@ -223,6 +234,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == '7':
 		if sequencer.getSemitone() == 10 and sequencer.getGateInSixtieths() != 0:
@@ -236,6 +248,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'u':
 		if sequencer.getSemitone() == 11 and sequencer.getGateInSixtieths() != 0:
@@ -249,6 +262,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'i':
 		if sequencer.getGateInSixtieths() == 0:
@@ -259,11 +273,15 @@ while (True):
 		else:
 			sequencer.setGate(0)
 
+		sequencer.saveSong('memory.stepper3')
+
 	if key == 'o':
 		if sequencer.getOctave() == 1:
 			sequencer.setOctave(0)
 		else:
 			sequencer.setOctave(1)
+
+		sequencer.saveSong('memory.stepper3')
 
 	if key == 'p':
 		if sequencer.getOctave() == 1:
@@ -271,17 +289,23 @@ while (True):
 		else:
 			sequencer.setOctave(1)
 
+		sequencer.saveSong('memory.stepper3')
+
 	if key == '[':
 		if sequencer.getCV1InSixtieths() == 0:
 			sequencer.setCV1(60)
 		else:
 			sequencer.setCV1(0)
 
+		sequencer.saveSong('memory.stepper3')
+
 	if key == ']':
 		if sequencer.getSlideInSixtieths() == 60:
 			sequencer.setSlide(0)
 		else:
 			sequencer.setSlide(60)
+
+		sequencer.saveSong('memory.stepper3')
 
 	# if key == chr(curses.KEY_BACKSPACE):
 	if key == '-':
