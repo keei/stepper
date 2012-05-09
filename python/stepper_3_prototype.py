@@ -10,7 +10,9 @@ import os
 import surf
 import time
 
-NUMBER_OF_CHANNELS = 1
+surf.MAX_NUMBER_OF_PATTERNS = 16
+surf.MAX_NUMBER_OF_ROWS = 16
+surf.NUMBER_OF_CHANNELS = 1
 
 sequencer = surf.Sequencer()
 sequencer.loadSong('2012.stepper3')

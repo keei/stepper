@@ -19,12 +19,12 @@ globalIncrementLengthInSeconds = 1.0 / 44100.0
 try:
 	MAX_NUMBER_OF_PATTERNS
 except NameError:
-	MAX_NUMBER_OF_PATTERNS = 16
+	MAX_NUMBER_OF_PATTERNS = 64
 
 try:
 	MAX_NUMBER_OF_ROWS
 except NameError:
-	MAX_NUMBER_OF_ROWS = 16
+	MAX_NUMBER_OF_ROWS = 64
 
 try:
 	NUMBER_OF_CHANNELS
@@ -530,16 +530,24 @@ class Sequencer:
 
 		# Load in the new song
 		song = open(filename)
-		pattern = song # Patterns should be separated by single blank lines.  If a pattern's less than MAX_NUMBER_OF_ROWS rows, the unused rows should be padded with 12,0,0,0,0 just in case.
-		rowNumber = 0
+		currentPatternNumber = 0
+		currentRowNumber = 0
 
-		for row in pattern:
-			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['pitch'] = int(row[0:2])
-			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['slide'] = int(row[3:5])
-			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['gate'] = int(row[6:8])
-			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['cv1'] = int(row[9:11])
-			self.patternsInSixtieths[self.currentPatternNumber][rowNumber][0]['cv1'] = int(row[12:14])
-			rowNumber = rowNumber + 1
+		for row in song:
+			if row == '\n':
+				currentPatternNumber = currentPatternNumber + 1
+				currentRowNumber = 0
+				continue
+
+			for channel in range(NUMBER_OF_CHANNELS):
+				offset = channel * 16
+				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['pitch'] = int(row[offset + 0:offset + 2])
+				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['slide'] = int(row[offset + 3:offset + 5])
+				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['gate'] = int(row[offset + 6:offset + 8])
+				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['cv1'] = int(row[offset + 9:offset + 11])
+				self.patternsInSixtieths[currentPatternNumber][currentRowNumber][0]['cv1'] = int(row[offset + 12:offset + 14])
+
+			currentRowNumber = currentRowNumber + 1
 
 	def pastePattern(self):
 		self.patternsInSixtieths[self.currentPatternNumber] = self.clipboard
