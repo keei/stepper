@@ -90,104 +90,167 @@ while (True):
 			sequencer.copyPattern()
 
 	if key == 'q':
-		if sequencer.getSemitone() == 0 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(0)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == '2':
-		if sequencer.getSemitone() == 1 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 1 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(1)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'w':
-		if sequencer.getSemitone() == 2 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 2 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(2)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == '3':
-		if sequencer.getSemitone() == 3 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 3 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(3)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'e':
-		if sequencer.getSemitone() == 4 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 4 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(4)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'r':
-		if sequencer.getSemitone() == 5 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 5 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(5)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == '5':
-		if sequencer.getSemitone() == 6 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 6 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(6)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 't':
-		if sequencer.getSemitone() == 7 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 7 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(7)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == '6':
-		if sequencer.getSemitone() == 8 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 8 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(8)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'y':
-		if sequencer.getSemitone() == 9 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 9 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(9)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == '7':
-		if sequencer.getSemitone() == 10 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 10 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(10)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'u':
-		if sequencer.getSemitone() == 11 and sequencer.getPitchInSixtiethsAndGaps() != 61:
-			sequencer.setPitch(61)
+		if sequencer.getSemitone() == 11 and sequencer.getGateInSixtieths() != 0:
+			sequencer.setGate(0)
 		else:
 			sequencer.setSemitone(11)
+
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'i':
 		if sequencer.getGateInSixtieths() == 0:
-			sequencer.setGate(61)
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 		else:
 			sequencer.setGate(0)
 
@@ -210,7 +273,7 @@ while (True):
 			sequencer.setCV1(0)
 
 	if key == ']':
-		if sequencer.getSlide() == 60:
+		if sequencer.getSlideInSixtieths() == 60:
 			sequencer.setSlide(0)
 		else:
 			sequencer.setSlide(60)
@@ -241,14 +304,14 @@ while (True):
 
 	clipboardFull = sequencer.getClipboardStatus()
 	cv1 = sequencer.getCV1InSixtieths()
-	gate = sequencer.getGateInSixtiethsAndGaps()
+	gate = sequencer.getGateInSixtieths()
 	octave = sequencer.getOctave()
-	pitchName = sequencer.getPitchInSixtiethsAndGaps()
+	pitchName = sequencer.getPitchInSixtieths()
 	semitone = sequencer.getSemitone()
-	slide = sequencer.getSlide()
+	slide = sequencer.getSlideInSixtieths()
 
 	currentRowNumber = sequencer.getCurrentRowNumber()
-	patternInSixtiethsAndGaps = sequencer.patternsInSixtiethsAndGaps[sequencer.currentPatternNumber]
+	patternInSixtieths = sequencer.patternsInSixtieths[sequencer.currentPatternNumber]
 	patternInSixtieths = sequencer.patternsInSixtieths[sequencer.currentPatternNumber]
 
 	for i in range(14):
@@ -276,10 +339,10 @@ while (True):
 	cursePrint(18, 0, 'Space bar to quit')
 
 	# Print out the whole current pattern's events
-	cursePrint(0, 55, 'NT SL GT AC  NT SL GT AC')
+	cursePrint(0, 55, 'NT SL GT AC')
 	i = 1
 
-	for event in patternInSixtiethsAndGaps:
+	for event in patternInSixtieths:
 		if i == ttySize[0]:
 			break
 
@@ -292,18 +355,6 @@ while (True):
 
 	for i in range(i, ttySize[0]):
 		cursePrint(i, 55, '                      ') # In case a row's just been removed, or the pattern's just been changed
-	i = 1
-
-	for event in patternInSixtieths:
-		if i == ttySize[0]:
-			break
-
-		if i - 1 == currentRowNumber:
-			cursePrint(i, 68, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']), True)
-		else:
-			cursePrint(i, 68, sequencer.convertSixtiethIntoChars(event[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(event[0]['cv1']))
-
-		i = i + 1
 
 	# Print out the LCD area's settings
 	if lcdMode == 'patternSelect':
