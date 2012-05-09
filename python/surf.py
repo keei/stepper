@@ -15,9 +15,21 @@ import wave
 globalIncrementLengthInSeconds = 1.0 / 44100.0
 
 # Pseudo-constants:
-MAX_NUMBER_OF_PATTERNS = 16
-MAX_NUMBER_OF_ROWS = 16
-NUMBER_OF_CHANNELS = 4
+
+try:
+	MAX_NUMBER_OF_PATTERNS
+except NameError:
+	MAX_NUMBER_OF_PATTERNS = 16
+
+try:
+	MAX_NUMBER_OF_ROWS
+except NameError:
+	MAX_NUMBER_OF_ROWS = 16
+
+try:
+	NUMBER_OF_CHANNELS
+except NameError:
+	NUMBER_OF_CHANNELS = 4
 
 class Attenuator:
 	audioInBipolarVolts = 0.0

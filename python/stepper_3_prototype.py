@@ -10,6 +10,8 @@ import os
 import surf
 import time
 
+NUMBER_OF_CHANNELS = 1
+
 sequencer = surf.Sequencer()
 sequencer.loadSong('2012.stepper3')
 sequencer.setLoop(True)
