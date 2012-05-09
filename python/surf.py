@@ -544,72 +544,7 @@ class Sequencer:
 			self.addPattern() # Add the first pattern, pattern 0
 
 	def saveSong(self, filename):
-		xmlSong = ElementTree.Element('song')
-
-		xmlName = ElementTree.SubElement(xmlSong, 'name')
-		xmlName.text = self.songName
-
-		xmlArtistName = ElementTree.SubElement(xmlSong, 'artist-name')
-		xmlArtistName.text = self.artistName
-
-		xmlArtistEmailAddress = ElementTree.SubElement(xmlSong, 'artist-email-address')
-		xmlArtistEmailAddress.text = self.artistEmailAddress
-
-		xmlSongInformation = ElementTree.SubElement(xmlSong, 'information')
-		xmlSongInformation.text = self.songInformation
-
-		xmlTempo = ElementTree.SubElement(xmlSong, 'tempo')
-		xmlTempo.text = str(self.tempo)
-
-		xmlPatterns = ElementTree.SubElement(xmlSong, 'patternsInSixtieths')
-		patternNumber = 0
-
-		for pattern in self.patternsInSixtieths:
-			patternNumber = patternNumber + 1
-			xmlPattern = ElementTree.SubElement(xmlPatterns, 'pattern')
-			xmlPattern.attrib = {'number': str(patternNumber)}
-			rowNumber = 0
-
-			for row in pattern:
-				rowNumber = rowNumber + 1
-				xmlRow = ElementTree.SubElement(xmlPattern, 'row')
-				xmlRow.attrib = {'number': str(rowNumber)}
-				channelNumber = 0
-
-				for channel in row:
-					channelNumber = channelNumber + 1
-					xmlChannel = ElementTree.SubElement(xmlRow, 'channel')
-					xmlChannel.attrib = {'number': str(channelNumber)}
-
-					xmlPitch = ElementTree.SubElement(xmlChannel, 'pitch')
-
-					if channel['pitch'] != '...':
-						xmlPitch.text = channel['pitch']
-
-					xmlSlide = ElementTree.SubElement(xmlChannel, 'slide')
-
-					if channel['slide'] == 60:
-						xmlSlide.text = 'true'
-					# else:
-						# xmlSlide.text = 'false'
-
-					xmlGate = ElementTree.SubElement(xmlChannel, 'gate')
-
-					if channel['gate'] != '..':
-						xmlGate.text = channel['gate']
-
-					xmlCV1 = ElementTree.SubElement(xmlChannel, 'cv1')
-
-					if channel['cv1'] != '..':
-						xmlCV1.text = channel['cv1']
-
-					xmlCV2 = ElementTree.SubElement(xmlChannel, 'cv2')
-
-					if channel['cv2'] != '..':
-						xmlCV2.text = channel['cv2']
-
-		xmlSong = ElementTree.ElementTree(xmlSong)
-		xmlSong.write(filename) # I should make this auto-increment instead of accepting a filename!
+		file = open(filename)
 
 	def setArtistEmailAddress(self, artistEmailAddress):
 		self.artistEmailAddress = artistEmailAddress
