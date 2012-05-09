@@ -257,7 +257,6 @@ class Sequencer:
 	gateInUnipolarVolts = []
 	loop = False
 	# noteCvLookupTable = [0.0, 0.083, 0.166, 0.25, 0.333, 0.416, 0.5, 0.583, 0.666, 0.75, 0.833, 0.916] # I should use this
-	numberOfChannels = NUMBER_OF_CHANNELS
 	numberOfPatterns = 1
 	numberOfRows = []
 	patternPositionInSeconds = 0.0
@@ -406,7 +405,7 @@ class Sequencer:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
 	def incrementCurrentRowNumber(self):
-		if self.currentRowNumber < len(self.patternsInSixtieths[self.currentPatternNumber]) - 1:
+		if self.currentRowNumber < self.numberOfRows[self.currentPatternNumber]:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
@@ -446,7 +445,7 @@ class Sequencer:
 			rowLengthInSeconds = firstRowLengthInSeconds
 			rowPositionInSeconds = rowPairPositionInSeconds
 
-		if currentRowNumber > len(self.patternsInSixtieths[self.currentPatternNumber]) - 1:
+		if currentRowNumber > self.numberOfRows[self.currentPatternNumber] - 1:
 			if self.loop == True:
 				self.patternPositionInSeconds = 0.0
 				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
@@ -547,23 +546,20 @@ class Sequencer:
 		self.clipboard = []
 		self.clipboardFull = False
 
-	def removePattern(self):
-		if self.numberOfPatterns > 1:
-			self.numberOfPatterns = self.numberOfPatterns - 1
-
-			for row in range(MAX_NUMBER_OF_ROWS):
-				for channel in numberOfChannels:
-					self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber] + 1][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed pattern to defaults, namely silent Cs
-
 	def removeRow(self):
 		if self.numberOfRows[self.currentPatternNumber] > 1:
 			self.numberOfRows[self.currentPatternNumber] = self.numberOfRows[self.currentPatternNumber] - 1
 
-			for channel in numberOfChannels:
-				self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber] + 1][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
+			for channel in range(NUMBER_OF_CHANNELS):
+				self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber]][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
 
 	def reset(self):
 		self.setTempo(120) # Default to 120BPM
+		self.numberOfRows = []
+
+		for pattern in range(MAX_NUMBER_OF_PATTERNS):
+			self.numberOfRows.append(MAX_NUMBER_OF_ROWS)
+
 		self.patternsInSixtieths = []
 
 		for pattern in range(MAX_NUMBER_OF_PATTERNS):
