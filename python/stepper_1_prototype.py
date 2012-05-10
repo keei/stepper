@@ -108,6 +108,12 @@ while (True):
 		else:
 			sequencer.copyPattern()
 
+	if key == 'j':
+		pass
+
+	if key == 'k':
+		pass
+
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:
 			sequencer.setGate(0)
@@ -371,15 +377,16 @@ while (True):
 
 	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
 	cursePrint(9, 0, 'A S    D                F                G         H  ')
-	cursePrint(10, 0, '    .     .        .     .     .                     ')
-	cursePrint(11, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
-	cursePrint(12, 0, 'C-  2 D-  3 E- F-  5 G-  6 A-  7 B- NT DN UP AC SL BK')
-	cursePrint(13, 0, ' Q     W     E  R     T     Y     U  I  O  P  [  ]  -')
-	cursePrint(14, 0, '                                                   FW')
-	cursePrint(15, 0, '                                                    =')
+	cursePrint(10, 0, '                                      J Transpose  K  ')
+	cursePrint(11, 0, '    .     .        .     .     .                     ')
+	cursePrint(12, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
+	cursePrint(13, 0, 'C-  2 D-  3 E- F-  5 G-  6 A-  7 B- NT DN UP AC SL BK')
+	cursePrint(14, 0, ' Q     W     E  R     T     Y     U  I  O  P  [  ]  -')
+	cursePrint(15, 0, '                                                   FW')
+	cursePrint(16, 0, '                                                    =')
 
-	cursePrint(17, 0, 'Tab to toggle play/stop mode')
-	cursePrint(18, 0, 'Space bar to quit')
+	cursePrint(18, 0, 'Tab to toggle play/stop mode')
+	cursePrint(19, 0, 'Space bar to quit')
 
 	# Print out the whole current pattern's rows
 	cursePrint(0, 55, 'NT SL GT AC')
@@ -415,29 +422,29 @@ while (True):
 
 	# Print out the current row
 	if semitone == 0:
-		cursePrint(11, 1, 'o')
+		cursePrint(12, 1, 'o')
 	elif semitone == 1:
-		cursePrint(10, 4, 'o')
+		cursePrint(11, 4, 'o')
 	elif semitone == 2:
-		cursePrint(11, 7, 'o')
+		cursePrint(12, 7, 'o')
 	elif semitone == 3:
-		cursePrint(10, 10, 'o')
+		cursePrint(11, 10, 'o')
 	elif semitone == 4:
-		cursePrint(11, 13, 'o')
+		cursePrint(12, 13, 'o')
 	elif semitone == 5:
-		cursePrint(11, 16, 'o')
+		cursePrint(12, 16, 'o')
 	elif semitone == 6:
-		cursePrint(10, 19, 'o')
+		cursePrint(11, 19, 'o')
 	elif semitone == 7:
-		cursePrint(11, 22, 'o')
+		cursePrint(12, 22, 'o')
 	elif semitone == 8:
-		cursePrint(10, 25, 'o')
+		cursePrint(11, 25, 'o')
 	elif semitone == 9:
-		cursePrint(11, 28, 'o')
+		cursePrint(12, 28, 'o')
 	elif semitone == 10:
-		cursePrint(10, 31, 'o')
+		cursePrint(11, 31, 'o')
 	elif semitone == 11:
-		cursePrint(11, 34, 'o')
+		cursePrint(12, 34, 'o')
 
 	if gate != 0:
 		gateCharacter = 'o'
@@ -464,8 +471,8 @@ while (True):
 	else:
 		slideCharacter = '.'
 
-	cursePrint(11, 37, gateCharacter)
-	cursePrint(11, 40, octaveDownCharacter)
-	cursePrint(11, 43, octaveUpCharacter)
-	cursePrint(11, 46, cv1Character)
-	cursePrint(11, 49, slideCharacter)
+	cursePrint(12, 37, gateCharacter)
+	cursePrint(12, 40, octaveDownCharacter)
+	cursePrint(12, 43, octaveUpCharacter)
+	cursePrint(12, 46, cv1Character)
+	cursePrint(12, 49, slideCharacter)
