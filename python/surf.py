@@ -260,6 +260,7 @@ class Sequencer:
 	cv2InSixtieths = []
 	cv2InTwelveBits = []
 	cv2InUnipolarVolts = []
+	finalPatternNumber = 0 # Final in the context of looping / playing
 	gateInSixtieths = []
 	gateInTwelveBits = []
 	gateInUnipolarVolts = []
@@ -490,14 +491,14 @@ class Sequencer:
 			elif self.playMode == 2:
 				self.currentPatternNumber = self.currentPatternNumber + 1
 
-				if self.currentPatternNumber > MAX_NUMBER_OF_PATTERNS - 1:
+				if self.currentPatternNumber > self.finalPatternNumber:
 					self.currentPatternNumber = 0
 
 				self.loadPattern('memory.stepper1')
 			elif self.playMode == 3:
 				self.currentPatternNumber = self.currentPatternNumber + 1
 
-				if self.currentPatternNumber > MAX_NUMBER_OF_PATTERNS - 1:
+				if self.currentPatternNumber > self.finalPatternNumber:
 					self.currentPatternNumber = 0
 					self.playMode = 0
 
@@ -705,10 +706,15 @@ class Sequencer:
 	def setPlayMode(self, playMode):
 		self.playMode = playMode
 		self.nextPatternNumber = self.currentPatternNumber # Play mode 1 will use this default, unless the user queues up a pattern change in the meantime.
+		self.finalPatternNumber = self.currentPatternNumber # Play modes 2 and 3 will use this.
+		# Technically, nextPatternNumber and finalPatternNumber could probably be the same variable, but I wouldn't advise that as it would be needlessly confusing.
 
 		# I think it's helpful to leave the cursor where it is after stopping.  If other people disagree, this condition can be removed.
 		if playMode != 0:
 			self.patternPositionInSeconds = 0.0
+
+		if playMode > 1:
+			self.currentPatternNumber = 0
 
 	def setSemitone(self, semitone):
 		octave = self.getOctave()

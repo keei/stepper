@@ -1,7 +1,6 @@
 Important, low-level stuff:
 
 Essential features:
-Looping through the song should be until the pattern the user was on when she started that play mode, not all the patterns that exist.  Most will likely be blank.
 Refactor the code before translating it into C or C++.
 
 Nice features:
