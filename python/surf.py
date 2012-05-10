@@ -618,7 +618,10 @@ class Sequencer:
 
 	def savePattern(self, filename):
 		# Save the current song
-		song = open(filename, 'w')
+		try:
+			song = open(filename, 'r+') # If it already exists, open the file in read/write mode so seeking past some data won't blat those data.
+		except IOError:
+			song = open(filename, 'w') # If it doesn't already exist, create it.
 
 		# Save the pattern lengths
 		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
