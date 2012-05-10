@@ -252,8 +252,8 @@ class Sequencer:
 	clipboard = []
 	clipboardFull = False
 	currentChannelNumber = 0
-	currentRowNumber = 0
 	currentPatternNumber = 0
+	currentRowNumber = 0
 	cv1InSixtieths = []
 	cv1InTwelveBits = []
 	cv1InUnipolarVolts = []
