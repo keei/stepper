@@ -560,6 +560,34 @@ class Sequencer:
 
 		currentRowNumber = currentRowNumber + 1
 
+	def loadSong(self, filename):
+		# Wipe the old song
+		self.reset()
+
+		# Load in the new song
+		song = open(filename, 'r')
+
+		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
+			numberOfRows = ord(song.read(1)) - 48
+			self.numberOfRows[currentPatternNumber] = numberOfRows
+
+		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
+			for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
+				for currentChannelNumber in range(NUMBER_OF_CHANNELS):
+					pitch = ord(song.read(1)) - 48
+					slide = ord(song.read(1)) - 48
+					gate = ord(song.read(1)) - 48
+					cv1 = ord(song.read(1)) - 48
+					cv2 = ord(song.read(1)) - 48
+
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['pitch'] = pitch
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['slide'] = slide
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['gate'] = gate
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv1'] = cv1
+					self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv2'] = cv2
+
+			currentRowNumber = currentRowNumber + 1
+
 	def pastePattern(self):
 		self.patternInSixtieths = self.clipboard
 		self.clipboard = []
@@ -610,6 +638,25 @@ class Sequencer:
 				cv1 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'] + 48)
 				cv2 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] + 48)
 				song.write(pitch + slide + gate + cv1 + cv2)
+
+	def saveSong(self, filename):
+		# Save the current song
+		song = open(filename, 'w')
+
+		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
+			numberOfRows = chr(self.numberOfRows[currentPatternNumber] + 48)
+			song.write(numberOfRows)
+
+		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
+			for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
+				for currentChannelNumber in range(NUMBER_OF_CHANNELS):
+					# I'm only adding 48 to everything to make the output happen to be printable ASCII.  As we're only using 61 numbers anyway, we might as well choose the pretty ones.
+					pitch = chr(self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['pitch'] + 48)
+					slide = chr(self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['slide'] + 48)
+					gate = chr(self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['gate'] + 48)
+					cv1 = chr(self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv1'] + 48)
+					cv2 = chr(self.patternsInSixtieths[currentPatternNumber][currentRowNumber][currentChannelNumber]['cv2'] + 48)
+					song.write(pitch + slide + gate + cv1 + cv2)
 
 	def setArtistEmailAddress(self, artistEmailAddress):
 		self.artistEmailAddress = artistEmailAddress
