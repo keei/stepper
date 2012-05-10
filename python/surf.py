@@ -657,7 +657,19 @@ class Sequencer:
 		try:
 			song = open(filename, 'r+') # If it already exists, open the file in read/write mode so seeking past some data won't blat those data.
 		except IOError:
-			song = open(filename, 'w') # If it doesn't already exist, create it.
+			song = open(filename, 'w') # If it doesn't already exist, create it first.
+
+			# Write a whole file of defaults first
+			for pattern in range(MAX_NUMBER_OF_PATTERNS):
+				song.write(chr(DEFAULT_NUMBER_OF_ROWS + 48))
+
+			for event in range(MAX_NUMBER_OF_PATTERNS * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS):
+				song.write(chr(24 + 48) + chr(48) + chr(48) + chr(48) + chr(48))
+
+			song.close()
+
+			# Now re-open the file as normal
+			song = open(filename, 'r+') # Now we know it already exists, open the file again, this time in read/write mode so seeking past some data won't blat those data.
 
 		# Save the pattern length
 		song.seek(self.currentPatternNumber)
