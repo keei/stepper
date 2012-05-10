@@ -3,8 +3,7 @@ Add two buttons to transpose the current pattern up and down by a single semiton
 Add the ability to tie non-sliding notes with full duration gates.
 
 Essential features:
-There should be looping options: loop through current pattern forever; cycle through playing all (non-blank) patterns forever; cycle through playing all (non-blank) patterns once, then stop.  (Pattern loop, song loop, song one-shot.)
-There should be one song file that Stepper 3 always loads from and saves to.  If it doesn't exist yet, it should create it.  This will be the equivalent of saving its whole memory to battery backup memory.
+There should be looping options: loop through current pattern forever; cycle through playing all patterns up until the current one forever; play all (non-blankpatterns up until the current one once, then stop.  (Pattern loop, song loop, song one-shot.)  These negate the need for a separate play button: whichever one's active, press it again to stop it, or one of the others to override it.
 Refactor the code before translating it into C or C++.
 
 Nice features:
