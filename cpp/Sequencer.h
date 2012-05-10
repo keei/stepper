@@ -19,9 +19,28 @@
 
 class Sequencer {
 private:
-	mutable bool clipboardFull, slideCV1, slideCV2, slidePitch;
-	mutable char currentChannelNumber, currentPatternNumber, currentRowNumber, finalPatternNumber, nextPatternNumber, numberOfRows, playMode, tempo;
-	mutable char clipboard[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS], cv1InSixtieths[NUMBER_OF_CHANNELS], cv1InTwelveBits[NUMBER_OF_CHANNELS], cv2InSixtieths[NUMBER_OF_CHANNELS], cv2InTwelveBits[NUMBER_OF_CHANNELS], gateInSixtieths[NUMBER_OF_CHANNELS], gateInTwelveBits[NUMBER_OF_CHANNELS], patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS], pitchInSixtieths[NUMBER_OF_CHANNELS], pitchInTwelveBits[NUMBER_OF_CHANNELS], ;
+	mutable char clipboard[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
+	mutable bool clipboardFull;
+	mutable char currentChannelNumber;
+	mutable char currentPatternNumber;
+	mutable char currentRowNumber;
+	mutable char cv1InSixtieths[NUMBER_OF_CHANNELS];
+	mutable char cv1InTwelveBits[NUMBER_OF_CHANNELS];
+	mutable char cv2InSixtieths[NUMBER_OF_CHANNELS];
+	mutable char cv2InTwelveBits[NUMBER_OF_CHANNELS];
+	mutable char finalPatternNumber;
+	mutable char gateInSixtieths[NUMBER_OF_CHANNELS];
+	mutable char gateInTwelveBits[NUMBER_OF_CHANNELS];
+	mutable char nextPatternNumber;
+	mutable char numberOfRows;
+	mutable char patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
+	mutable char pitchInSixtieths[NUMBER_OF_CHANNELS];
+	mutable char pitchInTwelveBits[NUMBER_OF_CHANNELS];
+	mutable char playMode;
+	mutable bool slideCV1;
+	mutable bool slideCV2;
+	mutable bool slidePitch;
+	mutable char tempo;
 };
 
 #endif
