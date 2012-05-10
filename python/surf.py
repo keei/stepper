@@ -255,10 +255,13 @@ class Sequencer:
 	currentRowNumber = 0
 	currentPatternNumber = 0
 	cv1InSixtieths = []
+	cv1InTwelveBits = []
 	cv1InUnipolarVolts = []
 	cv2InSixtieths = []
+	cv2InTwelveBits = []
 	cv2InUnipolarVolts = []
 	gateInSixtieths = []
+	gateInTwelveBits = []
 	gateInUnipolarVolts = []
 	loop = False
 	numberOfPatterns = 1
@@ -266,6 +269,7 @@ class Sequencer:
 	patternPositionInSeconds = 0.0
 	patternInSixtieths = []
 	pitchInSixtieths = []
+	pitchInTwelveBits = []
 	pitchInUnipolarVolts = []
 	playing = False
 	swingInBipolarVolts = 0.0
@@ -275,12 +279,16 @@ class Sequencer:
 	def __init__(self):
 		for channel in range(NUMBER_OF_CHANNELS):
 			self.cv1InSixtieths.append(0)
+			self.cv1InTwelveBits.append(0.0)
 			self.cv1InUnipolarVolts.append(0.0)
 			self.cv2InSixtieths.append(0)
+			self.cv2InTwelveBits.append(0.0)
 			self.cv2InUnipolarVolts.append(0.0)
 			self.gateInSixtieths.append(0)
+			self.gateInTwelveBits.append(0.0)
 			self.gateInUnipolarVolts.append(0.0)
 			self.pitchInSixtieths.append(24)
+			self.pitchInTwelveBits.append(0.0)
 			self.pitchInUnipolarVolts.append(0.0)
 
 		self.reset()
@@ -347,19 +355,28 @@ class Sequencer:
 	def getCV1InSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['cv1']
 
-	def getCV1Output(self, channel):
+	def getCV1InTwelveBits(self, channel):
+		return self.cv1InTwelveBits[channel]
+
+	def getCV1InUnipolarVolts(self, channel):
 		return self.cv1InUnipolarVolts[channel]
 
 	def getCV2InSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['cv2']
 
-	def getCV2Output(self, channel):
+	def getCV2InTwelveBits(self, channel):
+		return self.cv2InTwelveBits[channel]
+
+	def getCV2InUnipolarVolts(self, channel):
 		return self.cv2InUnipolarVolts[channel]
 
 	def getGateInSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['gate']
 
-	def getGateOutput(self, channel):
+	def getGateInTwelveBits(self, channel):
+		return self.gateInTwelveBits[channel]
+
+	def getGateInUnipolarVolts(self, channel):
 		return self.gateInUnipolarVolts[channel]
 
 	def getLoopTime(self):
@@ -371,7 +388,10 @@ class Sequencer:
 	def getPatternLength(self):
 		return self.numberOfRows[self.currentPatternNumber]
 
-	def getPitchOutput(self, channel):
+	def getPitchInTwelveBits(self, channel):
+		return self.pitchInTwelveBits[channel]
+
+	def getPitchInUnipolarVolts(self, channel):
 		return self.pitchInUnipolarVolts[channel]
 
 	def getPitchInSixtieths(self):
@@ -474,6 +494,7 @@ class Sequencer:
 		for channel in range(NUMBER_OF_CHANNELS):
 			# Convert the pitch to a control voltage, 1v/oct
 			pitchInSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['pitch']
+			self.pitchInTwelveBits[channel] = int(float(pitchInSixtieths) * 68.25) # / 60.0 * 4095.0
 			self.pitchInUnipolarVolts[channel] = float(pitchInSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Slide if necessary
@@ -485,34 +506,45 @@ class Sequencer:
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
 			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
+				self.gateInTwelveBits[channel] = 0
 				self.gateInUnipolarVolts[channel] = 0.0
 			else:
+				self.gateInTwelveBits[channel] = 4095
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
 			cv1InSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['cv1']
+			self.cv1InTwelveBits[channel] = int(float(cv1InSixtieths) * 68.25) # / 60.0 * 4095.0
 			self.cv1InUnipolarVolts[channel] = float(cv1InSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Set CV2
 			cv2InSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['cv2']
+			self.cv2InTwelveBits[channel] = int(float(cv2InSixtieths) * 68.25) # / 60.0 * 4095.0
 			self.cv2InUnipolarVolts[channel] = float(cv2InSixtieths) / 12.0 # / 60.0 * 5.0
 
 			# Do the actual sliding
 			if slide == 60:
 				nextPitchInSixtieths = self.patternInSixtieths[nextRowNumber][channel]['pitch']
+				nextPitchInTwelveBits = int(float(nextPitchInSixtieths) * 68.25) # / 60.0 * 4095.0
 				nextPitchInUnipolarVolts = float(nextPitchInSixtieths) / 12.0 # / 60.0 * 5.0
 
-				nextEventCV1 = self.patternInSixtieths[nextRowNumber][channel]['cv1']
-				nextCV1InUnipolarVolts = float(nextEventCV1) / 12.0 # / 60.0 * 5.0
+				nextCV1InSixtieths = self.patternInSixtieths[nextRowNumber][channel]['cv1']
+				nextCV1InTwelveBits = int(float(nextCV1InSixtieths) * 68.25) # / 60.0 * 4095.0
+				nextCV1InUnipolarVolts = float(nextCV1InSixtieths) / 12.0 # / 60.0 * 5.0
 
-				nextEventCV2 = self.patternInSixtieths[nextRowNumber][channel]['cv2']
-				nextCV2InUnipolarVolts = float(nextEventCV2) / 12.0 # / 60.0 * 5.0
+				nextCV2InSixtieths = self.patternInSixtieths[nextRowNumber][channel]['cv2']
+				nextCV2InTwelveBits = int(float(nextCV2InSixtieths) * 68.25) # / 60.0 * 4095.0
+				nextCV2InUnipolarVolts = float(nextCV2InSixtieths) / 12.0 # / 60.0 * 5.0
 
-				# Glide effortlessly and gracefully from self.pitchInUnipolarVolts to nextPitchInUnipolarVolts
+				# Glide effortlessly and gracefully from the current event to the next
 				if rowPositionInSeconds > rowLengthInSeconds / 2:
-					pitchDifference = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
-					cv1Difference = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
-					cv2Difference = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
+					pitchDifferenceInTwelveBits = nextPitchInTwelveBits - self.pitchInTwelveBits[channel]
+					cv1DifferenceInTwelveBits = nextCV1InTwelveBits - self.cv1InTwelveBits[channel]
+					cv2DifferenceInTwelveBits = nextCV2InTwelveBits - self.cv2InTwelveBits[channel]
+
+					pitchDifferenceInUnipolarVolts = nextPitchInUnipolarVolts - self.pitchInUnipolarVolts[channel]
+					cv1DifferenceInUnipolarVolts = nextCV1InUnipolarVolts - self.cv1InUnipolarVolts[channel]
+					cv2DifferenceInUnipolarVolts = nextCV2InUnipolarVolts - self.cv2InUnipolarVolts[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
 					beginningInSeconds = rowLengthInSeconds / 2
@@ -522,9 +554,13 @@ class Sequencer:
 					offsetEndInSeconds = endInSeconds - beginningInSeconds
 					positionAsDecimal = offsetPositionInSeconds / offsetEndInSeconds
 
-					self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (pitchDifference / 1 * positionAsDecimal)
-					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (cv1Difference / 1 * positionAsDecimal)
-					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2Difference / 1 * positionAsDecimal)
+					self.pitchInTwelveBits[channel] = int(self.pitchInTwelveBits[channel] + (pitchDifferenceInTwelveBits / 1 * positionAsDecimal))
+					self.cv1InTwelveBits[channel] = int(self.cv1InTwelveBits[channel] + (cv1DifferenceInTwelveBits / 1 * positionAsDecimal))
+					self.cv2InTwelveBits[channel] = int(self.cv2InTwelveBits[channel] + (cv2DifferenceInTwelveBits / 1 * positionAsDecimal))
+
+					self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (pitchDifferenceInUnipolarVolts / 1 * positionAsDecimal)
+					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (cv1DifferenceInUnipolarVolts / 1 * positionAsDecimal)
+					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2DifferenceInUnipolarVolts / 1 * positionAsDecimal)
 
 		return incrementLengthInSeconds
 

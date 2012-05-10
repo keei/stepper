@@ -337,9 +337,9 @@ while (True):
 
 	previousCycleTimeInSeconds = timeInSeconds
 
-	pitchOutput = sequencer.getPitchOutput(0)
-	cv1Output = sequencer.getCV1Output(0)
-	gateOutput = sequencer.getGateOutput(0)
+	pitchInUnipolarVolts = sequencer.getPitchInUnipolarVolts(0)
+	cv1InUnipolarVolts = sequencer.getCV1InUnipolarVolts(0)
+	gateInUnipolarVolts = sequencer.getGateInUnipolarVolts(0)
 
 	clipboardFull = sequencer.getClipboardStatus()
 	cv1 = sequencer.getCV1InSixtieths()
@@ -359,10 +359,10 @@ while (True):
 	cursePrint(0, 0, 'Time            ' + str(timeInMilliseconds))
 	cursePrint(1, 0, 'Iterations/sec  ' + str(iterationsPerSecond))
 
-	cursePrint(3, 0, 'Pitch           ' + str(pitchOutput))
-	cursePrint(4, 0, 'CV1             ' + str(cv1Output))
+	cursePrint(3, 0, 'Pitch           ' + str(pitchInUnipolarVolts))
+	cursePrint(4, 0, 'CV1             ' + str(cv1InUnipolarVolts))
 	cursePrint(5, 0, 'CV2             N/A')
-	cursePrint(6, 0, 'Gate            ' + str(gateOutput))
+	cursePrint(6, 0, 'Gate            ' + str(gateInUnipolarVolts))
 
 	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
 	cursePrint(9, 0, 'A S    D                F                G         H  ')
