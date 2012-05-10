@@ -11,9 +11,6 @@ To avoid confusion, variable names should end in a description of the unit:
 ...InBipolarVolts (implying that it's a float in the range of -5 to +5)
 ...InTwelveBits (implying that it's an integer in the range of 0 to 4095)
 ...InSixtieths (implying that it's an integer in the range of 00 to 60)
-...InSixtiethsAndGaps is the same as ...InSixtieths, only defaults are not converted.  They're depicted as the number 61.
-...InChars shows the pitch (semitone and octave) in the form of 'C-1', 'F#2', etc.
-...InCharsAndGaps is the same, only defaults are not converted.
 ...AsDecimal (implying that it's a float in the range of 0 to 1)
 
 For the sake of consistency within a single array, slides are represented in the array as 0 (off) or 60 (on), not as an actual boolean.
