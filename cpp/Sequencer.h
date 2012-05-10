@@ -19,6 +19,7 @@
 
 class Sequencer {
 private:
+	mutable float averageRowLengthInSeconds;
 	mutable char clipboard[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
 	mutable bool clipboardFull;
 	mutable char currentChannelNumber;
@@ -33,6 +34,7 @@ private:
 	mutable char gateInTwelveBits[NUMBER_OF_CHANNELS];
 	mutable char nextPatternNumber;
 	mutable char numberOfRows;
+	mutable float patternPositionInSeconds;
 	mutable char patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
 	mutable char pitchInSixtieths[NUMBER_OF_CHANNELS];
 	mutable char pitchInTwelveBits[NUMBER_OF_CHANNELS];
@@ -41,6 +43,85 @@ private:
 	mutable bool slideCV2;
 	mutable bool slidePitch;
 	mutable char tempo;
+	mutable float timeInSeconds;
+
+	void addRow() {
+	}
+
+	void copyPattern() {
+	}
+
+	void decrementCurrentChannelNumber() {
+	}
+
+	void decrementCurrentPatternNumber() {
+	}
+
+	void decrementCurrentRowNumber() {
+	}
+
+	void decrementNextPatternNumber() {
+	}
+
+	void decrementTempo() {
+	}
+
+	void getClipboardStatus() {
+	}
+
+	void getCurrentChannelNumber() {
+	}
+
+	void getCurrentPatternNumber() {
+	}
+
+	void getCurrentRowNumber() {
+	}
+
+	void getCV1InSixtieths() {
+	}
+
+	void getCV1InTwelveBits() {
+	}
+
+	void getCV2InSixtieths() {
+	}
+
+	void getCV2InTwelveBits() {
+	}
+
+	void getGateInSixtieths() {
+	}
+
+	void getGateInTwelveBits() {
+	}
+
+	void getOctave() {
+	}
+
+	void getPatternLength() {
+	}
+
+	void getPitchInSixtieths() {
+	}
+
+	void getPitchInTwelveBits() {
+	}
+
+	void getPlayMode() {
+	}
+
+	void getSemitone() {
+	}
+
+	void getSlideInSixtieths() {
+	}
+
+	void getTempo() {
+	}
+
+	Sequencer() {
+	}
 };
 
 #endif

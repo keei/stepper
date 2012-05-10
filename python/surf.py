@@ -326,13 +326,13 @@ class Sequencer:
 		if self.currentChannelNumber > 0:
 			self.currentChannelNumber = self.currentChannelNumber - 1
 
-	def decrementCurrentRowNumber(self):
-		if self.currentRowNumber > 0:
-			self.currentRowNumber = self.currentRowNumber - 1
-
 	def decrementCurrentPatternNumber(self):
 		if self.currentPatternNumber > 0:
 			self.currentPatternNumber = self.currentPatternNumber - 1
+
+	def decrementCurrentRowNumber(self):
+		if self.currentRowNumber > 0:
+			self.currentRowNumber = self.currentRowNumber - 1
 
 	def decrementNextPatternNumber(self):
 		if self.nextPatternNumber > 0:
@@ -342,23 +342,17 @@ class Sequencer:
 		if self.tempo > 1:
 			self.setTempo(self.tempo - 1)
 
-	def getArtistEmailAddress(self, artistEmailAddress):
-		return self.artistEmailAddress
-
-	def getArtistName(self, artistName):
-		return self.artistName
-
 	def getClipboardStatus(self):
 		return self.clipboardFull
 
 	def getCurrentChannelNumber(self):
 		return self.currentChannelNumber
 
-	def getCurrentRowNumber(self):
-		return self.currentRowNumber
-
 	def getCurrentPatternNumber(self):
 		return self.currentPatternNumber
+
+	def getCurrentRowNumber(self):
+		return self.currentRowNumber
 
 	def getCV1InSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['cv1']
@@ -387,9 +381,6 @@ class Sequencer:
 	def getGateInUnipolarVolts(self, channel):
 		return self.gateInUnipolarVolts[channel]
 
-	def getLoopTime(self):
-		return self.patternPositionInSeconds
-
 	def getOctave(self):
 		return floor(float(self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']) / 12.0)
 
@@ -413,12 +404,6 @@ class Sequencer:
 
 	def getSlideInSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['slide']
-
-	def getSongInformation(self, songInformation):
-		return self.songInformation
-
-	def getSongName(self, songName):
-		return self.songName
 
 	def getSwing(self):
 		return self.swingInBipolarVolts
@@ -692,12 +677,6 @@ class Sequencer:
 
 		song.close()
 
-	def setArtistEmailAddress(self, artistEmailAddress):
-		self.artistEmailAddress = artistEmailAddress
-
-	def setArtistName(self, artistName):
-		self.artistName = artistName
-
 	def setCV1(self, cv1):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['cv1'] = cv1
 
@@ -734,12 +713,6 @@ class Sequencer:
 
 	def setSlide(self, slide):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
-
-	def setSongInformation(self, songInformation):
-		self.songInformation = songInformation
-
-	def setSongName(self, songName):
-		self.songName = songName
 
 	def setSwing(self, swingInBipolarVolts):
 		self.swingInBipolarVolts = swingInBipolarVolts
