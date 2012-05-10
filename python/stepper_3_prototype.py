@@ -10,8 +10,9 @@ import os
 import surf
 import time
 
-surf.MAX_NUMBER_OF_PATTERNS = 16
-surf.MAX_NUMBER_OF_ROWS = 16
+surf.DEFAULT_NUMBER_OF_ROWS = 16
+surf.MAX_NUMBER_OF_PATTERNS = 64
+surf.MAX_NUMBER_OF_ROWS = 64
 surf.NUMBER_OF_CHANNELS = 1
 
 sequencer = surf.Sequencer()

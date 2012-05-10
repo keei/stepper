@@ -17,6 +17,11 @@ globalIncrementLengthInSeconds = 1.0 / 44100.0
 # Pseudo-constants:
 
 try:
+	DEFAULT_NUMBER_OF_ROWS
+except NameError:
+	DEFAULT_NUMBER_OF_ROWS = 64
+
+try:
 	MAX_NUMBER_OF_PATTERNS
 except NameError:
 	MAX_NUMBER_OF_PATTERNS = 64
@@ -605,7 +610,7 @@ class Sequencer:
 		self.numberOfRows = []
 
 		for pattern in range(MAX_NUMBER_OF_PATTERNS):
-			self.numberOfRows.append(MAX_NUMBER_OF_ROWS)
+			self.numberOfRows.append(DEFAULT_NUMBER_OF_ROWS)
 
 		self.patternInSixtieths = []
 
