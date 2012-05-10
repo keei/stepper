@@ -383,10 +383,10 @@ while (True):
 	cursePrint(13, 0, 'C-  2 D-  3 E- F-  5 G-  6 A-  7 B- NT DN UP AC SL BK')
 	cursePrint(14, 0, ' Q     W     E  R     T     Y     U  I  O  P  [  ]  -')
 	cursePrint(15, 0, '                                                   FW')
-	cursePrint(16, 0, '                                                    =')
-
-	cursePrint(18, 0, 'Tab to toggle play/stop mode')
-	cursePrint(19, 0, 'Space bar to quit')
+	cursePrint(16, 0, '    . Pattern loop  Z                               =')
+	cursePrint(17, 0, '    . Song loop     X                                ')
+	cursePrint(18, 0, '    . Song one-shot C                                ')
+	cursePrint(19, 0, '                                    Space bar to quit')
 
 	# Print out the whole current pattern's rows
 	cursePrint(0, 55, 'NT SL GT AC')
