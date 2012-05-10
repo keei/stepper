@@ -114,6 +114,24 @@ while (True):
 	if key == 'k':
 		sequencer.transposePatternUp()
 
+	if key == 'z':
+		if sequencer.getPlayMode() == 1:
+			sequencer.setPlayMode(0)
+		else:
+			sequencer.setPlayMode(1)
+
+	if key == 'x':
+		if sequencer.getPlayMode() == 2:
+			sequencer.setPlayMode(0)
+		else:
+			sequencer.setPlayMode(2)
+
+	if key == 'c':
+		if sequencer.getPlayMode() == 3:
+			sequencer.setPlayMode(0)
+		else:
+			sequencer.setPlayMode(3)
+
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:
 			sequencer.setGate(0)
@@ -422,6 +440,15 @@ while (True):
 
 	if clipboardFull == True:
 		cursePrint(8, 48, 'o')
+
+	playMode = sequencer.getPlayMode()
+
+	if playMode == 1:
+		cursePrint(16, 4, 'o')
+	elif playMode == 2:
+		cursePrint(17, 4, 'o')
+	elif playMode == 3:
+		cursePrint(18, 4, 'o')
 
 	# Print out the current row
 	if semitone == 0:

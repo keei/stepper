@@ -271,7 +271,7 @@ class Sequencer:
 	pitchInSixtieths = []
 	pitchInTwelveBits = []
 	pitchInUnipolarVolts = []
-	playing = False
+	playMode = 0
 	slideCV1 = True
 	slideCV2 = True
 	slidePitch = True
@@ -404,8 +404,8 @@ class Sequencer:
 	def getPitchInSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']
 
-	def getPlaying(self):
-		return self.playing
+	def getPlayMode(self):
+		return self.playMode
 
 	def getSemitone(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] % 12
@@ -453,7 +453,7 @@ class Sequencer:
 			self.setTempo(self.tempo + 1)
 
 	def incrementTime(self, incrementLengthInSeconds):
-		if self.playing == False:
+		if self.playMode == 0:
 			return
 
 		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
@@ -691,10 +691,11 @@ class Sequencer:
 	def setPitch(self, pitchInSixtieths):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchInSixtieths
 
-	def setPlaying(self, playing):
-		self.playing = playing
+	def setPlayMode(self, playMode):
+		self.playMode = playMode
 
-		if playing == True:
+		# I think it's helpful to leave the cursor where it is after stopping.  If other people disagree, this condition can be removed.
+		if playMode != 0:
 			self.patternPositionInSeconds = 0.0
 
 	def setSemitone(self, semitone):
