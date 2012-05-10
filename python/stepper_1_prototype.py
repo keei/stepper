@@ -1,4 +1,4 @@
-# Stepper 3 prototype, for Python 3.
+# Stepper 1 prototype, for Python 3.
 # By ZoeB.
 
 # This isn't a real Arduino emulator.  It just emulates millis(),
@@ -20,7 +20,7 @@ sequencer.slideCV1 = False # This won't have a DAC
 sequencer.slideCV2 = False # This won't exist at all
 
 try:
-	sequencer.loadPattern('memory.stepper3')
+	sequencer.loadPattern('memory.stepper1')
 except:
 	pass
 
@@ -72,23 +72,23 @@ while (True):
 
 	if key == 'a':
 		if lcdMode == 'patternSelect':
-			sequencer.savePattern('memory.stepper3') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
+			sequencer.savePattern('memory.stepper1') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
 			sequencer.decrementCurrentPatternNumber()
-			sequencer.loadPattern('memory.stepper3')
+			sequencer.loadPattern('memory.stepper1')
 		elif lcdMode == 'patternLength':
 			sequencer.removeRow()
-			sequencer.savePattern('memory.stepper3')
+			sequencer.savePattern('memory.stepper1')
 		elif lcdMode == 'tempo':
 			sequencer.decrementTempo()
 
 	if key == 's':
 		if lcdMode == 'patternSelect':
-			sequencer.savePattern('memory.stepper3')
+			sequencer.savePattern('memory.stepper1')
 			sequencer.incrementCurrentPatternNumber()
-			sequencer.loadPattern('memory.stepper3')
+			sequencer.loadPattern('memory.stepper1')
 		elif lcdMode == 'patternLength':
 			sequencer.addRow()
-			sequencer.savePattern('memory.stepper3')
+			sequencer.savePattern('memory.stepper1')
 		elif lcdMode == 'tempo':
 			sequencer.incrementTempo()
 
@@ -104,7 +104,7 @@ while (True):
 	if key == 'h':
 		if clipboardFull == True:
 			sequencer.pastePattern()
-			sequencer.savePattern('memory.stepper3')
+			sequencer.savePattern('memory.stepper1')
 		else:
 			sequencer.copyPattern()
 
@@ -120,7 +120,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == '2':
 		if sequencer.getSemitone() == 1 and sequencer.getGateInSixtieths() != 0:
@@ -134,7 +134,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'w':
 		if sequencer.getSemitone() == 2 and sequencer.getGateInSixtieths() != 0:
@@ -148,7 +148,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == '3':
 		if sequencer.getSemitone() == 3 and sequencer.getGateInSixtieths() != 0:
@@ -162,7 +162,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'e':
 		if sequencer.getSemitone() == 4 and sequencer.getGateInSixtieths() != 0:
@@ -176,7 +176,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'r':
 		if sequencer.getSemitone() == 5 and sequencer.getGateInSixtieths() != 0:
@@ -190,7 +190,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == '5':
 		if sequencer.getSemitone() == 6 and sequencer.getGateInSixtieths() != 0:
@@ -204,7 +204,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 't':
 		if sequencer.getSemitone() == 7 and sequencer.getGateInSixtieths() != 0:
@@ -218,7 +218,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == '6':
 		if sequencer.getSemitone() == 8 and sequencer.getGateInSixtieths() != 0:
@@ -232,7 +232,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'y':
 		if sequencer.getSemitone() == 9 and sequencer.getGateInSixtieths() != 0:
@@ -246,7 +246,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == '7':
 		if sequencer.getSemitone() == 10 and sequencer.getGateInSixtieths() != 0:
@@ -260,7 +260,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'u':
 		if sequencer.getSemitone() == 11 and sequencer.getGateInSixtieths() != 0:
@@ -274,7 +274,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'i':
 		if sequencer.getGateInSixtieths() == 0:
@@ -285,7 +285,7 @@ while (True):
 		else:
 			sequencer.setGate(0)
 
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'o':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -293,7 +293,7 @@ while (True):
 		if currentPitch > 11:
 			sequencer.setPitch(currentPitch - 12)
 
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == 'p':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -301,7 +301,7 @@ while (True):
 		if currentPitch < 49:
 			sequencer.setPitch(currentPitch + 12)
 
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == '[':
 		if sequencer.getCV1InSixtieths() == 0:
@@ -309,7 +309,7 @@ while (True):
 		else:
 			sequencer.setCV1(0)
 
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	if key == ']':
 		if sequencer.getSlideInSixtieths() == 60:
@@ -320,7 +320,7 @@ while (True):
 			if sequencer.getGateInSixtieths() == 30:
 				sequencer.setGate(60)
 
-		sequencer.savePattern('memory.stepper3')
+		sequencer.savePattern('memory.stepper1')
 
 	# if key == chr(curses.KEY_BACKSPACE):
 	if key == '-':
