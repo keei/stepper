@@ -275,7 +275,7 @@ class Sequencer:
 			self.cv2InUnipolarVolts.append(0.0)
 			self.gateInSixtieths.append(0)
 			self.gateInUnipolarVolts.append(0.0)
-			self.pitchInSixtieths.append(12)
+			self.pitchInSixtieths.append(24)
 			self.pitchInUnipolarVolts.append(0.0)
 
 		self.reset()
@@ -561,7 +561,7 @@ class Sequencer:
 			self.numberOfRows[self.currentPatternNumber] = self.numberOfRows[self.currentPatternNumber] - 1
 
 			for channel in range(NUMBER_OF_CHANNELS):
-				self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber]][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
+				self.patternsInSixtieths[self.currentPatternNumber][self.numberOfRows[self.currentPatternNumber]][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
 
 	def reset(self):
 		self.setTempo(120) # Default to 120BPM
@@ -580,7 +580,7 @@ class Sequencer:
 
 				for channel in range(NUMBER_OF_CHANNELS):
 					self.patternsInSixtieths[pattern][row].append([])
-					self.patternsInSixtieths[pattern][row][channel] = {'pitch': 12, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
+					self.patternsInSixtieths[pattern][row][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
 
 	def saveSong(self, filename):
 		# Save the current song

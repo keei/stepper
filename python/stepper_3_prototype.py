@@ -281,18 +281,18 @@ while (True):
 		sequencer.saveSong('memory.stepper3')
 
 	if key == 'o':
-		if sequencer.getOctave() == 1:
-			sequencer.setOctave(0)
-		else:
-			sequencer.setOctave(1)
+		currentOctave = sequencer.getOctave()
+
+		if currentOctave > 0:
+			sequencer.setOctave(currentOctave - 1)
 
 		sequencer.saveSong('memory.stepper3')
 
 	if key == 'p':
-		if sequencer.getOctave() == 1:
-			sequencer.setOctave(2)
-		else:
-			sequencer.setOctave(1)
+		currentOctave = sequencer.getOctave()
+
+		if currentOctave < 4 or (currentOctave == 4 and sequencer.getSemitone() == 0):
+			sequencer.setOctave(currentOctave + 1)
 
 		sequencer.saveSong('memory.stepper3')
 
@@ -435,10 +435,10 @@ while (True):
 	else:
 		gateCharacter = '.'
 
-	if octave == 0:
+	if octave < 2:
 		octaveDownCharacter = 'o'
 		octaveUpCharacter = '.'
-	elif octave == 2:
+	elif octave > 2:
 		octaveDownCharacter = '.'
 		octaveUpCharacter = 'o'
 	else:
