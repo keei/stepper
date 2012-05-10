@@ -279,16 +279,16 @@ class Sequencer:
 	def __init__(self):
 		for channel in range(NUMBER_OF_CHANNELS):
 			self.cv1InSixtieths.append(0)
-			self.cv1InTwelveBits.append(0.0)
+			self.cv1InTwelveBits.append(0)
 			self.cv1InUnipolarVolts.append(0.0)
 			self.cv2InSixtieths.append(0)
-			self.cv2InTwelveBits.append(0.0)
+			self.cv2InTwelveBits.append(0)
 			self.cv2InUnipolarVolts.append(0.0)
 			self.gateInSixtieths.append(0)
-			self.gateInTwelveBits.append(0.0)
+			self.gateInTwelveBits.append(0)
 			self.gateInUnipolarVolts.append(0.0)
 			self.pitchInSixtieths.append(24)
-			self.pitchInTwelveBits.append(0.0)
+			self.pitchInTwelveBits.append(0)
 			self.pitchInUnipolarVolts.append(0.0)
 
 		self.reset()
@@ -313,6 +313,10 @@ class Sequencer:
 		sixtieth = '%02d' % sixtieth
 
 		return sixtieth
+
+	def convertTwelveBitsIntoChars(self, twelveBits):
+		"""Convert a number between 0 and 4095 into four characters, suitable for display on a screen with a fixed width font."""
+		return '%04d' % twelveBits
 
 	def copyPattern(self):
 		self.clipboard = self.patternInSixtieths

@@ -337,9 +337,9 @@ while (True):
 
 	previousCycleTimeInSeconds = timeInSeconds
 
-	pitchInUnipolarVolts = sequencer.getPitchInUnipolarVolts(0)
-	cv1InUnipolarVolts = sequencer.getCV1InUnipolarVolts(0)
-	gateInUnipolarVolts = sequencer.getGateInUnipolarVolts(0)
+	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
+	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
+	gateInTwelveBits = sequencer.getGateInTwelveBits(0)
 
 	clipboardFull = sequencer.getClipboardStatus()
 	cv1 = sequencer.getCV1InSixtieths()
@@ -359,10 +359,10 @@ while (True):
 	cursePrint(0, 0, 'Time            ' + str(timeInMilliseconds))
 	cursePrint(1, 0, 'Iterations/sec  ' + str(iterationsPerSecond))
 
-	cursePrint(3, 0, 'Pitch           ' + str(pitchInUnipolarVolts))
-	cursePrint(4, 0, 'CV1             ' + str(cv1InUnipolarVolts))
+	cursePrint(3, 0, 'Pitch           ' + sequencer.convertTwelveBitsIntoChars(pitchInTwelveBits))
+	cursePrint(4, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
 	cursePrint(5, 0, 'CV2             N/A')
-	cursePrint(6, 0, 'Gate            ' + str(gateInUnipolarVolts))
+	cursePrint(6, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
 
 	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
 	cursePrint(9, 0, 'A S    D                F                G         H  ')
