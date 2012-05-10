@@ -705,15 +705,16 @@ class Sequencer:
 
 	def setPlayMode(self, playMode):
 		self.playMode = playMode
-		self.nextPatternNumber = self.currentPatternNumber # Play mode 1 will use this default, unless the user queues up a pattern change in the meantime.
-		self.finalPatternNumber = self.currentPatternNumber # Play modes 2 and 3 will use this.
+
 		# Technically, nextPatternNumber and finalPatternNumber could probably be the same variable, but I wouldn't advise that as it would be needlessly confusing.
-
-		# I think it's helpful to leave the cursor where it is after stopping.  If other people disagree, this condition can be removed.
-		if playMode != 0:
+		if playMode == 0:
+			pass
+		elif playMode == 1:
 			self.patternPositionInSeconds = 0.0
-
-		if playMode > 1:
+			self.nextPatternNumber = self.currentPatternNumber # Play mode 1 will use this default, unless the user queues up a pattern change in the meantime.
+		else:
+			self.patternPositionInSeconds = 0.0
+			self.finalPatternNumber = self.currentPatternNumber # Play modes 2 and 3 will use this.
 			self.currentPatternNumber = 0
 
 	def setSemitone(self, semitone):
