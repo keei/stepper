@@ -283,12 +283,11 @@ while (True):
 		sequencer.savePattern('memory.stepper1')
 
 	if key == 'i':
-		gate = sequencer.getGateInSixtieths()
-
-		if gate == 0:
-			sequencer.setGate(30)
-		elif gate == 30:
-			sequencer.setGate(60)
+		if sequencer.getGateInSixtieths() == 0:
+			if sequencer.getSlideInSixtieths() == 60:
+				sequencer.setGate(60)
+			else:
+				sequencer.setGate(30)
 		else:
 			sequencer.setGate(0)
 
