@@ -315,6 +315,9 @@ while (True):
 		else:
 			sequencer.setSlide(60)
 
+			if sequencer.getGateInSixtieths() == 30:
+				sequencer.setGate(60)
+
 		sequencer.savePattern('memory.stepper3')
 
 	# if key == chr(curses.KEY_BACKSPACE):
