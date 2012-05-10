@@ -409,7 +409,7 @@ class Sequencer:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
 	def incrementCurrentRowNumber(self):
-		if self.currentRowNumber < self.numberOfRows[self.currentPatternNumber]:
+		if self.currentRowNumber < self.numberOfRows[self.currentPatternNumber] - 1:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
