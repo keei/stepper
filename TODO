@@ -1,8 +1,7 @@
 Important, low-level stuff:
 
 Essential features:
-There should be looping options: loop through current pattern forever; cycle through playing all patterns up until the current one forever; play all patterns up until the current one once, then stop.  (Pattern loop, song loop, song one-shot.)  These negate the need for a separate play button: whichever one's active, press it again to stop it, or one of the others to override it.
-Changing patterns while in pattern loop mode should probably wait patiently until the current pattern has finished playing, in effect "queueing up" the next selected pattern.
+Looping through the song should be until the pattern the user was on when she started that play mode, not all the patterns that exist.  Most will likely be blank.
 Refactor the code before translating it into C or C++.
 
 Nice features:

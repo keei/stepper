@@ -263,8 +263,7 @@ class Sequencer:
 	gateInSixtieths = []
 	gateInTwelveBits = []
 	gateInUnipolarVolts = []
-	loop = False
-	numberOfPatterns = 1
+	nextPatternNumber = 0
 	numberOfRows = []
 	patternPositionInSeconds = 0.0
 	patternInSixtieths = []
@@ -295,10 +294,6 @@ class Sequencer:
 			self.pitchInUnipolarVolts.append(0.0)
 
 		self.reset()
-
-	def addPattern(self):
-		if self.numberOfPatterns < MAX_NUMBER_OF_PATTERNS:
-			self.numberOfPatterns = self.numberOfPatterns + 1
 
 	def addRow(self):
 		if self.numberOfRows[self.currentPatternNumber] < MAX_NUMBER_OF_ROWS:
@@ -336,6 +331,10 @@ class Sequencer:
 	def decrementCurrentPatternNumber(self):
 		if self.currentPatternNumber > 0:
 			self.currentPatternNumber = self.currentPatternNumber - 1
+
+	def decrementNextPatternNumber(self):
+		if self.nextPatternNumber > 0:
+			self.nextPatternNumber = self.currentPatternNumber - 1
 
 	def decrementTempo(self):
 		if self.tempo > 1:
@@ -440,13 +439,12 @@ class Sequencer:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
-		if self.currentPatternNumber == MAX_NUMBER_OF_PATTERNS - 1: # Count starting 0
-			return
+		if self.currentPatternNumber != MAX_NUMBER_OF_PATTERNS - 1: # Count starting 0
+			self.currentPatternNumber = self.currentPatternNumber + 1
 
-		if self.currentPatternNumber == self.numberOfPatterns - 1:
-			self.numberOfPatterns = self.numberOfPatterns + 1
-
-		self.currentPatternNumber = self.currentPatternNumber + 1
+	def incrementNextPatternNumber(self):
+		if self.nextPatternNumber != MAX_NUMBER_OF_PATTERNS - 1: # Count starting 0
+			self.nextPatternNumber = self.nextPatternNumber + 1
 
 	def incrementTempo(self):
 		if self.tempo < 300:
@@ -477,17 +475,33 @@ class Sequencer:
 			rowPositionInSeconds = rowPairPositionInSeconds
 
 		if currentRowNumber > self.numberOfRows[self.currentPatternNumber] - 1:
-			if self.loop == True:
-				self.patternPositionInSeconds = 0.0
-				# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
+			self.patternPositionInSeconds = 0.0
+			# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
 
-				# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
-				currentRowNumber = 0
-				rowPairNumber = 0
-				rowPairPositionInSeconds = 0.0
-				rowPositionInSeconds = 0.0
-			else:
-				currentRowNumber = self.numberOfRows[self.currentPatternNumber]
+			# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
+			currentRowNumber = 0
+			rowPairNumber = 0
+			rowPairPositionInSeconds = 0.0
+			rowPositionInSeconds = 0.0
+
+			if self.playMode == 1:
+				self.currentPatternNumber = self.nextPatternNumber
+				self.loadPattern('memory.stepper1')
+			elif self.playMode == 2:
+				self.currentPatternNumber = self.currentPatternNumber + 1
+
+				if self.currentPatternNumber > MAX_NUMBER_OF_PATTERNS - 1:
+					self.currentPatternNumber = 0
+
+				self.loadPattern('memory.stepper1')
+			elif self.playMode == 3:
+				self.currentPatternNumber = self.currentPatternNumber + 1
+
+				if self.currentPatternNumber > MAX_NUMBER_OF_PATTERNS - 1:
+					self.currentPatternNumber = 0
+					self.playMode = 0
+
+				self.loadPattern('memory.stepper1')
 
 		self.currentRowNumber = currentRowNumber
 
@@ -681,9 +695,6 @@ class Sequencer:
 	def setGate(self, gate):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['gate'] = gate
 
-	def setLoop(self, loop):
-		self.loop = loop
-
 	def setOctave(self, octave):
 		semitone = self.getSemitone()
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
@@ -693,6 +704,7 @@ class Sequencer:
 
 	def setPlayMode(self, playMode):
 		self.playMode = playMode
+		self.nextPatternNumber = self.currentPatternNumber # Play mode 1 will use this default, unless the user queues up a pattern change in the meantime.
 
 		# I think it's helpful to leave the cursor where it is after stopping.  If other people disagree, this condition can be removed.
 		if playMode != 0:

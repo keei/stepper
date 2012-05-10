@@ -24,8 +24,6 @@ try:
 except:
 	pass
 
-sequencer.setLoop(True)
-
 previousCycleTimeInSeconds = 0
 
 interface = curses.initscr()
@@ -64,17 +62,15 @@ while (True):
 		curses.endwin()
 		exit()
 
-	if key == '	':
-		if sequencer.getPlaying() == True:
-			sequencer.setPlaying(False)
-		else:
-			sequencer.setPlaying(True)
-
 	if key == 'a':
 		if lcdMode == 'patternSelect':
 			sequencer.savePattern('memory.stepper1') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
-			sequencer.decrementCurrentPatternNumber()
-			sequencer.loadPattern('memory.stepper1')
+
+			if sequencer.getPlayMode() == 1:
+				sequencer.decrementNextPatternNumber()
+			elif sequencer.getPlayMode() == 0:
+				sequencer.decrementCurrentPatternNumber()
+				sequencer.loadPattern('memory.stepper1')
 		elif lcdMode == 'patternLength':
 			sequencer.removeRow()
 			sequencer.savePattern('memory.stepper1')
@@ -84,8 +80,12 @@ while (True):
 	if key == 's':
 		if lcdMode == 'patternSelect':
 			sequencer.savePattern('memory.stepper1')
-			sequencer.incrementCurrentPatternNumber()
-			sequencer.loadPattern('memory.stepper1')
+
+			if sequencer.getPlayMode() == 1:
+				sequencer.incrementNextPatternNumber()
+			elif sequencer.getPlayMode() == 0:
+				sequencer.incrementCurrentPatternNumber()
+				sequencer.loadPattern('memory.stepper1')
 		elif lcdMode == 'patternLength':
 			sequencer.addRow()
 			sequencer.savePattern('memory.stepper1')
