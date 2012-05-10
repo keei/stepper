@@ -28,3 +28,10 @@ separate from the sequencer.  The sequencer can be hooked up to
 control arbitrary parameters of these modules, but which modules are
 used, and how they're set up, are not part of the song format, and
 cannot be saved.
+
+== Stepper 1 ==
+
+Stepper 1 is an application that uses the Surf library.  It's a
+single channel step sequencer.  As it's implemented primarily in
+tangible hardware, its interface centers around (in the prototype,
+rough emulations of) LEDs, buttons, LCDs and rotary encoders.
