@@ -340,7 +340,7 @@ while (True):
 	cv1 = sequencer.getCV1InSixtieths()
 	gate = sequencer.getGateInSixtieths()
 	octave = sequencer.getOctave()
-	pitchName = sequencer.getPitchInSixtieths()
+	pitch = sequencer.getPitchInSixtieths()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlideInSixtieths()
 
@@ -405,7 +405,7 @@ while (True):
 		cursePrint(8, 48, 'o')
 
 	# Print out the current row
-	if semitone == 0 and pitchName != 61:
+	if semitone == 0:
 		cursePrint(11, 1, 'o')
 	elif semitone == 1:
 		cursePrint(10, 4, 'o')
@@ -430,7 +430,7 @@ while (True):
 	elif semitone == 11:
 		cursePrint(11, 34, 'o')
 
-	if gate != 0 and (gate != 61 or pitchName != 61):
+	if gate != 0:
 		gateCharacter = 'o'
 	else:
 		gateCharacter = '.'
