@@ -281,18 +281,18 @@ while (True):
 		sequencer.saveSong('memory.stepper3')
 
 	if key == 'o':
-		currentOctave = sequencer.getOctave()
+		currentPitch = sequencer.getPitchInSixtieths()
 
-		if currentOctave > 0:
-			sequencer.setOctave(currentOctave - 1)
+		if currentPitch > 11:
+			sequencer.setPitch(currentPitch - 12)
 
 		sequencer.saveSong('memory.stepper3')
 
 	if key == 'p':
-		currentOctave = sequencer.getOctave()
+		currentPitch = sequencer.getPitchInSixtieths()
 
-		if currentOctave < 4 or (currentOctave == 4 and sequencer.getSemitone() == 0):
-			sequencer.setOctave(currentOctave + 1)
+		if currentPitch < 49:
+			sequencer.setPitch(currentPitch + 12)
 
 		sequencer.saveSong('memory.stepper3')
 
@@ -339,7 +339,7 @@ while (True):
 	clipboardFull = sequencer.getClipboardStatus()
 	cv1 = sequencer.getCV1InSixtieths()
 	gate = sequencer.getGateInSixtieths()
-	octave = sequencer.getOctave()
+	# octave = sequencer.getOctave()
 	pitch = sequencer.getPitchInSixtieths()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlideInSixtieths()
@@ -435,10 +435,10 @@ while (True):
 	else:
 		gateCharacter = '.'
 
-	if octave < 2:
+	if pitch < 24:
 		octaveDownCharacter = 'o'
 		octaveUpCharacter = '.'
-	elif octave > 2:
+	elif pitch > 35:
 		octaveDownCharacter = '.'
 		octaveUpCharacter = 'o'
 	else:
