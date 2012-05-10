@@ -294,6 +294,7 @@ class Sequencer:
 			self.pitchInTwelveBits.append(0)
 			self.pitchInUnipolarVolts.append(0.0)
 
+		self.setTempo(120) # Default to 120BPM
 		self.reset()
 
 	def addRow(self):
@@ -591,7 +592,7 @@ class Sequencer:
 		return incrementLengthInSeconds
 
 	def loadPattern(self, filename):
-		# Wipe the old song
+		# Wipe the old pattern
 		self.reset()
 
 		# Load the new song
@@ -640,7 +641,7 @@ class Sequencer:
 				self.patternInSixtieths[self.numberOfRows[self.currentPatternNumber]][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
 
 	def reset(self):
-		self.setTempo(120) # Default to 120BPM
+		"""Clear the pattern held in memory."""
 		self.numberOfRows = []
 
 		for pattern in range(MAX_NUMBER_OF_PATTERNS):

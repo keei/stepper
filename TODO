@@ -1,5 +1,5 @@
 Important, low-level stuff:
-We should probably only load, store and save the number of rows in the *current* pattern, not all of them.  This is sort of intertwined with how reset() is being called from patternLoad(), which I believe is a throwback to when it was songLoad().  Obviously, switching patterns shouldn't change the song's tempo!
+We should probably only load, store and save the number of rows in the *current* pattern, not all of them.  This is sort of intertwined with how reset() is being called from patternLoad(), which I believe is a throwback to when it was songLoad().
 
 Essential features:
 Refactor the code before translating it into C or C++.
