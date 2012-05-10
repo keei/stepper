@@ -320,6 +320,9 @@ while (True):
 	if key == ']':
 		if sequencer.getSlideInSixtieths() == 60:
 			sequencer.setSlide(0)
+
+			if sequencer.getGateInSixtieths() == 60:
+				sequencer.setGate(30)
 		else:
 			sequencer.setSlide(60)
 
