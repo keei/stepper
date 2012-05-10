@@ -626,6 +626,7 @@ class Sequencer:
 				self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] = cv2
 
 		currentRowNumber = currentRowNumber + 1
+		song.close()
 
 	def pastePattern(self):
 		self.patternInSixtieths = self.clipboard
@@ -676,6 +677,8 @@ class Sequencer:
 				cv1 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'] + 48)
 				cv2 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] + 48)
 				song.write(pitch + slide + gate + cv1 + cv2)
+
+		song.close()
 
 	def setArtistEmailAddress(self, artistEmailAddress):
 		self.artistEmailAddress = artistEmailAddress
