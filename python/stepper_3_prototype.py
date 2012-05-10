@@ -16,6 +16,8 @@ surf.MAX_NUMBER_OF_ROWS = 64
 surf.NUMBER_OF_CHANNELS = 1
 
 sequencer = surf.Sequencer()
+sequencer.slideCV1 = False # This won't have a DAC
+sequencer.slideCV2 = False # This won't exist at all
 
 try:
 	sequencer.loadPattern('memory.stepper3')

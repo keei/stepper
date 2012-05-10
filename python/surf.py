@@ -272,6 +272,9 @@ class Sequencer:
 	pitchInTwelveBits = []
 	pitchInUnipolarVolts = []
 	playing = False
+	slideCV1 = True
+	slideCV2 = True
+	slidePitch = True
 	swingInBipolarVolts = 0.0
 	tempo = 120
 	timeInSeconds = 0.0
@@ -558,13 +561,17 @@ class Sequencer:
 					offsetEndInSeconds = endInSeconds - beginningInSeconds
 					positionAsDecimal = offsetPositionInSeconds / offsetEndInSeconds
 
-					self.pitchInTwelveBits[channel] = int(self.pitchInTwelveBits[channel] + (pitchDifferenceInTwelveBits / 1 * positionAsDecimal))
-					self.cv1InTwelveBits[channel] = int(self.cv1InTwelveBits[channel] + (cv1DifferenceInTwelveBits / 1 * positionAsDecimal))
-					self.cv2InTwelveBits[channel] = int(self.cv2InTwelveBits[channel] + (cv2DifferenceInTwelveBits / 1 * positionAsDecimal))
+					if self.slidePitch == True:
+						self.pitchInTwelveBits[channel] = int(self.pitchInTwelveBits[channel] + (pitchDifferenceInTwelveBits / 1 * positionAsDecimal))
+						self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (pitchDifferenceInUnipolarVolts / 1 * positionAsDecimal)
 
-					self.pitchInUnipolarVolts[channel] = self.pitchInUnipolarVolts[channel] + (pitchDifferenceInUnipolarVolts / 1 * positionAsDecimal)
-					self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (cv1DifferenceInUnipolarVolts / 1 * positionAsDecimal)
-					self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2DifferenceInUnipolarVolts / 1 * positionAsDecimal)
+					if self.slideCV1 == True:
+						self.cv1InTwelveBits[channel] = int(self.cv1InTwelveBits[channel] + (cv1DifferenceInTwelveBits / 1 * positionAsDecimal))
+						self.cv1InUnipolarVolts[channel] = self.cv1InUnipolarVolts[channel] + (cv1DifferenceInUnipolarVolts / 1 * positionAsDecimal)
+
+					if self.slideCV2 == True:
+						self.cv2InTwelveBits[channel] = int(self.cv2InTwelveBits[channel] + (cv2DifferenceInTwelveBits / 1 * positionAsDecimal))
+						self.cv2InUnipolarVolts[channel] = self.cv2InUnipolarVolts[channel] + (cv2DifferenceInUnipolarVolts / 1 * positionAsDecimal)
 
 		return incrementLengthInSeconds
 
