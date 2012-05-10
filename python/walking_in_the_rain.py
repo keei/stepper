@@ -41,10 +41,10 @@ while time < trackLength:
 	time = sequencer.getTime()
 	sequencer.incrementTime(surf.globalIncrementLengthInSeconds)
 
-	leadCV1 = sequencer.getCV1Output(0) # This can control anything.  Let's arbitrarily use it as the velocity.
-	leadCV2 = sequencer.getCV2Output(0)
-	leadGate = sequencer.getGateOutput(0)
-	leadPitch = sequencer.getPitchOutput(0)
+	leadCV1 = sequencer.getCV1InUnipolarVolts(0) # This can control anything.  Let's arbitrarily use it as the velocity.
+	leadCV2 = sequencer.getCV2InUnipolarVolts(0)
+	leadGate = sequencer.getGateInUnipolarVolts(0)
+	leadPitch = sequencer.getPitchInUnipolarVolts(0)
 	leadOscillator.setPitch(leadPitch)
 	leadOscillator.setPulseWidth(leadCV2)
 	leadOscillator.incrementTime(surf.globalIncrementLengthInSeconds)
@@ -56,9 +56,9 @@ while time < trackLength:
 	leadAttenuator.setCV2(leadCV1)
 	leadPulse = leadAttenuator.getAudio()
 
-	bassCV1 = sequencer.getCV1Output(1) # This can control anything.  Let's arbitrarily use it as the velocity.
-	bassGate = sequencer.getGateOutput(1)
-	bassPitch = sequencer.getPitchOutput(1)
+	bassCV1 = sequencer.getCV1InUnipolarVolts(1) # This can control anything.  Let's arbitrarily use it as the velocity.
+	bassGate = sequencer.getGateInUnipolarVolts(1)
+	bassPitch = sequencer.getPitchInUnipolarVolts(1)
 	bassOscillator.setPitch(bassPitch)
 	bassOscillator.incrementTime(surf.globalIncrementLengthInSeconds)
 	bassPulse = bassOscillator.getPulse()
@@ -69,8 +69,8 @@ while time < trackLength:
 	bassAttenuator.setCV2(bassCV1)
 	bassPulse = bassAttenuator.getAudio()
 
-	hihatCV1 = sequencer.getCV1Output(2) # This can control anything.  Let's arbitrarily use it as the velocity.
-	hihatGate = sequencer.getGateOutput(2)
+	hihatCV1 = sequencer.getCV1InUnipolarVolts(2) # This can control anything.  Let's arbitrarily use it as the velocity.
+	hihatGate = sequencer.getGateInUnipolarVolts(2)
 	hihatNoise = hihatOscillator.getAudio()
 	hihatAttenuator.setAudio(hihatNoise)
 	hihatAttenuator.setCV1(hihatGate)
