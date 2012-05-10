@@ -109,10 +109,10 @@ while (True):
 			sequencer.copyPattern()
 
 	if key == 'j':
-		pass
+		sequencer.transposePatternDown()
 
 	if key == 'k':
-		pass
+		sequencer.transposePatternUp()
 
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:

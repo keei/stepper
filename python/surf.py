@@ -719,6 +719,40 @@ class Sequencer:
 		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
 		self.averageRowLengthInSeconds = semiquaverLengthInSeconds
 
+	def transposePatternDown(self):
+		# Only transpose down if every note in the pattern will still be in the 0 to 60 range afterwards
+		lowestPitch = 60
+
+		for row in self.patternInSixtieths:
+			for channel in row:
+				if channel['pitch'] < lowestPitch:
+					lowestPitch = channel['pitch']
+
+		if lowestPitch == 0:
+			return
+
+		# Go ahead and transpose the pattern
+		for row in self.patternInSixtieths:
+			for channel in row:
+					channel['pitch'] = channel['pitch'] - 1
+
+	def transposePatternUp(self):
+		# Only transpose up if every note in the pattern will still be in the 0 to 60 range afterwards
+		highestPitch = 0
+
+		for row in self.patternInSixtieths:
+			for channel in row:
+				if channel['pitch'] > highestPitch:
+					highestPitch = channel['pitch']
+
+		if highestPitch == 60:
+			return
+
+		# Go ahead and transpose the pattern
+		for row in self.patternInSixtieths:
+			for channel in row:
+					channel['pitch'] = channel['pitch'] + 1
+
 class SustainReleaseEnvelopeGenerator:
 	cvInUnipolarVolts = 0.0
 	gateInUnipolarVolts = 0.0

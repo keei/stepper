@@ -1,5 +1,4 @@
 Important, low-level stuff:
-Add two buttons to transpose the current pattern up and down by a single semitone.  They should only work if every note in the current pattern will still be in the range of 0-60 afterwards.
 Add the ability to tie non-sliding notes with full duration gates.
 
 Essential features:
