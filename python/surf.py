@@ -265,7 +265,7 @@ class Sequencer:
 	gateInTwelveBits = []
 	gateInUnipolarVolts = []
 	nextPatternNumber = 0
-	numberOfRows = []
+	numberOfRows = 0
 	patternPositionInSeconds = 0.0
 	patternInSixtieths = []
 	pitchInSixtieths = []
@@ -298,8 +298,8 @@ class Sequencer:
 		self.reset()
 
 	def addRow(self):
-		if self.numberOfRows[self.currentPatternNumber] < MAX_NUMBER_OF_ROWS:
-			self.numberOfRows[self.currentPatternNumber] = self.numberOfRows[self.currentPatternNumber] + 1
+		if self.numberOfRows < MAX_NUMBER_OF_ROWS:
+			self.numberOfRows = self.numberOfRows + 1
 
 	def convertNumberIntoChars(self, number):
 		"""Convert a number into three characters, suitable for display on an LCD."""
@@ -394,7 +394,7 @@ class Sequencer:
 		return floor(float(self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']) / 12.0)
 
 	def getPatternLength(self):
-		return self.numberOfRows[self.currentPatternNumber]
+		return self.numberOfRows
 
 	def getPitchInTwelveBits(self, channel):
 		return self.pitchInTwelveBits[channel]
@@ -430,14 +430,14 @@ class Sequencer:
 		return self.timeInSeconds
 
 	def getTrackLength(self):
-		return sum(self.numberOfRows) * self.averageRowLengthInSeconds # This is now grossly oversimplifying!
+		pass # This will involve loading in the pattern lengths from the file.
 
 	def incrementCurrentChannelNumber(self):
 		if self.currentChannelNumber < NUMBER_OF_CHANNELS - 1:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
 	def incrementCurrentRowNumber(self):
-		if self.currentRowNumber < self.numberOfRows[self.currentPatternNumber] - 1:
+		if self.currentRowNumber < self.numberOfRows - 1:
 			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementCurrentPatternNumber(self):
@@ -476,7 +476,7 @@ class Sequencer:
 			rowLengthInSeconds = firstRowLengthInSeconds
 			rowPositionInSeconds = rowPairPositionInSeconds
 
-		if currentRowNumber > self.numberOfRows[self.currentPatternNumber] - 1:
+		if currentRowNumber > self.numberOfRows - 1:
 			self.patternPositionInSeconds = 0.0
 			# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
 
@@ -510,7 +510,7 @@ class Sequencer:
 		# Read in the current and next event rows
 		nextRowNumber = currentRowNumber + 1
 
-		if nextRowNumber > self.numberOfRows[self.currentPatternNumber] - 1:
+		if nextRowNumber > self.numberOfRows - 1:
 			nextRowNumber = 0 # Wrap around from the last note in the pattern to the first note in the pattern.  Slide to that.  Let's not worry for now about whether the selected pattern will change.
 
 		# Work out each current event's pitch, slide or lack thereof, gate length, CV1 and CV2
@@ -598,10 +598,9 @@ class Sequencer:
 		# Load the new song
 		song = open(filename, 'r')
 
-		# Load the pattern lengths
-		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
-			numberOfRows = ord(song.read(1)) - 48
-			self.numberOfRows[currentPatternNumber] = numberOfRows
+		# Load the pattern length
+		song.seek(self.currentPatternNumber)
+		self.numberOfRows = ord(song.read(1)) - 48
 
 		# Seek ahead
 		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS * 5)) # 5 bytes per event
@@ -634,19 +633,15 @@ class Sequencer:
 		self.clipboardFull = False
 
 	def removeRow(self):
-		if self.numberOfRows[self.currentPatternNumber] > 1:
-			self.numberOfRows[self.currentPatternNumber] = self.numberOfRows[self.currentPatternNumber] - 1
+		if self.numberOfRows > 1:
+			self.numberOfRows = self.numberOfRows - 1
 
 			for channel in range(NUMBER_OF_CHANNELS):
-				self.patternInSixtieths[self.numberOfRows[self.currentPatternNumber]][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
+				self.patternInSixtieths[self.numberOfRows][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
 
 	def reset(self):
 		"""Clear the pattern held in memory."""
-		self.numberOfRows = []
-
-		for pattern in range(MAX_NUMBER_OF_PATTERNS):
-			self.numberOfRows.append(DEFAULT_NUMBER_OF_ROWS)
-
+		self.numberOfRows = DEFAULT_NUMBER_OF_ROWS
 		self.patternInSixtieths = []
 
 		for row in range(MAX_NUMBER_OF_ROWS):
@@ -663,10 +658,10 @@ class Sequencer:
 		except IOError:
 			song = open(filename, 'w') # If it doesn't already exist, create it.
 
-		# Save the pattern lengths
-		for currentPatternNumber in range(MAX_NUMBER_OF_PATTERNS):
-			numberOfRows = chr(self.numberOfRows[currentPatternNumber] + 48)
-			song.write(numberOfRows)
+		# Save the pattern length
+		song.seek(self.currentPatternNumber)
+		numberOfRows = chr(self.numberOfRows + 48)
+		song.write(numberOfRows)
 
 		# Seek ahead
 		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS * 5)) # 5 bytes per event
