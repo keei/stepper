@@ -36,13 +36,14 @@ private:
 	mutable unsigned char patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
 	mutable unsigned short pitchInTwelveBits[NUMBER_OF_CHANNELS];
 	mutable unsigned char playMode;
-	mutable bool slideCV1;
-	mutable bool slideCV2;
-	mutable bool slidePitch;
 	mutable unsigned char tempo;
 	mutable float timeInSeconds;
 
 public:
+	mutable bool slideCV1;
+	mutable bool slideCV2;
+	mutable bool slidePitch;
+
 	Sequencer() {
 		for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
 			cv1InTwelveBits[i] = 0;

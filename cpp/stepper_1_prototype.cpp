@@ -3,13 +3,22 @@
 #define MAX_NUMBER_OF_ROWS 64
 #define NUMBER_OF_CHANNELS 1
 
-// #include <iostream>
+#include <curses.h>
 #include <stdio.h>
 #include "Sequencer.cpp"
 
 int main() {
+	unsigned short previousCycleTimeInSeconds = 0;
+
 	Sequencer sequencer;
-	// std::cout << chr(sequencer.getTempo());
-	// std::cout << "\n";
-	printf("%u\n", sequencer.getTempo());
+	sequencer.slideCV1 = false; // This won't have a DAC
+	sequencer.slideCV2 = false; // This won't exist at all
+
+	initscr();
+
+	while (true) {
+		if (true) {
+			endwin();
+		}
+	}
 }
