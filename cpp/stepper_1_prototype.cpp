@@ -6,7 +6,7 @@
 #include <curses.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
+#include <sys/time.h>
 #include "Sequencer.cpp"
 
 
@@ -34,6 +34,11 @@ int main() {
 	unsigned short previousCycleTimeInSeconds = 0;
 	unsigned short timeInMiliseconds = 0;
 	char key = '.';
+	struct timeval tv;
+
+	// printf("Clock: %u\n", clock());
+	gettimeofday(&tv, NULL);
+	printf("Time of day: %u\n", tv.tv_usec);
 
 	Sequencer sequencer;
 	sequencer.slideCV1 = false; // This won't have a DAC
@@ -50,6 +55,9 @@ int main() {
 
 		if (key == ' ') {
 			endwin();
+			// printf("Clock: %u\n", clock());
+			gettimeofday(&tv, NULL);
+			printf("Time of day: %u\n", tv.tv_usec);
 			return 0;
 		}
 
