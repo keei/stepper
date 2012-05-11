@@ -177,7 +177,8 @@ public:
 	void setSlide() {
 	}
 
-	void setTempo(char tempo) {
+	void setTempo(char t) {
+		tempo = t;
 	}
 
 	void transposePatternDown() {
