@@ -20,7 +20,7 @@
 class Sequencer {
 private:
 	mutable float averageRowLengthInSeconds;
-	mutable unsigned char clipboard[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
+	mutable unsigned char clipboard[MAX_NUMBER_OF_ROWS][NUMBER_OF_CHANNELS][5];
 	mutable bool clipboardFull;
 	mutable unsigned char currentChannelNumber;
 	mutable unsigned char currentPatternNumber;
@@ -33,7 +33,7 @@ private:
 	mutable unsigned char nextPatternNumber;
 	mutable unsigned char numberOfRows;
 	mutable float patternPositionInSeconds;
-	mutable unsigned char patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
+	mutable unsigned char patternInSixtieths[MAX_NUMBER_OF_ROWS][NUMBER_OF_CHANNELS][5];
 	mutable unsigned short pitchInTwelveBits[NUMBER_OF_CHANNELS];
 	mutable unsigned char playMode;
 	mutable unsigned char tempo;
@@ -114,7 +114,7 @@ public:
 	}
 
 	unsigned char getCV1InSixtieths() {
-		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][3];
 	}
 
 	unsigned short getCV1InTwelveBits(unsigned char c) {
@@ -122,7 +122,7 @@ public:
 	}
 
 	unsigned char getCV2InSixtieths() {
-		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][4];
 	}
 
 	unsigned short getCV2InTwelveBits(unsigned char c) {
@@ -130,7 +130,7 @@ public:
 	}
 
 	unsigned char getGateInSixtieths() {
-		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['gate'];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][2];
 	}
 
 	unsigned short getGateInTwelveBits(unsigned char c) {
@@ -145,7 +145,7 @@ public:
 	}
 
 	unsigned char getPitchInSixtieths() {
-		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][0];
 	}
 
 	unsigned short getPitchInTwelveBits(unsigned char c) {
@@ -223,22 +223,22 @@ public:
 	}
 
 	void setCV1(unsigned char c) {
-		// patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'] = c;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][3] = c;
 	}
 
 	void setCV2(unsigned char c) {
-		// patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] = c;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][4] = c;
 	}
 
 	void setGate(unsigned char g) {
-		// patternInSixtieths[currentRowNumber][currentChannelNumber]['gate'] = g;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][2] = g;
 	}
 
 	void setOctave(unsigned char o) {
 	}
 
 	void setPitch(unsigned char p) {
-		// patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'] = p;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][0] = p;
 	}
 
 	void setPlayMode(unsigned char p) {
@@ -249,7 +249,7 @@ public:
 	}
 
 	void setSlide(unsigned char s) {
-		// patternInSixtieths[currentRowNumber][currentChannelNumber]['slide'] = s;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][1] = s;
 	}
 
 	void setTempo(char t) {
