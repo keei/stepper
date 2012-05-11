@@ -421,13 +421,13 @@ class Sequencer:
 		if self.currentChannelNumber < NUMBER_OF_CHANNELS - 1:
 			self.currentChannelNumber = self.currentChannelNumber + 1
 
-	def incrementCurrentRowNumber(self):
-		if self.currentRowNumber < self.numberOfRows - 1:
-			self.currentRowNumber = self.currentRowNumber + 1
-
 	def incrementCurrentPatternNumber(self):
 		if self.currentPatternNumber != MAX_NUMBER_OF_PATTERNS - 1: # Count starting 0
 			self.currentPatternNumber = self.currentPatternNumber + 1
+
+	def incrementCurrentRowNumber(self):
+		if self.currentRowNumber < self.numberOfRows - 1:
+			self.currentRowNumber = self.currentRowNumber + 1
 
 	def incrementNextPatternNumber(self):
 		if self.nextPatternNumber != MAX_NUMBER_OF_PATTERNS - 1: # Count starting 0
