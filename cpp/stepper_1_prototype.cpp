@@ -15,11 +15,9 @@ void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char s
 
 	for (i = 0; i < strlen(s); i++) {
 		if (invert == true) {
-			move(rowNumber, firstColumnNumber + i);
-			addch(s[i]);
+			// mvaddch(rowNumber, firstColumnNumber + i, s[i], A_REVERSE);
 		} else {
-			move(rowNumber, firstColumnNumber + i);
-			addch(s[i]);
+			mvaddch(rowNumber, firstColumnNumber + i, s[i]);
 		}
 	}
 }
@@ -38,7 +36,9 @@ int main() {
 	sequencer.slideCV2 = false; // This won't exist at all
 
 	initscr();
+	nodelay();
 	noecho();
+	cbreak();
 
 	while (true) {
 		key = getch();
@@ -50,5 +50,6 @@ int main() {
 
 		timeInMiliseconds = millis();
 		cursePrint(0, 0, "test", false);
+		refresh();
 	}
 }
