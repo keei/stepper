@@ -32,6 +32,7 @@ private:
 	mutable char finalPatternNumber;
 	mutable char gateInSixtieths[NUMBER_OF_CHANNELS];
 	mutable char gateInTwelveBits[NUMBER_OF_CHANNELS];
+	mutable char i;
 	mutable char nextPatternNumber;
 	mutable char numberOfRows;
 	mutable float patternPositionInSeconds;
@@ -45,6 +46,7 @@ private:
 	mutable char tempo;
 	mutable float timeInSeconds;
 
+public:
 	void addRow() {
 	}
 
@@ -117,7 +119,8 @@ private:
 	void getSlideInSixtieths() {
 	}
 
-	void getTempo() {
+	char getTempo() {
+		return tempo;
 	}
 
 	void incrementCurrentChannelNumber() {
@@ -174,7 +177,7 @@ private:
 	void setSlide() {
 	}
 
-	void setTempo() {
+	void setTempo(char tempo) {
 	}
 
 	void transposePatternDown() {
@@ -184,6 +187,19 @@ private:
 	}
 
 	Sequencer() {
+		for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
+			cv1InSixtieths[i] = 0;
+			cv1InTwelveBits[i] = 0;
+			cv2InSixtieths[i] = 0;
+			cv2InTwelveBits[i] = 0;
+			gateInSixtieths[i] = 0;
+			gateInTwelveBits[i] = 0;
+			pitchInSixtieths[i] = 0;
+			pitchInTwelveBits[i] = 0;
+		}
+
+		setTempo(120); // Default to 120BPM
+		reset();
 	}
 };
 
