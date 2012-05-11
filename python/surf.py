@@ -254,21 +254,17 @@ class Sequencer:
 	currentChannelNumber = 0
 	currentPatternNumber = 0
 	currentRowNumber = 0
-	cv1InSixtieths = []
 	cv1InTwelveBits = []
 	cv1InUnipolarVolts = []
-	cv2InSixtieths = []
 	cv2InTwelveBits = []
 	cv2InUnipolarVolts = []
 	finalPatternNumber = 0 # Final in the context of looping / playing
-	gateInSixtieths = []
 	gateInTwelveBits = []
 	gateInUnipolarVolts = []
 	nextPatternNumber = 0
 	numberOfRows = 0
 	patternPositionInSeconds = 0.0
 	patternInSixtieths = []
-	pitchInSixtieths = []
 	pitchInTwelveBits = []
 	pitchInUnipolarVolts = []
 	playMode = 0
@@ -281,16 +277,12 @@ class Sequencer:
 
 	def __init__(self):
 		for channel in range(NUMBER_OF_CHANNELS):
-			self.cv1InSixtieths.append(0)
 			self.cv1InTwelveBits.append(0)
 			self.cv1InUnipolarVolts.append(0.0)
-			self.cv2InSixtieths.append(0)
 			self.cv2InTwelveBits.append(0)
 			self.cv2InUnipolarVolts.append(0.0)
-			self.gateInSixtieths.append(0)
 			self.gateInTwelveBits.append(0)
 			self.gateInUnipolarVolts.append(0.0)
-			self.pitchInSixtieths.append(24)
 			self.pitchInTwelveBits.append(0)
 			self.pitchInUnipolarVolts.append(0.0)
 
