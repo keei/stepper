@@ -9,6 +9,8 @@
 #include <sys/time.h>
 #include "Sequencer.cpp"
 
+struct timeval tv;
+unsigned long startTimeInMiliseconds = 0;
 
 void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char s[81], bool invert) {
 	unsigned char i;
@@ -27,18 +29,17 @@ void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char s
 }
 
 long millis() {
-	return clock();
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000) + tv.tv_usec - startTimeInMiliseconds;
 }
 
 int main() {
 	unsigned short previousCycleTimeInSeconds = 0;
 	unsigned short timeInMiliseconds = 0;
 	char key = '.';
-	struct timeval tv;
 
-	// printf("Clock: %u\n", clock());
 	gettimeofday(&tv, NULL);
-	printf("Time of day: %u\n", tv.tv_usec);
+	startTimeInMiliseconds = (tv.tv_sec * 1000) + tv.tv_usec;
 
 	Sequencer sequencer;
 	sequencer.slideCV1 = false; // This won't have a DAC
@@ -55,9 +56,8 @@ int main() {
 
 		if (key == ' ') {
 			endwin();
-			// printf("Clock: %u\n", clock());
-			gettimeofday(&tv, NULL);
-			printf("Time of day: %u\n", tv.tv_usec);
+			timeInMiliseconds = millis();
+			printf("Time in miliseconds: %u\n", timeInMiliseconds);
 			return 0;
 		}
 
