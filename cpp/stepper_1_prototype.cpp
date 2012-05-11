@@ -13,12 +13,16 @@
 void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char s[81], bool invert) {
 	unsigned char i;
 
+	if (invert == true) {
+		attron(A_REVERSE);
+	}
+
 	for (i = 0; i < strlen(s); i++) {
-		if (invert == true) {
-			// mvaddch(rowNumber, firstColumnNumber + i, s[i], A_REVERSE);
-		} else {
-			mvaddch(rowNumber, firstColumnNumber + i, s[i]);
-		}
+		mvaddch(rowNumber, firstColumnNumber + i, s[i]);
+	}
+
+	if (invert == true) {
+		attron(A_REVERSE);
 	}
 }
 
@@ -36,9 +40,10 @@ int main() {
 	sequencer.slideCV2 = false; // This won't exist at all
 
 	initscr();
-	nodelay();
+	nodelay(stdscr, true);
 	noecho();
 	cbreak();
+	timeout(-1);
 
 	while (true) {
 		key = getch();
