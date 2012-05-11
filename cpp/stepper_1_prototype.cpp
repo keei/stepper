@@ -5,10 +5,12 @@
 
 #include <curses.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include "Sequencer.cpp"
 
 int main() {
 	unsigned short previousCycleTimeInSeconds = 0;
+	unsigned short startTimeInSeconds = 0;
 	char key = ' ';
 
 	Sequencer sequencer;
@@ -17,6 +19,12 @@ int main() {
 
 	initscr();
 	noecho();
+
+	startTimeInSeconds = gettimeofday();
+
+	millis() {
+		return gettimeofday() - startTimeInSeconds;
+	}
 
 	while (true) {
 		key = getch();
