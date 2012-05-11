@@ -46,6 +46,6 @@ int main() {
 		}
 
 		timeInMiliseconds = millis();
-		cursePrint(0, 0, 'test', false);
+		cursePrint(0, 0, "test", false);
 	}
 }
