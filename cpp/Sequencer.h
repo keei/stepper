@@ -120,6 +120,69 @@ private:
 	void getTempo() {
 	}
 
+	void incrementCurrentChannelNumber() {
+	}
+
+	void incrementCurrentPatternNumber() {
+	}
+
+	void incrementCurrentRowNumber() {
+	}
+
+	void incrementNextPatternNumber() {
+	}
+
+	void incrementTempo() {
+	}
+
+	void incrementTime() {
+	}
+
+	void loadPattern() {
+	}
+
+	void pastePattern() {
+	}
+
+	void reset() {
+	}
+
+	void savePattern() {
+	}
+
+	void setCV1() {
+	}
+
+	void setCV2() {
+	}
+
+	void setGate() {
+	}
+
+	void setOctave() {
+	}
+
+	void setPitch() {
+	}
+
+	void setPlayMode() {
+	}
+
+	void setSemitone() {
+	}
+
+	void setSlide() {
+	}
+
+	void setTempo() {
+	}
+
+	void transposePatternDown() {
+	}
+
+	void transposePatternUp() {
+	}
+
 	Sequencer() {
 	}
 };
