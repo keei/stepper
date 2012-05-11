@@ -17,6 +17,26 @@
 #define NUMBER_OF_CHANNELS 4
 #endif
 
+#ifndef PITCH
+#define PITCH 0
+#endif
+
+#ifndef SLIDE
+#define SLIDE 1
+#endif
+
+#ifndef GATE
+#define GATE 2
+#endif
+
+#ifndef CV1
+#define CV1 3
+#endif
+
+#ifndef CV2
+#define CV2 4
+#endif
+
 class Sequencer {
 private:
 	mutable float averageRowLengthInSeconds;
@@ -114,7 +134,7 @@ public:
 	}
 
 	unsigned char getCV1InSixtieths() {
-		return patternInSixtieths[currentRowNumber][currentChannelNumber][3];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][CV1];
 	}
 
 	unsigned short getCV1InTwelveBits(unsigned char c) {
@@ -122,7 +142,7 @@ public:
 	}
 
 	unsigned char getCV2InSixtieths() {
-		return patternInSixtieths[currentRowNumber][currentChannelNumber][4];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][CV2];
 	}
 
 	unsigned short getCV2InTwelveBits(unsigned char c) {
@@ -130,7 +150,7 @@ public:
 	}
 
 	unsigned char getGateInSixtieths() {
-		return patternInSixtieths[currentRowNumber][currentChannelNumber][2];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][GATE];
 	}
 
 	unsigned short getGateInTwelveBits(unsigned char c) {
@@ -145,7 +165,7 @@ public:
 	}
 
 	unsigned char getPitchInSixtieths() {
-		return patternInSixtieths[currentRowNumber][currentChannelNumber][0];
+		return patternInSixtieths[currentRowNumber][currentChannelNumber][PITCH];
 	}
 
 	unsigned short getPitchInTwelveBits(unsigned char c) {
@@ -223,22 +243,22 @@ public:
 	}
 
 	void setCV1(unsigned char c) {
-		patternInSixtieths[currentRowNumber][currentChannelNumber][3] = c;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][CV1] = c;
 	}
 
 	void setCV2(unsigned char c) {
-		patternInSixtieths[currentRowNumber][currentChannelNumber][4] = c;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][CV2] = c;
 	}
 
 	void setGate(unsigned char g) {
-		patternInSixtieths[currentRowNumber][currentChannelNumber][2] = g;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][GATE] = g;
 	}
 
 	void setOctave(unsigned char o) {
 	}
 
 	void setPitch(unsigned char p) {
-		patternInSixtieths[currentRowNumber][currentChannelNumber][0] = p;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][PITCH] = p;
 	}
 
 	void setPlayMode(unsigned char p) {
@@ -249,7 +269,7 @@ public:
 	}
 
 	void setSlide(unsigned char s) {
-		patternInSixtieths[currentRowNumber][currentChannelNumber][1] = s;
+		patternInSixtieths[currentRowNumber][currentChannelNumber][SLIDE] = s;
 	}
 
 	void setTempo(char t) {
