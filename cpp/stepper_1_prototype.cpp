@@ -9,14 +9,15 @@
 #include <time.h>
 #include "Sequencer.cpp"
 
-unsigned char i;
 
-void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char* string, bool invert) {
-	for (i = 0; i < strlen(string); i++) {
+void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, string s, bool invert) {
+	unsigned char i;
+
+	for (i = 0; i < strlen(s); i++) {
 		if (invert == true) {
-			addch(rowNumber, columnNumber + i, string[i], A_REVERSE);
+			// addch(rowNumber, columnNumber + i, s[i], A_REVERSE);
 		} else {
-			addch(rowNumber, columnNumber + i, string[i]);
+			// addch(rowNumber, columnNumber + i, s[i]);
 		}
 	}
 }
