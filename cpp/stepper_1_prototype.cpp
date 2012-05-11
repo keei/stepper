@@ -10,14 +10,16 @@
 #include "Sequencer.cpp"
 
 
-void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, string s, bool invert) {
+void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char s[81], bool invert) {
 	unsigned char i;
 
 	for (i = 0; i < strlen(s); i++) {
 		if (invert == true) {
-			// addch(rowNumber, columnNumber + i, s[i], A_REVERSE);
+			move(rowNumber, firstColumnNumber + i);
+			addch(s[i]);
 		} else {
-			// addch(rowNumber, columnNumber + i, s[i]);
+			move(rowNumber, firstColumnNumber + i);
+			addch(s[i]);
 		}
 	}
 }
