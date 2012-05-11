@@ -5,13 +5,14 @@
 
 #include <curses.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #include "Sequencer.cpp"
 
 unsigned char i;
 
-void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char string[80], bool invert) {
-	for (i = 0; i < sizeof(string); i++) {
+void cursePrint(unsigned char rowNumber, unsigned char firstColumnNumber, char* string, bool invert) {
+	for (i = 0; i < strlen(string); i++) {
 		if (invert == true) {
 			addch(rowNumber, columnNumber + i, string[i], A_REVERSE);
 		} else {
