@@ -9,16 +9,21 @@
 
 int main() {
 	unsigned short previousCycleTimeInSeconds = 0;
+	char key = ' ';
 
 	Sequencer sequencer;
 	sequencer.slideCV1 = false; // This won't have a DAC
 	sequencer.slideCV2 = false; // This won't exist at all
 
 	initscr();
+	noecho();
 
 	while (true) {
-		if (true) {
+		key = getch();
+
+		if (key == 'q') {
 			endwin();
+			return 0;
 		}
 	}
 }
