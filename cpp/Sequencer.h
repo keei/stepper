@@ -20,103 +20,145 @@
 class Sequencer {
 private:
 	mutable float averageRowLengthInSeconds;
-	mutable char clipboard[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
+	mutable unsigned char clipboard[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
 	mutable bool clipboardFull;
-	mutable char currentChannelNumber;
-	mutable char currentPatternNumber;
-	mutable char currentRowNumber;
-	mutable char cv1InSixtieths[NUMBER_OF_CHANNELS];
-	mutable char cv1InTwelveBits[NUMBER_OF_CHANNELS];
-	mutable char cv2InSixtieths[NUMBER_OF_CHANNELS];
-	mutable char cv2InTwelveBits[NUMBER_OF_CHANNELS];
-	mutable char finalPatternNumber;
-	mutable char gateInSixtieths[NUMBER_OF_CHANNELS];
-	mutable char gateInTwelveBits[NUMBER_OF_CHANNELS];
-	mutable char i;
-	mutable char nextPatternNumber;
-	mutable char numberOfRows;
+	mutable unsigned char currentChannelNumber;
+	mutable unsigned char currentPatternNumber;
+	mutable unsigned char currentRowNumber;
+	mutable unsigned short cv1InTwelveBits[NUMBER_OF_CHANNELS];
+	mutable unsigned short cv2InTwelveBits[NUMBER_OF_CHANNELS];
+	mutable unsigned char finalPatternNumber;
+	mutable unsigned short gateInTwelveBits[NUMBER_OF_CHANNELS];
+	mutable unsigned char i;
+	mutable unsigned char nextPatternNumber;
+	mutable unsigned char numberOfRows;
 	mutable float patternPositionInSeconds;
-	mutable char patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
-	mutable char pitchInSixtieths[NUMBER_OF_CHANNELS];
-	mutable char pitchInTwelveBits[NUMBER_OF_CHANNELS];
-	mutable char playMode;
+	mutable unsigned char patternInSixtieths[MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS];
+	mutable unsigned short pitchInTwelveBits[NUMBER_OF_CHANNELS];
+	mutable unsigned char playMode;
 	mutable bool slideCV1;
 	mutable bool slideCV2;
 	mutable bool slidePitch;
-	mutable char tempo;
+	mutable unsigned char tempo;
 	mutable float timeInSeconds;
 
 public:
+	Sequencer() {
+		for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
+			cv1InTwelveBits[i] = 0;
+			cv2InTwelveBits[i] = 0;
+			gateInTwelveBits[i] = 0;
+			pitchInTwelveBits[i] = 0;
+		}
+
+		setTempo(120); // Default to 120BPM
+		reset();
+	}
+
 	void addRow() {
+		if (numberOfRows < MAX_NUMBER_OF_ROWS) {
+			numberOfRows++;
+		}
 	}
 
 	void copyPattern() {
+		// clipboard = patternInSixtieths;
+		clipboardFull = true;
 	}
 
 	void decrementCurrentChannelNumber() {
+		if (currentChannelNumber > 0) {
+			currentChannelNumber--;
+		}
 	}
 
 	void decrementCurrentPatternNumber() {
+		if (currentPatternNumber > 0) {
+			currentPatternNumber--;
+		}
 	}
 
 	void decrementCurrentRowNumber() {
+		if (currentRowNumber > 0) {
+			currentRowNumber--;
+		}
 	}
 
 	void decrementNextPatternNumber() {
+		if (nextPatternNumber > 0) {
+			nextPatternNumber--;
+		}
 	}
 
 	void decrementTempo() {
+		if (tempo > 1) {
+			setTempo(tempo - 1);
+		}
 	}
 
-	void getClipboardStatus() {
+	bool getClipboardStatus() {
+		return clipboardFull;
 	}
 
-	void getCurrentChannelNumber() {
+	unsigned char getCurrentChannelNumber() {
+		return currentChannelNumber;
 	}
 
-	void getCurrentPatternNumber() {
+	unsigned char getCurrentPatternNumber() {
+		return currentPatternNumber;
 	}
 
-	void getCurrentRowNumber() {
+	unsigned char getCurrentRowNumber() {
+		return currentRowNumber;
 	}
 
-	void getCV1InSixtieths() {
+	unsigned char getCV1InSixtieths() {
+		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'];
 	}
 
-	void getCV1InTwelveBits() {
+	unsigned short getCV1InTwelveBits(unsigned char c) {
+		return cv1InTwelveBits[c];
 	}
 
-	void getCV2InSixtieths() {
+	unsigned char getCV2InSixtieths() {
+		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'];
 	}
 
-	void getCV2InTwelveBits() {
+	unsigned short getCV2InTwelveBits(unsigned char c) {
+		return cv2InTwelveBits[c];
 	}
 
-	void getGateInSixtieths() {
+	unsigned char getGateInSixtieths() {
+		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['gate'];
 	}
 
-	void getGateInTwelveBits() {
+	unsigned short getGateInTwelveBits(unsigned char c) {
+		return gateInTwelveBits[c];
 	}
 
-	void getOctave() {
+	unsigned char getOctave() {
 	}
 
-	void getPatternLength() {
+	unsigned char getPatternLength() {
+		return numberOfRows;
 	}
 
-	void getPitchInSixtieths() {
+	unsigned char getPitchInSixtieths() {
+		// return patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'];
 	}
 
-	void getPitchInTwelveBits() {
+	unsigned short getPitchInTwelveBits(unsigned char c) {
+		return pitchInTwelveBits[c];
 	}
 
-	void getPlayMode() {
+	unsigned char getPlayMode() {
+		return playMode;
 	}
 
-	void getSemitone() {
+	unsigned char getSemitone() {
 	}
 
-	void getSlideInSixtieths() {
+	unsigned char getSlideInSixtieths() {
 	}
 
 	char getTempo() {
@@ -124,18 +166,33 @@ public:
 	}
 
 	void incrementCurrentChannelNumber() {
+		if (currentChannelNumber < NUMBER_OF_CHANNELS - 1) {
+			currentChannelNumber++;
+		}
 	}
 
 	void incrementCurrentPatternNumber() {
+		if (currentPatternNumber < MAX_NUMBER_OF_PATTERNS - 1) {
+			currentPatternNumber++;
+		}
 	}
 
 	void incrementCurrentRowNumber() {
+		if (currentRowNumber < numberOfRows - 1) {
+			currentRowNumber++;
+		}
 	}
 
 	void incrementNextPatternNumber() {
+		if (nextPatternNumber < MAX_NUMBER_OF_PATTERNS - 1) {
+			nextPatternNumber++;
+		}
 	}
 
 	void incrementTempo() {
+		if (tempo < 255) {
+			setTempo(tempo + 1);
+		}
 	}
 
 	void incrementTime() {
@@ -145,6 +202,17 @@ public:
 	}
 
 	void pastePattern() {
+		// patternInSixtieths = clipboard;
+		// clipboard = [];
+		clipboardFull = false;
+	}
+
+	void removeRow() {
+		if (numberOfRows > 1) {
+			numberOfRows--;
+		}
+
+		// Actually wipe the old row clean
 	}
 
 	void reset() {
@@ -153,28 +221,34 @@ public:
 	void savePattern() {
 	}
 
-	void setCV1() {
+	void setCV1(unsigned char c) {
+		// patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'] = c;
 	}
 
-	void setCV2() {
+	void setCV2(unsigned char c) {
+		// patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] = c;
 	}
 
-	void setGate() {
+	void setGate(unsigned char g) {
+		// patternInSixtieths[currentRowNumber][currentChannelNumber]['gate'] = g;
 	}
 
-	void setOctave() {
+	void setOctave(unsigned char o) {
 	}
 
-	void setPitch() {
+	void setPitch(unsigned char p) {
+		// patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'] = p;
 	}
 
-	void setPlayMode() {
+	void setPlayMode(unsigned char p) {
+		playMode = p;
 	}
 
-	void setSemitone() {
+	void setSemitone(unsigned char s) {
 	}
 
-	void setSlide() {
+	void setSlide(unsigned char s) {
+		// patternInSixtieths[currentRowNumber][currentChannelNumber]['slide'] = s;
 	}
 
 	void setTempo(char t) {
@@ -185,22 +259,6 @@ public:
 	}
 
 	void transposePatternUp() {
-	}
-
-	Sequencer() {
-		for (i = 0; i < NUMBER_OF_CHANNELS; i++) {
-			cv1InSixtieths[i] = 0;
-			cv1InTwelveBits[i] = 0;
-			cv2InSixtieths[i] = 0;
-			cv2InTwelveBits[i] = 0;
-			gateInSixtieths[i] = 0;
-			gateInTwelveBits[i] = 0;
-			pitchInSixtieths[i] = 0;
-			pitchInTwelveBits[i] = 0;
-		}
-
-		setTempo(120); // Default to 120BPM
-		reset();
 	}
 };
 
