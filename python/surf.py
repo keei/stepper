@@ -434,7 +434,7 @@ class Sequencer:
 			self.nextPatternNumber = self.nextPatternNumber + 1
 
 	def incrementTempo(self):
-		if self.tempo < 300:
+		if self.tempo < 255:
 			self.setTempo(self.tempo + 1)
 
 	def incrementTime(self, incrementLengthInSeconds):
