@@ -46,7 +46,7 @@ while (True):
 
 	cursePrint(3, 0, '    NOTE      OCT SLD GAT CV1 CV2                       ')
 	cursePrint(4, 0, ' 2 3  4 5 6                        -                    ')
-	cursePrint(5, 0, 'Q W ER T Y U  O P  ]   I   [      ,=.                   ')
+	cursePrint(5, 0, 'Q W ER T Y U  O P  0   I  [ ] \' \\ ,=.                   ')
 
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
@@ -318,15 +318,7 @@ while (True):
 
 		sequencer.savePattern('memory.tracker4')
 
-	if key == '[':
-		if sequencer.getCV1InSixtieths() == 0:
-			sequencer.setCV1(60)
-		else:
-			sequencer.setCV1(0)
-
-		sequencer.savePattern('memory.tracker4')
-
-	if key == ']':
+	if key == '0':
 		if sequencer.getSlideInSixtieths() == 60:
 			sequencer.setSlide(0)
 
@@ -337,6 +329,38 @@ while (True):
 
 			if sequencer.getGateInSixtieths() == 30:
 				sequencer.setGate(60)
+
+		sequencer.savePattern('memory.tracker4')
+
+	if key == '[':
+		cv1InSixtieths = sequencer.getCV1InSixtieths()
+
+		if cv1InSixtieths > 0:
+			sequencer.setCV1(cv1InSixtieths - 1)
+
+		sequencer.savePattern('memory.tracker4')
+
+	if key == ']':
+		cv1InSixtieths = sequencer.getCV1InSixtieths()
+
+		if cv1InSixtieths < 60:
+			sequencer.setCV1(cv1InSixtieths + 1)
+
+		sequencer.savePattern('memory.tracker4')
+
+	if key == '\'':
+		cv2InSixtieths = sequencer.getCV2InSixtieths()
+
+		if cv2InSixtieths > 0:
+			sequencer.setCV2(cv2InSixtieths - 1)
+
+		sequencer.savePattern('memory.tracker4')
+
+	if key == '\\':
+		cv2InSixtieths = sequencer.getCV2InSixtieths()
+
+		if cv2InSixtieths < 60:
+			sequencer.setCV2(cv2InSixtieths + 1)
 
 		sequencer.savePattern('memory.tracker4')
 
