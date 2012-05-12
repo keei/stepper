@@ -1,8 +1,5 @@
-# Stepper 1 prototype, for Python 3.
+# Tracker 4 prototype, for Python 3.
 # By ZoeB.
-
-# This isn't a real Arduino emulator.  It just emulates millis(),
-# and allows realtime testing of what the sequencer would output.
 
 import curses
 import math
@@ -12,15 +9,13 @@ import time
 
 surf.DEFAULT_NUMBER_OF_ROWS = 16
 surf.MAX_NUMBER_OF_PATTERNS = 64
-surf.MAX_NUMBER_OF_ROWS = 64
-surf.NUMBER_OF_CHANNELS = 1
+surf.MAX_NUMBER_OF_ROWS = 16
+surf.NUMBER_OF_CHANNELS = 4
 
 sequencer = surf.Sequencer()
-sequencer.slideCV1 = False # This won't have a DAC
-sequencer.slideCV2 = False # This won't exist at all
 
 try:
-	sequencer.loadPattern('memory.stepper1')
+	sequencer.loadPattern('memory.tracker4')
 except:
 	pass
 
@@ -64,31 +59,31 @@ while (True):
 
 	if key == 'a':
 		if lcdMode == 'patternSelect':
-			sequencer.savePattern('memory.stepper1') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
+			sequencer.savePattern('memory.tracker4') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
 
 			if sequencer.getPlayMode() == 1:
 				sequencer.decrementNextPatternNumber()
 			elif sequencer.getPlayMode() == 0:
 				sequencer.decrementCurrentPatternNumber()
-				sequencer.loadPattern('memory.stepper1')
+				sequencer.loadPattern('memory.tracker4')
 		elif lcdMode == 'patternLength':
 			sequencer.removeRow()
-			sequencer.savePattern('memory.stepper1')
+			sequencer.savePattern('memory.tracker4')
 		elif lcdMode == 'tempo':
 			sequencer.decrementTempo()
 
 	if key == 's':
 		if lcdMode == 'patternSelect':
-			sequencer.savePattern('memory.stepper1')
+			sequencer.savePattern('memory.tracker4')
 
 			if sequencer.getPlayMode() == 1:
 				sequencer.incrementNextPatternNumber()
 			elif sequencer.getPlayMode() == 0:
 				sequencer.incrementCurrentPatternNumber()
-				sequencer.loadPattern('memory.stepper1')
+				sequencer.loadPattern('memory.tracker4')
 		elif lcdMode == 'patternLength':
 			sequencer.addRow()
-			sequencer.savePattern('memory.stepper1')
+			sequencer.savePattern('memory.tracker4')
 		elif lcdMode == 'tempo':
 			sequencer.incrementTempo()
 
@@ -104,7 +99,7 @@ while (True):
 	if key == 'h':
 		if clipboardFull == True:
 			sequencer.pastePattern()
-			sequencer.savePattern('memory.stepper1')
+			sequencer.savePattern('memory.tracker4')
 		else:
 			sequencer.copyPattern()
 
@@ -113,24 +108,6 @@ while (True):
 
 	if key == 'k':
 		sequencer.transposePatternUp()
-
-	if key == 'z':
-		if sequencer.getPlayMode() == 1:
-			sequencer.setPlayMode(0)
-		else:
-			sequencer.setPlayMode(1)
-
-	if key == 'x':
-		if sequencer.getPlayMode() == 2:
-			sequencer.setPlayMode(0)
-		else:
-			sequencer.setPlayMode(2)
-
-	if key == 'c':
-		if sequencer.getPlayMode() == 3:
-			sequencer.setPlayMode(0)
-		else:
-			sequencer.setPlayMode(3)
 
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:
@@ -144,7 +121,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == '2':
 		if sequencer.getSemitone() == 1 and sequencer.getGateInSixtieths() != 0:
@@ -158,7 +135,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'w':
 		if sequencer.getSemitone() == 2 and sequencer.getGateInSixtieths() != 0:
@@ -172,7 +149,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == '3':
 		if sequencer.getSemitone() == 3 and sequencer.getGateInSixtieths() != 0:
@@ -186,7 +163,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'e':
 		if sequencer.getSemitone() == 4 and sequencer.getGateInSixtieths() != 0:
@@ -200,7 +177,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'r':
 		if sequencer.getSemitone() == 5 and sequencer.getGateInSixtieths() != 0:
@@ -214,7 +191,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == '5':
 		if sequencer.getSemitone() == 6 and sequencer.getGateInSixtieths() != 0:
@@ -228,7 +205,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 't':
 		if sequencer.getSemitone() == 7 and sequencer.getGateInSixtieths() != 0:
@@ -242,7 +219,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == '6':
 		if sequencer.getSemitone() == 8 and sequencer.getGateInSixtieths() != 0:
@@ -256,7 +233,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'y':
 		if sequencer.getSemitone() == 9 and sequencer.getGateInSixtieths() != 0:
@@ -270,7 +247,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == '7':
 		if sequencer.getSemitone() == 10 and sequencer.getGateInSixtieths() != 0:
@@ -284,7 +261,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'u':
 		if sequencer.getSemitone() == 11 and sequencer.getGateInSixtieths() != 0:
@@ -298,7 +275,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'i':
 		if sequencer.getGateInSixtieths() == 0:
@@ -309,7 +286,7 @@ while (True):
 		else:
 			sequencer.setGate(0)
 
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'o':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -317,7 +294,7 @@ while (True):
 		if currentPitch > 11:
 			sequencer.setPitch(currentPitch - 12)
 
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'p':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -325,7 +302,7 @@ while (True):
 		if currentPitch < 49:
 			sequencer.setPitch(currentPitch + 12)
 
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == '[':
 		if sequencer.getCV1InSixtieths() == 0:
@@ -333,7 +310,7 @@ while (True):
 		else:
 			sequencer.setCV1(0)
 
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	if key == ']':
 		if sequencer.getSlideInSixtieths() == 60:
@@ -347,7 +324,7 @@ while (True):
 			if sequencer.getGateInSixtieths() == 30:
 				sequencer.setGate(60)
 
-		sequencer.savePattern('memory.stepper1')
+		sequencer.savePattern('memory.tracker4')
 
 	# if key == chr(curses.KEY_BACKSPACE):
 	if key == '-':
@@ -387,68 +364,33 @@ while (True):
 	for i in range(14):
 		cursePrint(i, 0, '                                                ')
 
-	interface.move(0, 0)
-	cursePrint(0, 0, 'Time            ' + str(timeInMilliseconds))
-	cursePrint(1, 0, 'Iterations/sec  ' + str(iterationsPerSecond))
-
-	cursePrint(3, 0, 'Pitch           ' + sequencer.convertTwelveBitsIntoChars(pitchInTwelveBits))
-	cursePrint(4, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
-	cursePrint(5, 0, 'CV2             N/A')
-	cursePrint(6, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
-
-	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
-	cursePrint(9, 0, 'A S    D                F                G         H  ')
-	cursePrint(10, 0, '                                      J Transpose  K  ')
-	cursePrint(11, 0, '    .     .        .     .     .                     ')
-	cursePrint(12, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
-	cursePrint(13, 0, 'C-  2 D-  3 E- F-  5 G-  6 A-  7 B- NT DN UP AC SL BK')
-	cursePrint(14, 0, ' Q     W     E  R     T     Y     U  I  O  P  [  ]  -')
-	cursePrint(15, 0, '                                                   FW')
-	cursePrint(16, 0, '    . Pattern loop  Z                               =')
-	cursePrint(17, 0, '    . Song loop     X                                ')
-	cursePrint(18, 0, '    . Song one-shot C                                ')
-	cursePrint(19, 0, '                                    Space bar to quit')
+	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  [Copy]')
 
 	# Print out the whole current pattern's rows
-	cursePrint(0, 55, 'NT SL GT AC')
-	i = 1
+	cursePrint(2, 0, 'NT SL GT AC')
+	i = 3
 
 	for row in patternInSixtieths:
 		if i == ttySize[0]:
 			break
 
-		if i - 1 == currentRowNumber:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
+		if i - 3 == currentRowNumber:
+			cursePrint(i, 0, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
 		else:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
+			cursePrint(i, 0, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
 
 		i = i + 1
 
 	for i in range(i, ttySize[0]):
-		cursePrint(i, 55, '                      ') # In case a row's just been removed, or the pattern's just been changed
+		cursePrint(i, 0, '                      ') # In case a row's just been removed, or the pattern's just been changed
 
 	# Print out the LCD area's settings
-	if lcdMode == 'patternSelect':
-		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
-		cursePrint(8, 4, 'o')
-	elif lcdMode == 'patternLength':
-		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
-		cursePrint(8, 21, 'o')
-	elif lcdMode == 'tempo':
-		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getTempo()))
-		cursePrint(8, 38, 'o')
+	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
+	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
+	cursePrint(0, 34, sequencer.convertNumberIntoChars(sequencer.getTempo()))
 
 	if clipboardFull == True:
-		cursePrint(8, 48, 'o')
-
-	playMode = sequencer.getPlayMode()
-
-	if playMode == 1:
-		cursePrint(16, 4, 'o')
-	elif playMode == 2:
-		cursePrint(17, 4, 'o')
-	elif playMode == 3:
-		cursePrint(18, 4, 'o')
+		cursePrint(0, 39, '[Copy]', True)
 
 	# Print out the current row
 	if semitone == 0:
