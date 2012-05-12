@@ -410,7 +410,7 @@ while (True):
 	cursePrint(19, 0, '                                    Space bar to quit')
 
 	# Print out the whole current pattern's rows
-	cursePrint(0, 55, 'NT SL GT AC')
+	cursePrint(0, 55, 'NTE SL GT AC')
 	i = 1
 
 	for row in patternInSixtieths:
@@ -418,14 +418,14 @@ while (True):
 			break
 
 		if i - 1 == currentRowNumber:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
+			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
 		else:
-			cursePrint(i, 55, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
+			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
 
 		i = i + 1
 
 	for i in range(i, ttySize[0]):
-		cursePrint(i, 55, '                      ') # In case a row's just been removed, or the pattern's just been changed
+		cursePrint(i, 55, '                       ') # In case a row's just been removed, or the pattern's just been changed
 
 	# Print out the LCD area's settings
 	if lcdMode == 'patternSelect':
