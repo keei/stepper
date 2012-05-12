@@ -35,6 +35,42 @@ def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 		columnNumber = columnNumber + 1
 
 while (True):
+	# Output
+	currentRowNumber = sequencer.getCurrentRowNumber()
+	currentChannelNumber = sequencer.getCurrentChannelNumber()
+	patternInSixtieths = sequencer.patternInSixtieths
+
+	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  [Copy]')
+	cursePrint(1, 0, '         A S          D F         G H    I   ')
+
+	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
+	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
+	cursePrint(0, 34, sequencer.convertNumberIntoChars(sequencer.getTempo()))
+
+	if sequencer.getClipboardStatus() == True:
+		cursePrint(0, 39, '[Copy]', True)
+
+	# Print out the whole current pattern's rows
+	for channel in range(surf.NUMBER_OF_CHANNELS):
+		channelOffset = channel * 14
+		cursePrint(3, channelOffset, 'NTE SL GT AC')
+		i = 4
+
+		for row in patternInSixtieths:
+			if i == ttySize[0]:
+				break
+
+			if i - 4 == currentRowNumber and channel == currentChannelNumber:
+				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']), True)
+			else:
+				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']))
+
+			i = i + 1
+
+		for i in range(i, ttySize[0]):
+			cursePrint(i, channelOffset, '              ') # In case a row's just been removed, or the pattern's just been changed
+
+	# Input
 	try:
 		key = interface.getkey()
 	except:
@@ -307,36 +343,3 @@ while (True):
 	if key == '=':
 		sequencer.incrementCurrentRowNumber()
 
-	currentRowNumber = sequencer.getCurrentRowNumber()
-	currentChannelNumber = sequencer.getCurrentChannelNumber()
-	patternInSixtieths = sequencer.patternInSixtieths
-
-	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  [Copy]')
-	cursePrint(1, 0, '         A S          D F         G H    I   ')
-
-	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
-	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
-	cursePrint(0, 34, sequencer.convertNumberIntoChars(sequencer.getTempo()))
-
-	if sequencer.getClipboardStatus() == True:
-		cursePrint(0, 39, '[Copy]', True)
-
-	# Print out the whole current pattern's rows
-	for channel in range(surf.NUMBER_OF_CHANNELS):
-		channelOffset = channel * 14
-		cursePrint(3, channelOffset, 'NTE SL GT AC')
-		i = 4
-
-		for row in patternInSixtieths:
-			if i == ttySize[0]:
-				break
-
-			if i - 4 == currentRowNumber and channel == currentChannelNumber:
-				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']), True)
-			else:
-				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']))
-
-			i = i + 1
-
-		for i in range(i, ttySize[0]):
-			cursePrint(i, channelOffset, '              ') # In case a row's just been removed, or the pattern's just been changed
