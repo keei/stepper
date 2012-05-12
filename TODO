@@ -10,6 +10,7 @@ Make a voltage controlled slew limiter module.  (Basically like the sequencer's 
 Make a sample and hold module.
 Make a voltage controlled delay / echo module.  (With a set sized array, cycled through at a voltage controlled speed, with a voltage controlled amount of feedback and a voltage controlled dry/wet mix.)
 Have a go at making a chorus.  (I gather this is something like an extremely short delay with only one copy of the signal and a slightly variable speed.)
+Tracker 4 could do with an "export channel to Stepper 1" feature, where whichever channel is currently selected is exported (for all patterns) into a 1-channel-only format compatible with Stepper 1.
 
 Distant dreams:
 A multimode filter would be nice, but is probably beyond my abilities.
