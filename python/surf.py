@@ -299,11 +299,20 @@ class Sequencer:
 		number = '%03d' % number
 		return number
 
+	def convertPitchInSixtiethsIntoChars(self, sixtieth):
+		"""Convert a number between 0 and 60 into three characters depicting the note in a more human readable form, suitable for display on a screen with a fixed width font."""
+		semitone = sixtieth % 12
+		octave = floor(sixtieth / 12.0)
+
+		semitoneNames = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
+
+		semitone = semitoneNames[semitone]
+		return semitone + str(octave)
+
 	def convertSixtiethIntoChars(self, sixtieth):
 		"""Convert a number between 0 and 60 into two characters, suitable for display on a screen with a fixed width font."""
 		sixtieth = int(sixtieth) # This should be unnecessary.  It may be a sign that things need to be debugged.
 		sixtieth = '%02d' % sixtieth
-
 		return sixtieth
 
 	def convertTwelveBitsIntoChars(self, twelveBits):
