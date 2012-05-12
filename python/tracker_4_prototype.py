@@ -30,7 +30,6 @@ ttySize = interface.getmaxyx()
 startTimeInSeconds = time.time()
 iterationsPerSecond = 0
 iterationsThisSecond = 0
-lcdMode = 'tempo'
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
@@ -58,45 +57,30 @@ while (True):
 		exit()
 
 	if key == 'a':
-		if lcdMode == 'patternSelect':
-			sequencer.savePattern('memory.tracker4') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
-
-			if sequencer.getPlayMode() == 1:
-				sequencer.decrementNextPatternNumber()
-			elif sequencer.getPlayMode() == 0:
-				sequencer.decrementCurrentPatternNumber()
-				sequencer.loadPattern('memory.tracker4')
-		elif lcdMode == 'patternLength':
-			sequencer.removeRow()
-			sequencer.savePattern('memory.tracker4')
-		elif lcdMode == 'tempo':
-			sequencer.decrementTempo()
+		sequencer.savePattern('memory.tracker4') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
+		sequencer.decrementCurrentPatternNumber()
+		sequencer.loadPattern('memory.tracker4')
 
 	if key == 's':
-		if lcdMode == 'patternSelect':
-			sequencer.savePattern('memory.tracker4')
-
-			if sequencer.getPlayMode() == 1:
-				sequencer.incrementNextPatternNumber()
-			elif sequencer.getPlayMode() == 0:
-				sequencer.incrementCurrentPatternNumber()
-				sequencer.loadPattern('memory.tracker4')
-		elif lcdMode == 'patternLength':
-			sequencer.addRow()
-			sequencer.savePattern('memory.tracker4')
-		elif lcdMode == 'tempo':
-			sequencer.incrementTempo()
+		sequencer.savePattern('memory.tracker4')
+		sequencer.incrementCurrentPatternNumber()
+		sequencer.loadPattern('memory.tracker4')
 
 	if key == 'd':
-		lcdMode = 'patternSelect'
+		sequencer.removeRow()
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'f':
-		lcdMode = 'patternLength'
+		sequencer.addRow()
+		sequencer.savePattern('memory.tracker4')
 
 	if key == 'g':
-		lcdMode = 'tempo'
+		sequencer.decrementTempo()
 
 	if key == 'h':
+		sequencer.incrementTempo()
+
+	if key == 'i':
 		if clipboardFull == True:
 			sequencer.pastePattern()
 			sequencer.savePattern('memory.tracker4')
@@ -365,16 +349,17 @@ while (True):
 		cursePrint(i, 0, '                                                ')
 
 	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  [Copy]')
+	cursePrint(1, 0, '         A S          D F         G H    I   ')
 
 	# Print out the whole current pattern's rows
-	cursePrint(2, 0, 'NT SL GT AC')
-	i = 3
+	cursePrint(3, 0, 'NT SL GT AC')
+	i = 4
 
 	for row in patternInSixtieths:
 		if i == ttySize[0]:
 			break
 
-		if i - 3 == currentRowNumber:
+		if i - 4 == currentRowNumber:
 			cursePrint(i, 0, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
 		else:
 			cursePrint(i, 0, sequencer.convertSixtiethIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
@@ -384,67 +369,10 @@ while (True):
 	for i in range(i, ttySize[0]):
 		cursePrint(i, 0, '                      ') # In case a row's just been removed, or the pattern's just been changed
 
-	# Print out the LCD area's settings
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
 	cursePrint(0, 34, sequencer.convertNumberIntoChars(sequencer.getTempo()))
 
+	# Show if the clipboard is in use
 	if clipboardFull == True:
 		cursePrint(0, 39, '[Copy]', True)
-
-	# Print out the current row
-	if semitone == 0:
-		cursePrint(12, 1, 'o')
-	elif semitone == 1:
-		cursePrint(11, 4, 'o')
-	elif semitone == 2:
-		cursePrint(12, 7, 'o')
-	elif semitone == 3:
-		cursePrint(11, 10, 'o')
-	elif semitone == 4:
-		cursePrint(12, 13, 'o')
-	elif semitone == 5:
-		cursePrint(12, 16, 'o')
-	elif semitone == 6:
-		cursePrint(11, 19, 'o')
-	elif semitone == 7:
-		cursePrint(12, 22, 'o')
-	elif semitone == 8:
-		cursePrint(11, 25, 'o')
-	elif semitone == 9:
-		cursePrint(12, 28, 'o')
-	elif semitone == 10:
-		cursePrint(11, 31, 'o')
-	elif semitone == 11:
-		cursePrint(12, 34, 'o')
-
-	if gate != 0:
-		gateCharacter = 'o'
-	else:
-		gateCharacter = '.'
-
-	if pitch < 24:
-		octaveDownCharacter = 'o'
-		octaveUpCharacter = '.'
-	elif pitch > 35:
-		octaveDownCharacter = '.'
-		octaveUpCharacter = 'o'
-	else:
-		octaveDownCharacter = '.'
-		octaveUpCharacter = '.'
-
-	if cv1 != 0:
-		cv1Character = 'o'
-	else:
-		cv1Character = '.'
-
-	if slide == 60:
-		slideCharacter = 'o'
-	else:
-		slideCharacter = '.'
-
-	cursePrint(12, 37, gateCharacter)
-	cursePrint(12, 40, octaveDownCharacter)
-	cursePrint(12, 43, octaveUpCharacter)
-	cursePrint(12, 46, cv1Character)
-	cursePrint(12, 49, slideCharacter)
