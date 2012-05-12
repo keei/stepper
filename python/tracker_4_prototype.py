@@ -44,9 +44,9 @@ while (True):
 	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  Transpose  [Copy]')
 	cursePrint(1, 0, '         A S          D F         G H  J       K    L   ')
 
-	cursePrint(3, 0, '    NOTE     OCT SL GT AC                               ')
-	cursePrint(4, 0, ' 2 3  4 5 6   P             -                           ')
-	cursePrint(5, 0, 'Q W ER T Y U  O   ]  I  [  ,=.                          ')
+	cursePrint(3, 0, '    NOTE      OCT SLD GAT CV1 CV2                       ')
+	cursePrint(4, 0, ' 2 3  4 5 6                        -                    ')
+	cursePrint(5, 0, 'Q W ER T Y U  O P  ]   I   [      ,=.                   ')
 
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
@@ -58,7 +58,7 @@ while (True):
 	# Print out the whole current pattern
 	for channel in range(surf.NUMBER_OF_CHANNELS):
 		channelOffset = channel * 17
-		cursePrint(7, channelOffset, 'NTE SL GT AC CV')
+		cursePrint(7, channelOffset, 'NTE SL GT CV CV')
 		i = 8
 
 		for row in patternInSixtieths:
