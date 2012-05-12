@@ -40,27 +40,31 @@ while (True):
 	currentChannelNumber = sequencer.getCurrentChannelNumber()
 	patternInSixtieths = sequencer.patternInSixtieths
 
-	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  [Copy]')
-	cursePrint(1, 0, '         A S          D F         G H    I   ')
+	# Print out the header information
+	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  Transpose  [Copy]')
+	cursePrint(1, 0, '         A S          D F         G H  J       K    L   ')
+
+	cursePrint(3, 0, ' 2 3  4 5 6   P  SL GT AC   -                           ')
+	cursePrint(4, 0, 'Q W ER T Y U  O   [  I  ]  ,=.                          ')
 
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
 	cursePrint(0, 34, sequencer.convertNumberIntoChars(sequencer.getTempo()))
 
 	if sequencer.getClipboardStatus() == True:
-		cursePrint(0, 39, '[Copy]', True)
+		cursePrint(0, 50, '[Copy]', True)
 
-	# Print out the whole current pattern's rows
+	# Print out the whole current pattern
 	for channel in range(surf.NUMBER_OF_CHANNELS):
 		channelOffset = channel * 14
-		cursePrint(3, channelOffset, 'NTE SL GT AC')
-		i = 4
+		cursePrint(6, channelOffset, 'NTE SL GT AC')
+		i = 7
 
 		for row in patternInSixtieths:
 			if i == ttySize[0]:
 				break
 
-			if i - 4 == currentRowNumber and channel == currentChannelNumber:
+			if i - 7 == currentRowNumber and channel == currentChannelNumber:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']), True)
 			else:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']))
@@ -105,18 +109,18 @@ while (True):
 	if key == 'h':
 		sequencer.incrementTempo()
 
-	if key == 'i':
-		if clipboardFull == True:
-			sequencer.pastePattern()
-			sequencer.savePattern('memory.tracker4')
-		else:
-			sequencer.copyPattern()
-
 	if key == 'j':
 		sequencer.transposePatternDown()
 
 	if key == 'k':
 		sequencer.transposePatternUp()
+
+	if key == 'l':
+		if sequencer.getClipboardStatus() == True:
+			sequencer.pastePattern()
+			sequencer.savePattern('memory.tracker4')
+		else:
+			sequencer.copyPattern()
 
 	if key == 'q':
 		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:
@@ -343,3 +347,8 @@ while (True):
 	if key == '=':
 		sequencer.incrementCurrentRowNumber()
 
+	if key == ',':
+		sequencer.decrementCurrentChannelNumber()
+
+	if key == '.':
+		sequencer.incrementCurrentChannelNumber()
