@@ -5,7 +5,6 @@ import curses
 import math
 import os
 import surf
-import time
 
 surf.DEFAULT_NUMBER_OF_ROWS = 16
 surf.MAX_NUMBER_OF_PATTERNS = 64
@@ -19,17 +18,10 @@ try:
 except:
 	pass
 
-previousCycleTimeInSeconds = 0
-
 interface = curses.initscr()
-interface.nodelay(True)
 curses.noecho()
 os.system('clear')
 ttySize = interface.getmaxyx()
-
-startTimeInSeconds = time.time()
-iterationsPerSecond = 0
-iterationsThisSecond = 0
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
@@ -41,9 +33,6 @@ def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 			interface.addch(rowNumber, columnNumber, char)
 
 		columnNumber = columnNumber + 1
-
-def millis():
-	return int((time.time() - startTimeInSeconds) * 1000)
 
 while (True):
 	try:
@@ -318,31 +307,8 @@ while (True):
 	if key == '=':
 		sequencer.incrementCurrentRowNumber()
 
-	timeInMilliseconds = millis()
-	timeInSeconds = timeInMilliseconds / 1000.0
-	incrementLengthInSeconds = timeInSeconds - previousCycleTimeInSeconds
-	sequencer.incrementTime(incrementLengthInSeconds)
-	iterationsThisSecond = iterationsThisSecond + 1
-
-	if math.floor(timeInSeconds) != math.floor(previousCycleTimeInSeconds):
-		iterationsPerSecond = iterationsThisSecond
-		iterationsThisSecond = 0
-
-	previousCycleTimeInSeconds = timeInSeconds
-
-	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
-	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
-	gateInTwelveBits = sequencer.getGateInTwelveBits(0)
-
-	clipboardFull = sequencer.getClipboardStatus()
-	cv1 = sequencer.getCV1InSixtieths()
-	gate = sequencer.getGateInSixtieths()
-	# octave = sequencer.getOctave()
-	pitch = sequencer.getPitchInSixtieths()
-	semitone = sequencer.getSemitone()
-	slide = sequencer.getSlideInSixtieths()
-
 	currentRowNumber = sequencer.getCurrentRowNumber()
+	currentChannelNumber = sequencer.getCurrentChannelNumber()
 	patternInSixtieths = sequencer.patternInSixtieths
 
 	cursePrint(0, 0, 'Pattern: XXX  Length: XXX  Tempo: XXX  [Copy]')
@@ -352,7 +318,7 @@ while (True):
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
 	cursePrint(0, 34, sequencer.convertNumberIntoChars(sequencer.getTempo()))
 
-	if clipboardFull == True:
+	if sequencer.getClipboardStatus() == True:
 		cursePrint(0, 39, '[Copy]', True)
 
 	# Print out the whole current pattern's rows
@@ -365,7 +331,7 @@ while (True):
 			if i == ttySize[0]:
 				break
 
-			if i - 4 == currentRowNumber and channel == sequencer.getCurrentChannelNumber():
+			if i - 4 == currentRowNumber and channel == currentChannelNumber:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']), True)
 			else:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']))
