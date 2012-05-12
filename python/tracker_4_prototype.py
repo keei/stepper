@@ -56,8 +56,8 @@ while (True):
 
 	# Print out the whole current pattern
 	for channel in range(surf.NUMBER_OF_CHANNELS):
-		channelOffset = channel * 14
-		cursePrint(6, channelOffset, 'NTE SL GT AC')
+		channelOffset = channel * 17
+		cursePrint(6, channelOffset, 'NTE SL GT AC CV')
 		i = 7
 
 		for row in patternInSixtieths:
@@ -65,14 +65,14 @@ while (True):
 				break
 
 			if i - 7 == currentRowNumber and channel == currentChannelNumber:
-				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']), True)
+				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv2']), True)
 			else:
-				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']))
+				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv2']))
 
 			i = i + 1
 
 		for i in range(i, ttySize[0]):
-			cursePrint(i, channelOffset, '              ') # In case a row's just been removed, or the pattern's just been changed
+			cursePrint(i, channelOffset, '                 ') # In case a row's just been removed, or the pattern's just been changed
 
 	# Input
 	try:
