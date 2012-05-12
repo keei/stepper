@@ -46,7 +46,7 @@ while (True):
 
 	cursePrint(3, 0, '    NOTE      OCT SLD GAT CV1 CV2                       ')
 	cursePrint(4, 0, ' 2 3  4 5 6                        -                    ')
-	cursePrint(5, 0, 'Q W ER T Y U  O P  0  8I9 [ ] \' \\ ,=.                   ')
+	cursePrint(5, 0, 'Q W ER T Y U  O P  0  8I9 [ ] \' \\ ,=.  Space bar to quit')
 
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
