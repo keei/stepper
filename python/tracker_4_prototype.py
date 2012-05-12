@@ -45,7 +45,7 @@ while (True):
 	cursePrint(1, 0, '         A S          D F         G H  J       K    L   ')
 
 	cursePrint(3, 0, ' 2 3  4 5 6   P  SL GT AC   -                           ')
-	cursePrint(4, 0, 'Q W ER T Y U  O   [  I  ]  ,=.                          ')
+	cursePrint(4, 0, 'Q W ER T Y U  O   ]  I  [  ,=.                          ')
 
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
