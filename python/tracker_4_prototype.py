@@ -46,7 +46,7 @@ while (True):
 
 	cursePrint(3, 0, '    NOTE      OCT SLD GAT CV1 CV2                       ')
 	cursePrint(4, 0, ' 2 3  4 5 6                        -                    ')
-	cursePrint(5, 0, 'Q W ER T Y U  O P  0   I  [ ] \' \\ ,=.                   ')
+	cursePrint(5, 0, 'Q W ER T Y U  O P  0  8I9 [ ] \' \\ ,=.                   ')
 
 	cursePrint(0, 9, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
 	cursePrint(0, 22, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
@@ -299,6 +299,22 @@ while (True):
 				sequencer.setGate(30)
 		else:
 			sequencer.setGate(0)
+
+		sequencer.savePattern('memory.tracker4')
+
+	if key == '8':
+		gateInSixtieths = sequencer.getGateInSixtieths()
+
+		if gateInSixtieths > 0:
+			sequencer.setGate(gateInSixtieths - 1)
+
+		sequencer.savePattern('memory.tracker4')
+
+	if key == '9':
+		gateInSixtieths = sequencer.getGateInSixtieths()
+
+		if gateInSixtieths < 60:
+			sequencer.setGate(gateInSixtieths + 1)
 
 		sequencer.savePattern('memory.tracker4')
 
