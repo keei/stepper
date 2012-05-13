@@ -4,6 +4,7 @@ Essential features:
 Refactor the code before translating it into C or C++.
 
 Nice features:
+Each channel should have a "nudge up" and "nudge down" option, to rotate all the events along as if on a conveyer belt, changing the offset.
 I need to improve the README file.
 Make an ADSR envelope generator; use the attenuator with that instead.
 Make a voltage controlled slew limiter module.  (Basically like the sequencer's slide and the delay module.)
