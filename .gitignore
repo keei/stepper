@@ -2,6 +2,5 @@ python/__pycache__
 *.pyc
 *.swp
 *.wav
-a.out
-memory.stepper1
-memory.tracker1
+*.out
+memory.*
