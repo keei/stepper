@@ -586,7 +586,7 @@ class Sequencer:
 
 		# Load the pattern length
 		song.seek(self.currentPatternNumber)
-		self.numberOfRows = ord(song.read(1)) - 48
+		self.numberOfRows = ord(song.read(1))
 
 		# Seek ahead
 		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS * 5)) # 5 bytes per event
@@ -599,11 +599,11 @@ class Sequencer:
 				if not firstByte: # End of file.  Nothing to load.  This pattern doesn't exist yet.
 					return
 
-				pitch = ord(firstByte) - 48
-				slide = ord(song.read(1)) - 48
-				gate = ord(song.read(1)) - 48
-				cv1 = ord(song.read(1)) - 48
-				cv2 = ord(song.read(1)) - 48
+				pitch = ord(firstByte)
+				slide = ord(song.read(1))
+				gate = ord(song.read(1))
+				cv1 = ord(song.read(1))
+				cv2 = ord(song.read(1))
 
 				self.patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'] = pitch
 				self.patternInSixtieths[currentRowNumber][currentChannelNumber]['slide'] = slide
@@ -647,10 +647,10 @@ class Sequencer:
 
 			# Write a whole file of defaults first
 			for pattern in range(MAX_NUMBER_OF_PATTERNS):
-				song.write(chr(DEFAULT_NUMBER_OF_ROWS + 48))
+				song.write(chr(DEFAULT_NUMBER_OF_ROWS))
 
 			for event in range(MAX_NUMBER_OF_PATTERNS * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS):
-				song.write(chr(24 + 48) + chr(48) + chr(48) + chr(48) + chr(48))
+				song.write(chr(24) + chr(0) + chr(0) + chr(0) + chr(0))
 
 			song.close()
 
@@ -659,7 +659,7 @@ class Sequencer:
 
 		# Save the pattern length
 		song.seek(self.currentPatternNumber)
-		numberOfRows = chr(self.numberOfRows + 48)
+		numberOfRows = chr(self.numberOfRows)
 		song.write(numberOfRows)
 
 		# Seek ahead
@@ -668,12 +668,11 @@ class Sequencer:
 		# Save the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
 			for currentChannelNumber in range(NUMBER_OF_CHANNELS):
-				# I'm only adding 48 to everything to make the output happen to be printable ASCII.  As we're only using 61 numbers anyway, we might as well choose the pretty ones.
-				pitch = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'] + 48)
-				slide = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['slide'] + 48)
-				gate = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['gate'] + 48)
-				cv1 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'] + 48)
-				cv2 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] + 48)
+				pitch = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['pitch'])
+				slide = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['slide'])
+				gate = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['gate'])
+				cv1 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'])
+				cv2 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'])
 				song.write(pitch + slide + gate + cv1 + cv2)
 
 		song.close()
