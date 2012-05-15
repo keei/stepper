@@ -3,14 +3,14 @@
 import curses
 import math
 import os
-import surf
+import stepper
 
-surf.DEFAULT_NUMBER_OF_ROWS = 16
-surf.MAX_NUMBER_OF_PATTERNS = 64
-surf.MAX_NUMBER_OF_ROWS = 16
-surf.NUMBER_OF_CHANNELS = 4
+stepper.DEFAULT_NUMBER_OF_ROWS = 16
+stepper.MAX_NUMBER_OF_PATTERNS = 64
+stepper.MAX_NUMBER_OF_ROWS = 16
+stepper.NUMBER_OF_CHANNELS = 4
 
-sequencer = surf.Sequencer()
+sequencer = stepper.Sequencer()
 
 try:
 	sequencer.loadPattern('memory.tracker1')
@@ -55,7 +55,7 @@ while (True):
 		cursePrint(0, 50, '[Copy]', True)
 
 	# Print out the whole current pattern
-	for channel in range(surf.NUMBER_OF_CHANNELS):
+	for channel in range(stepper.NUMBER_OF_CHANNELS):
 		channelOffset = channel * 17
 		cursePrint(7, channelOffset, 'NTE SL GT CV CV')
 		i = 8

@@ -6,15 +6,15 @@
 import curses
 import math
 import os
-import surf
+import stepper
 import time
 
-surf.DEFAULT_NUMBER_OF_ROWS = 16
-surf.MAX_NUMBER_OF_PATTERNS = 64
-surf.MAX_NUMBER_OF_ROWS = 16
-surf.NUMBER_OF_CHANNELS = 1
+stepper.DEFAULT_NUMBER_OF_ROWS = 16
+stepper.MAX_NUMBER_OF_PATTERNS = 64
+stepper.MAX_NUMBER_OF_ROWS = 16
+stepper.NUMBER_OF_CHANNELS = 1
 
-sequencer = surf.Sequencer()
+sequencer = stepper.Sequencer()
 sequencer.slideCV1 = False # This won't have a DAC
 sequencer.slideCV2 = False # This won't exist at all
 
