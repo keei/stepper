@@ -1,5 +1,4 @@
-# Stepper 1 prototype, for Python 3.
-# By ZoeB.
+# Stepper 1 prototype application, for Python 3.
 
 # This isn't a real Arduino emulator.  It just emulates millis(),
 # and allows realtime testing of what the sequencer would output.

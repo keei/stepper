@@ -1,5 +1,4 @@
-# Tracker 1 prototype, for Python 3.
-# By ZoeB.
+# Tracker 1 prototype application, for Python 3.
 
 import curses
 import math
