@@ -63,6 +63,9 @@ class Sequencer:
 	swing = 0 # In the range of -127 to +127, in other words a signed char in C.
 	tempo = 120 # In the range of 0 to 255, in other words an unsigned char in C.
 	timeInSeconds = 0.0
+	triggerClipboard = []
+	triggerInTwelveBits = []
+	triggerPattern = []
 
 	def __init__(self):
 		for channel in range(NUMBER_OF_CHANNELS):
@@ -70,6 +73,9 @@ class Sequencer:
 			self.cv2InTwelveBits.append(0)
 			self.gateInTwelveBits.append(0)
 			self.pitchInTwelveBits.append(0)
+
+		for channel in range(8):
+			self.triggerInTwelveBits.append(0)
 
 		self.setTempo(120) # Default to 120BPM
 		self.reset()
@@ -104,8 +110,21 @@ class Sequencer:
 		"""Convert a number between 0 and 4095 into four characters, suitable for display on a screen with a fixed width font."""
 		return '%04d' % twelveBits
 
+	def convertTriggerByteIntoChars(self, number):
+		"""Convert a byte into eight characters, suitable for display on a screen with a fixed width font."""
+		string = ''
+
+		for i in range(8):
+			if number & 1 << i: # "2 << i" basically means "Two to the power of i"
+				string = 'o' + string
+			else:
+				string = '.' + string
+
+		return string
+
 	def copyPattern(self):
 		self.clipboard = self.patternInSixtieths
+		self.triggerClipboard = self.triggerPattern
 		self.clipboardFull = True
 
 	def decrementCurrentChannelNumber(self):
@@ -333,6 +352,15 @@ class Sequencer:
 					if self.slideCV2 == True:
 						self.cv2InTwelveBits[channel] = int(self.cv2InTwelveBits[channel] + (cv2DifferenceInTwelveBits / 1 * positionAsDecimal))
 
+		# Work out the current row's triggers
+		triggers = self.triggerPattern[self.currentRowNumber]
+
+		for i in range(8):
+			if triggers & 1 << i: # "2 << i" basically means "Two to the power of i"
+				self.triggerInTwelveBits[7 - i] = HIGH
+			else:
+				self.triggerInTwelveBits[7 - i] = LOW
+
 		return incrementLengthInSeconds
 
 	def loadPattern(self, filename):
@@ -347,7 +375,7 @@ class Sequencer:
 		self.numberOfRows = ord(song.read(1))
 
 		# Seek ahead
-		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS * 5)) # 5 bytes per event
+		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
 
 		# Load the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
@@ -369,12 +397,17 @@ class Sequencer:
 				self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'] = cv1
 				self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'] = cv2
 
+			triggers = ord(song.read(1))
+			self.triggerPattern[currentRowNumber] = triggers
+
 		currentRowNumber = currentRowNumber + 1
 		song.close()
 
 	def pastePattern(self):
 		self.patternInSixtieths = self.clipboard
+		self.triggerPattern = self.triggerClipboard
 		self.clipboard = []
+		self.triggerClipboard = []
 		self.clipboardFull = False
 
 	def removeRow(self):
@@ -388,13 +421,17 @@ class Sequencer:
 		"""Clear the pattern held in memory."""
 		self.numberOfRows = DEFAULT_NUMBER_OF_ROWS
 		self.patternInSixtieths = []
+		self.triggerPattern = []
 
 		for row in range(MAX_NUMBER_OF_ROWS):
 			self.patternInSixtieths.append([])
+			self.triggerPattern.append([])
 
 			for channel in range(NUMBER_OF_CHANNELS):
 				self.patternInSixtieths[row].append([])
 				self.patternInSixtieths[row][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
+
+			self.triggerPattern[row] = 0
 
 	def savePattern(self, filename):
 		# Save the current song
@@ -407,8 +444,11 @@ class Sequencer:
 			for pattern in range(MAX_NUMBER_OF_PATTERNS):
 				song.write(chr(DEFAULT_NUMBER_OF_ROWS))
 
-			for event in range(MAX_NUMBER_OF_PATTERNS * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS):
-				song.write(chr(24) + chr(0) + chr(0) + chr(0) + chr(0))
+			for row in range(MAX_NUMBER_OF_PATTERNS * MAX_NUMBER_OF_ROWS):
+				for event in range(NUMBER_OF_CHANNELS):
+					song.write(chr(24) + chr(0) + chr(0) + chr(0) + chr(0)) # Gate and CV
+
+				song.write(chr(0)) # Triggers
 
 			song.close()
 
@@ -421,7 +461,7 @@ class Sequencer:
 		song.write(numberOfRows)
 
 		# Seek ahead
-		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * NUMBER_OF_CHANNELS * 5)) # 5 bytes per event
+		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
 
 		# Save the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
@@ -432,6 +472,9 @@ class Sequencer:
 				cv1 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv1'])
 				cv2 = chr(self.patternInSixtieths[currentRowNumber][currentChannelNumber]['cv2'])
 				song.write(pitch + slide + gate + cv1 + cv2)
+
+			triggers = chr(self.triggerPattern[currentRowNumber])
+			song.write(triggers)
 
 		song.close()
 
@@ -480,6 +523,9 @@ class Sequencer:
 		crotchetLengthInSeconds = 60.0 / float(self.tempo)
 		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
 		self.averageRowLengthInSeconds = semiquaverLengthInSeconds
+
+	def toggleTrigger(self, triggerChannel):
+		self.triggerPattern[self.currentRowNumber] = self.triggerPattern[self.currentRowNumber]^ 1 << 8 - triggerChannel
 
 	def transposePatternDown(self):
 		# Only transpose down if every note in the pattern will still be in the 0 to 60 range afterwards
