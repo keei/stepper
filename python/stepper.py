@@ -368,7 +368,12 @@ class Sequencer:
 		self.reset()
 
 		# Load the new song
-		song = open(filename, 'r')
+		try:
+			song = open(filename, 'r')
+		except IOError:
+			# If the file doesn't exist yet, make a blank one.
+			self.savePattern(filename)
+			song = open(filename, 'r')
 
 		# Load the pattern length
 		song.seek(self.currentPatternNumber)
