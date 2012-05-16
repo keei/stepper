@@ -6,7 +6,7 @@ import os
 import stepper
 
 stepper.DEFAULT_NUMBER_OF_ROWS = 16
-stepper.MAX_NUMBER_OF_PATTERNS = 64
+stepper.MAX_NUMBER_OF_PATTERNS = 128
 stepper.MAX_NUMBER_OF_ROWS = 16
 stepper.NUMBER_OF_CHANNELS = 4
 
