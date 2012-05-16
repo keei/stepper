@@ -26,10 +26,16 @@ except:
 previousCycleTimeInSeconds = 0
 
 interface = curses.initscr()
+ttySize = interface.getmaxyx()
+
+if ttySize[0] < 24 or ttySize[1] < 80:
+	curses.endwin()
+	print('Please use a terminal with at least 80 by 24 characters.\n')
+	exit()
+
 interface.nodelay(True)
 curses.noecho()
 os.system('clear')
-ttySize = interface.getmaxyx()
 
 startTimeInSeconds = time.time()
 iterationsPerSecond = 0
@@ -413,18 +419,12 @@ while (True):
 	i = 1
 
 	for row in patternInSixtieths:
-		if i == ttySize[0]:
-			break
-
 		if i - 1 == currentRowNumber:
 			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
 		else:
 			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
 
 		i = i + 1
-
-	for i in range(i, ttySize[0]):
-		cursePrint(i, 55, '                       ') # In case a row's just been removed, or the pattern's just been changed
 
 	# Print out the LCD area's settings
 	if lcdMode == 'patternSelect':
