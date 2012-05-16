@@ -16,6 +16,16 @@ except NameError:
 	DEFAULT_NUMBER_OF_ROWS = 64
 
 try:
+	HIGH
+except NameError:
+	HIGH = 4095
+
+try:
+	LOW
+except NameError:
+	LOW = 0
+
+try:
 	MAX_NUMBER_OF_PATTERNS
 except NameError:
 	MAX_NUMBER_OF_PATTERNS = 64
@@ -298,10 +308,10 @@ class Sequencer:
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
 			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
-				self.gateInTwelveBits[channel] = 0
+				self.gateInTwelveBits[channel] = LOW
 				self.gateInUnipolarVolts[channel] = 0.0
 			else:
-				self.gateInTwelveBits[channel] = 4095
+				self.gateInTwelveBits[channel] = HIGH
 				self.gateInUnipolarVolts[channel] = 5.0
 
 			# Set CV1
