@@ -18,9 +18,15 @@ except:
 	pass
 
 interface = curses.initscr()
+ttySize = interface.getmaxyx()
+
+if ttySize[0] < 24 or ttySize[1] < 80:
+	curses.endwin()
+	print('Please use a terminal with at least 80 by 24 characters.\n')
+	exit()
+
 curses.noecho()
 os.system('clear')
-ttySize = interface.getmaxyx()
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
@@ -62,9 +68,6 @@ while (True):
 		i = 8
 
 		for row in patternInSixtieths:
-			if i == ttySize[0]:
-				break
-
 			if i - 8 == currentRowNumber and channel == currentChannelNumber:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv2']), True)
 			else:
@@ -72,27 +75,18 @@ while (True):
 
 			i = i + 1
 
-		for i in range(i, ttySize[0]):
-			cursePrint(i, channelOffset, '                 ') # In case a row's just been removed, or the pattern's just been changed
-
 	# Triggers
 	channelOffset = stepper.NUMBER_OF_CHANNELS * 17
 	cursePrint(7, channelOffset, 'TRIGGERS')
 	i = 8
 
 	for row in range(stepper.MAX_NUMBER_OF_ROWS):
-		if i == ttySize[0]:
-			break
-
 		if i - 8 == currentRowNumber:
 			cursePrint(i, channelOffset, sequencer.convertTriggerByteIntoChars(sequencer.triggerPattern[row]), True)
 		else:
 			cursePrint(i, channelOffset, sequencer.convertTriggerByteIntoChars(sequencer.triggerPattern[row]))
 
 		i = i + 1
-
-	for i in range(i, ttySize[0]):
-		cursePrint(i, channelOffset, '        ') # In case a row's just been removed, or the pattern's just been changed
 
 	# Input
 	try:
