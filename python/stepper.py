@@ -60,8 +60,8 @@ class Sequencer:
 	slideCV1 = True
 	slideCV2 = True
 	slidePitch = True
-	swingInBipolarVolts = 0.0
-	tempo = 120
+	swing = 0 # In the range of -127 to +127, in other words a signed char in C.
+	tempo = 120 # In the range of 0 to 255, in other words an unsigned char in C.
 	timeInSeconds = 0.0
 
 	def __init__(self):
@@ -180,7 +180,7 @@ class Sequencer:
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['slide']
 
 	def getSwing(self):
-		return self.swingInBipolarVolts
+		return self.swing
 
 	def getTempo(self):
 		return self.tempo
@@ -223,7 +223,7 @@ class Sequencer:
 		rowPairNumber = int(self.patternPositionInSeconds // rowPairLengthInSeconds)
 		currentRowNumber = rowPairNumber * 2
 
-		swingAsDecimal = (self.swingInBipolarVolts + 5.0) / 10.0
+		swingAsDecimal = (self.swing + 127.0) / 254.0
 		firstRowLengthInSeconds = self.averageRowLengthInSeconds / 0.5 * swingAsDecimal
 		rowPairPositionInSeconds = self.patternPositionInSeconds - (rowPairLengthInSeconds * rowPairNumber)
 
@@ -472,8 +472,8 @@ class Sequencer:
 	def setSlide(self, slide):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
 
-	def setSwing(self, swingInBipolarVolts):
-		self.swingInBipolarVolts = swingInBipolarVolts
+	def setSwing(self, swing):
+		self.swing = swing
 
 	def setTempo(self, tempo):
 		self.tempo = int(tempo)
