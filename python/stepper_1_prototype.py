@@ -77,27 +77,23 @@ while (True):
 	currentRowNumber = sequencer.getCurrentRowNumber()
 	patternInSixtieths = sequencer.patternInSixtieths
 
-	for i in range(14):
-		cursePrint(i, 0, '                                                ')
+	cursePrint(0, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
+	cursePrint(1, 0, 'W E    R                T                Y         I  ')
+	cursePrint(2, 0, '                                      9 Transpose  0  ')
+	cursePrint(3, 0, '    .     .        .     .     .                     ')
+	cursePrint(4, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
+	cursePrint(5, 0, 'C-  S D-  D E- F-  G G-  H A-  J B- NT DN UP AC SL BK')
+	cursePrint(6, 0, ' Z     X     C  V     B     N     M  ;  ,  .  \'  /  Q')
+	cursePrint(7, 0, '                                                   FW')
+	cursePrint(8, 0, '    . Pattern loop  1                               A')
+	cursePrint(9, 0, '    . Song loop     2                                ')
+	cursePrint(10, 0, '    . Song one-shot 3                                ')
+	cursePrint(11, 0, '                                    Space bar to quit')
 
-	interface.move(0, 0)
-	cursePrint(3, 0, 'Pitch           ' + sequencer.convertTwelveBitsIntoChars(pitchInTwelveBits))
-	cursePrint(4, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
-	cursePrint(5, 0, 'CV2             N/A')
-	cursePrint(6, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
-
-	cursePrint(8, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
-	cursePrint(9, 0, 'W E    R                T                Y         I  ')
-	cursePrint(10, 0, '                                      9 Transpose  0  ')
-	cursePrint(11, 0, '    .     .        .     .     .                     ')
-	cursePrint(12, 0, ' . C#  . D#  .  . F#  . G#  . A#  .  .  .  .  .  .   ')
-	cursePrint(13, 0, 'C-  S D-  D E- F-  G G-  H A-  J B- NT DN UP AC SL BK')
-	cursePrint(14, 0, ' Z     X     C  V     B     N     M  ;  ,  .  \'  /  Q')
-	cursePrint(15, 0, '                                                   FW')
-	cursePrint(16, 0, '    . Pattern loop  1                               A')
-	cursePrint(17, 0, '    . Song loop     2                                ')
-	cursePrint(18, 0, '    . Song one-shot 3                                ')
-	cursePrint(19, 0, '                                    Space bar to quit')
+	cursePrint(12, 0, 'Pitch           ' + sequencer.convertTwelveBitsIntoChars(pitchInTwelveBits))
+	cursePrint(13, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
+	cursePrint(14, 0, 'CV2             N/A')
+	cursePrint(15, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
 
 	# Print out the whole current pattern's rows
 	cursePrint(0, 55, 'NTE SL GT AC')
@@ -113,52 +109,52 @@ while (True):
 
 	# Print out the LCD area's settings
 	if lcdMode == 'patternSelect':
-		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
-		cursePrint(8, 4, 'o')
+		cursePrint(0, 0, sequencer.convertNumberIntoChars(sequencer.getCurrentPatternNumber()))
+		cursePrint(0, 4, 'o')
 	elif lcdMode == 'patternLength':
-		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
-		cursePrint(8, 21, 'o')
+		cursePrint(0, 0, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
+		cursePrint(0, 21, 'o')
 	elif lcdMode == 'tempo':
-		cursePrint(8, 0, sequencer.convertNumberIntoChars(sequencer.getTempo()))
-		cursePrint(8, 38, 'o')
+		cursePrint(0, 0, sequencer.convertNumberIntoChars(sequencer.getTempo()))
+		cursePrint(0, 38, 'o')
 
 	if clipboardFull == True:
-		cursePrint(8, 48, 'o')
+		cursePrint(0, 48, 'o')
 
 	playMode = sequencer.getPlayMode()
 
 	if playMode == 1:
-		cursePrint(16, 4, 'o')
+		cursePrint(8, 4, 'o')
 	elif playMode == 2:
-		cursePrint(17, 4, 'o')
+		cursePrint(9, 4, 'o')
 	elif playMode == 3:
-		cursePrint(18, 4, 'o')
+		cursePrint(10, 4, 'o')
 
 	# Print out the current row
 	if semitone == 0:
-		cursePrint(12, 1, 'o')
+		cursePrint(4, 1, 'o')
 	elif semitone == 1:
-		cursePrint(11, 4, 'o')
+		cursePrint(3, 4, 'o')
 	elif semitone == 2:
-		cursePrint(12, 7, 'o')
+		cursePrint(4, 7, 'o')
 	elif semitone == 3:
-		cursePrint(11, 10, 'o')
+		cursePrint(3, 10, 'o')
 	elif semitone == 4:
-		cursePrint(12, 13, 'o')
+		cursePrint(4, 13, 'o')
 	elif semitone == 5:
-		cursePrint(12, 16, 'o')
+		cursePrint(4, 16, 'o')
 	elif semitone == 6:
-		cursePrint(11, 19, 'o')
+		cursePrint(3, 19, 'o')
 	elif semitone == 7:
-		cursePrint(12, 22, 'o')
+		cursePrint(4, 22, 'o')
 	elif semitone == 8:
-		cursePrint(11, 25, 'o')
+		cursePrint(3, 25, 'o')
 	elif semitone == 9:
-		cursePrint(12, 28, 'o')
+		cursePrint(4, 28, 'o')
 	elif semitone == 10:
-		cursePrint(11, 31, 'o')
+		cursePrint(3, 31, 'o')
 	elif semitone == 11:
-		cursePrint(12, 34, 'o')
+		cursePrint(4, 34, 'o')
 
 	if gate != 0:
 		gateCharacter = 'o'
@@ -185,11 +181,11 @@ while (True):
 	else:
 		slideCharacter = '.'
 
-	cursePrint(12, 37, gateCharacter)
-	cursePrint(12, 40, octaveDownCharacter)
-	cursePrint(12, 43, octaveUpCharacter)
-	cursePrint(12, 46, cv1Character)
-	cursePrint(12, 49, slideCharacter)
+	cursePrint(4, 37, gateCharacter)
+	cursePrint(4, 40, octaveDownCharacter)
+	cursePrint(4, 43, octaveUpCharacter)
+	cursePrint(4, 46, cv1Character)
+	cursePrint(4, 49, slideCharacter)
 
 	# Input
 	try:
