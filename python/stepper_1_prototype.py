@@ -24,7 +24,6 @@ except:
 	pass
 
 previousCycleTimeInMilliseconds = 0
-previousCycleTimeInSeconds = 0.0
 
 interface = curses.initscr()
 ttySize = interface.getmaxyx()
@@ -39,8 +38,6 @@ curses.noecho()
 os.system('clear')
 
 startTimeInSeconds = time.time()
-iterationsPerSecond = 0
-iterationsThisSecond = 0
 lcdMode = 'tempo'
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
@@ -60,18 +57,9 @@ def millis():
 while (True):
 	# Updating values in real time
 	timeInMilliseconds = millis()
-	timeInSeconds = timeInMilliseconds / 1000.0
 	incrementLengthInMilliseconds = timeInMilliseconds - previousCycleTimeInMilliseconds
-	incrementLengthInSeconds = timeInSeconds - previousCycleTimeInSeconds
 	sequencer.incrementTime(incrementLengthInMilliseconds)
-	iterationsThisSecond = iterationsThisSecond + 1
-
-	if math.floor(timeInSeconds) != math.floor(previousCycleTimeInSeconds):
-		iterationsPerSecond = iterationsThisSecond
-		iterationsThisSecond = 0
-
 	previousCycleTimeInMilliseconds = timeInMilliseconds
-	previousCycleTimeInSeconds = timeInSeconds
 
 	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
 	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
@@ -93,9 +81,6 @@ while (True):
 		cursePrint(i, 0, '                                                ')
 
 	interface.move(0, 0)
-	cursePrint(0, 0, 'Time            ' + str(timeInMilliseconds))
-	cursePrint(1, 0, 'Iterations/sec  ' + str(iterationsPerSecond))
-
 	cursePrint(3, 0, 'Pitch           ' + sequencer.convertTwelveBitsIntoChars(pitchInTwelveBits))
 	cursePrint(4, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
 	cursePrint(5, 0, 'CV2             N/A')
