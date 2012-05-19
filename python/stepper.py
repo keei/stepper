@@ -432,6 +432,9 @@ class Sequencer:
 		if self.numberOfRows > 1:
 			self.numberOfRows = self.numberOfRows - 1
 
+			if self.currentRowNumber > self.numberOfRows - 1:
+				self.currentRowNumber = self.numberOfRows - 1
+
 			for channel in range(NUMBER_OF_CHANNELS):
 				self.patternInSixtieths[self.numberOfRows][channel] = {'pitch': DEFAULT_PITCH, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
 
