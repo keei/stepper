@@ -5,6 +5,8 @@ import math
 import os
 import stepper
 
+FILENAME = 'memory.tracker1'
+
 stepper.DEFAULT_NUMBER_OF_ROWS = 16
 stepper.MAX_NUMBER_OF_PATTERNS = 128
 stepper.MAX_NUMBER_OF_ROWS = 16
@@ -13,7 +15,7 @@ stepper.NUMBER_OF_CHANNELS = 4
 sequencer = stepper.Sequencer()
 
 try:
-	sequencer.loadPattern('memory.tracker1')
+	sequencer.loadPattern(FILENAME)
 except:
 	pass
 
@@ -102,22 +104,22 @@ while (True):
 		exit()
 
 	if key == 'w':
-		sequencer.savePattern('memory.tracker1') # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
+		sequencer.savePattern(FILENAME) # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
 		sequencer.decrementCurrentPatternNumber()
-		sequencer.loadPattern('memory.tracker1')
+		sequencer.loadPattern(FILENAME)
 
 	if key == 'e':
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 		sequencer.incrementCurrentPatternNumber()
-		sequencer.loadPattern('memory.tracker1')
+		sequencer.loadPattern(FILENAME)
 
 	if key == 'r':
 		sequencer.removeRow()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 't':
 		sequencer.addRow()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'y':
 		sequencer.decrementTempo()
@@ -134,7 +136,7 @@ while (True):
 	if key == 'i':
 		if sequencer.getClipboardStatus() == True:
 			sequencer.pastePattern()
-			sequencer.savePattern('memory.tracker1')
+			sequencer.savePattern(FILENAME)
 		else:
 			sequencer.copyPattern()
 
@@ -150,7 +152,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 's':
 		if sequencer.getSemitone() == 1 and sequencer.getGateInSixtieths() != 0:
@@ -164,7 +166,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'x':
 		if sequencer.getSemitone() == 2 and sequencer.getGateInSixtieths() != 0:
@@ -178,7 +180,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'd':
 		if sequencer.getSemitone() == 3 and sequencer.getGateInSixtieths() != 0:
@@ -192,7 +194,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'c':
 		if sequencer.getSemitone() == 4 and sequencer.getGateInSixtieths() != 0:
@@ -206,7 +208,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'v':
 		if sequencer.getSemitone() == 5 and sequencer.getGateInSixtieths() != 0:
@@ -220,7 +222,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'g':
 		if sequencer.getSemitone() == 6 and sequencer.getGateInSixtieths() != 0:
@@ -234,7 +236,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'b':
 		if sequencer.getSemitone() == 7 and sequencer.getGateInSixtieths() != 0:
@@ -248,7 +250,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'h':
 		if sequencer.getSemitone() == 8 and sequencer.getGateInSixtieths() != 0:
@@ -262,7 +264,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'n':
 		if sequencer.getSemitone() == 9 and sequencer.getGateInSixtieths() != 0:
@@ -276,7 +278,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'j':
 		if sequencer.getSemitone() == 10 and sequencer.getGateInSixtieths() != 0:
@@ -290,7 +292,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'm':
 		if sequencer.getSemitone() == 11 and sequencer.getGateInSixtieths() != 0:
@@ -304,7 +306,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '1':
 		sequencer.toggleTrigger(1)
@@ -339,7 +341,7 @@ while (True):
 		else:
 			sequencer.setGate(0)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '\'':
 		gateInSixtieths = sequencer.getGateInSixtieths()
@@ -347,7 +349,7 @@ while (True):
 		if gateInSixtieths > 0:
 			sequencer.setGate(gateInSixtieths - 1)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '\\':
 		gateInSixtieths = sequencer.getGateInSixtieths()
@@ -355,7 +357,7 @@ while (True):
 		if gateInSixtieths < 60:
 			sequencer.setGate(gateInSixtieths + 1)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == ',':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -363,7 +365,7 @@ while (True):
 		if currentPitch > 11:
 			sequencer.setPitch(currentPitch - 12)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '.':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -371,7 +373,7 @@ while (True):
 		if currentPitch < 49:
 			sequencer.setPitch(currentPitch + 12)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '/':
 		if sequencer.getSlideInSixtieths() == 60:
@@ -385,7 +387,7 @@ while (True):
 			if sequencer.getGateInSixtieths() == 30:
 				sequencer.setGate(60)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '[':
 		cv1InSixtieths = sequencer.getCV1InSixtieths()
@@ -393,7 +395,7 @@ while (True):
 		if cv1InSixtieths > 0:
 			sequencer.setCV1(cv1InSixtieths - 1)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == ']':
 		cv1InSixtieths = sequencer.getCV1InSixtieths()
@@ -401,7 +403,7 @@ while (True):
 		if cv1InSixtieths < 60:
 			sequencer.setCV1(cv1InSixtieths + 1)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '-':
 		cv2InSixtieths = sequencer.getCV2InSixtieths()
@@ -409,7 +411,7 @@ while (True):
 		if cv2InSixtieths > 0:
 			sequencer.setCV2(cv2InSixtieths - 1)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == '=':
 		cv2InSixtieths = sequencer.getCV2InSixtieths()
@@ -417,7 +419,7 @@ while (True):
 		if cv2InSixtieths < 60:
 			sequencer.setCV2(cv2InSixtieths + 1)
 
-		sequencer.savePattern('memory.tracker1')
+		sequencer.savePattern(FILENAME)
 
 	if key == 'q':
 		sequencer.decrementCurrentRowNumber()
