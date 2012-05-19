@@ -6,8 +6,6 @@ from random import uniform
 from struct import pack
 import wave
 
-globalIncrementLengthInSeconds = 1.0 / 44100.0
-
 # Pseudo-constants:
 
 try:
