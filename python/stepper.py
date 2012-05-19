@@ -1,7 +1,5 @@
 # Stepper 1 library, for Python 3.
 
-from math import floor
-
 # Pseudo-constants:
 
 try:
@@ -112,7 +110,7 @@ class Sequencer:
 	def convertPitchInSixtiethsIntoChars(self, sixtieth):
 		"""Convert a number between 0 and 60 into three characters depicting the note in a more human readable form, suitable for display on a screen with a fixed width font."""
 		semitone = sixtieth % SEMITONES_IN_OCTAVE_INT
-		octave = floor(sixtieth / SEMITONES_IN_OCTAVE_FLOAT)
+		octave = int(sixtieth / SEMITONES_IN_OCTAVE_FLOAT)
 
 		semitoneNames = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 
@@ -197,7 +195,7 @@ class Sequencer:
 		return self.gateInTwelveBits[channel]
 
 	def getOctave(self):
-		return floor(float(self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']) / SEMITONES_IN_OCTAVE_FLOAT)
+		return int(float(self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']) / SEMITONES_IN_OCTAVE_FLOAT)
 
 	def getPatternLength(self):
 		return self.numberOfRows
