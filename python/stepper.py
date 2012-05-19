@@ -14,6 +14,21 @@ except NameError:
 	DEFAULT_NUMBER_OF_ROWS = 64
 
 try:
+	DEFAULT_PITCH
+except NameError:
+	DEFAULT_PITCH = 24 # C-2
+
+try:
+	DEFAULT_TEMPO
+except NameError:
+	DEFAULT_TEMPO = 120
+
+try:
+	FROM_SIXTIETHS_TO_TWELVE_BITS
+except NameError:
+	FROM_SIXTIETHS_TO_TWELVE_BITS = 68.25 # Multiplying by 68.25 is the same as dividing by 60.0 and multiplying by 4095.0
+
+try:
 	HIGH
 except NameError:
 	HIGH = 4095
@@ -38,6 +53,16 @@ try:
 except NameError:
 	NUMBER_OF_CHANNELS = 4
 
+try:
+	SEMITONES_IN_OCTAVE_FLOAT
+except NameError:
+	SEMITONES_IN_OCTAVE_FLOAT = 12.0
+
+try:
+	SEMITONES_IN_OCTAVE_INT
+except NameError:
+	SEMITONES_IN_OCTAVE_INT = 12
+
 class Sequencer:
 	averageRowLengthInSeconds = 0.0
 	clipboard = []
@@ -59,7 +84,7 @@ class Sequencer:
 	slideCV2 = True
 	slidePitch = True
 	swing = 0 # In the range of -127 to +127, in other words a signed char in C.
-	tempo = 120 # In the range of 0 to 255, in other words an unsigned char in C.
+	tempo = DEFAULT_TEMPO # In the range of 1 to 255, in other words an unsigned char in C.
 	timeInSeconds = 0.0
 	triggerClipboard = []
 	triggerInTwelveBits = []
@@ -75,7 +100,7 @@ class Sequencer:
 		for channel in range(8):
 			self.triggerInTwelveBits.append(0)
 
-		self.setTempo(120) # Default to 120BPM
+		self.setTempo(DEFAULT_TEMPO)
 		self.reset()
 
 	def addRow(self):
@@ -90,8 +115,8 @@ class Sequencer:
 
 	def convertPitchInSixtiethsIntoChars(self, sixtieth):
 		"""Convert a number between 0 and 60 into three characters depicting the note in a more human readable form, suitable for display on a screen with a fixed width font."""
-		semitone = sixtieth % 12
-		octave = floor(sixtieth / 12.0)
+		semitone = sixtieth % SEMITONES_IN_OCTAVE_INT
+		octave = floor(sixtieth / SEMITONES_IN_OCTAVE_FLOAT)
 
 		semitoneNames = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-']
 
@@ -176,7 +201,7 @@ class Sequencer:
 		return self.gateInTwelveBits[channel]
 
 	def getOctave(self):
-		return floor(float(self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']) / 12.0)
+		return floor(float(self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch']) / SEMITONES_IN_OCTAVE_FLOAT)
 
 	def getPatternLength(self):
 		return self.numberOfRows
@@ -191,7 +216,7 @@ class Sequencer:
 		return self.playMode
 
 	def getSemitone(self):
-		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] % 12
+		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] % SEMITONES_IN_OCTAVE_INT
 
 	def getSlideInSixtieths(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['slide']
@@ -293,7 +318,7 @@ class Sequencer:
 		for channel in range(NUMBER_OF_CHANNELS):
 			# Convert the pitch to a control voltage, 1v/oct
 			pitchInSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['pitch']
-			self.pitchInTwelveBits[channel] = int(float(pitchInSixtieths) * 68.25) # / 60.0 * 4095.0
+			self.pitchInTwelveBits[channel] = int(float(pitchInSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 			# Slide if necessary
 			slide = self.patternInSixtieths[self.currentRowNumber][channel]['slide']
@@ -310,22 +335,22 @@ class Sequencer:
 
 			# Set CV1
 			cv1InSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['cv1']
-			self.cv1InTwelveBits[channel] = int(float(cv1InSixtieths) * 68.25) # / 60.0 * 4095.0
+			self.cv1InTwelveBits[channel] = int(float(cv1InSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 			# Set CV2
 			cv2InSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['cv2']
-			self.cv2InTwelveBits[channel] = int(float(cv2InSixtieths) * 68.25) # / 60.0 * 4095.0
+			self.cv2InTwelveBits[channel] = int(float(cv2InSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 			# Do the actual sliding
 			if slide == 60:
 				nextPitchInSixtieths = self.patternInSixtieths[nextRowNumber][channel]['pitch']
-				nextPitchInTwelveBits = int(float(nextPitchInSixtieths) * 68.25) # / 60.0 * 4095.0
+				nextPitchInTwelveBits = int(float(nextPitchInSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 				nextCV1InSixtieths = self.patternInSixtieths[nextRowNumber][channel]['cv1']
-				nextCV1InTwelveBits = int(float(nextCV1InSixtieths) * 68.25) # / 60.0 * 4095.0
+				nextCV1InTwelveBits = int(float(nextCV1InSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 				nextCV2InSixtieths = self.patternInSixtieths[nextRowNumber][channel]['cv2']
-				nextCV2InTwelveBits = int(float(nextCV2InSixtieths) * 68.25) # / 60.0 * 4095.0
+				nextCV2InTwelveBits = int(float(nextCV2InSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 				# Glide effortlessly and gracefully from the current event to the next
 				if rowPositionInSeconds > rowLengthInSeconds / 2:
@@ -418,7 +443,7 @@ class Sequencer:
 			self.numberOfRows = self.numberOfRows - 1
 
 			for channel in range(NUMBER_OF_CHANNELS):
-				self.patternInSixtieths[self.numberOfRows][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
+				self.patternInSixtieths[self.numberOfRows][channel] = {'pitch': DEFAULT_PITCH, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs.  We would add 1 to the number of rows, as we want to go one above it, but remember that us hackers count starting with 0.
 
 	def reset(self):
 		"""Clear the pattern held in memory."""
@@ -432,7 +457,7 @@ class Sequencer:
 
 			for channel in range(NUMBER_OF_CHANNELS):
 				self.patternInSixtieths[row].append([])
-				self.patternInSixtieths[row][channel] = {'pitch': 24, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
+				self.patternInSixtieths[row][channel] = {'pitch': DEFAULT_PITCH, 'slide': 0, 'gate': 0, 'cv1': 0, 'cv2': 0} # Reset removed row to defaults, namely silent Cs
 
 			self.triggerPattern[row] = 0
 
@@ -449,7 +474,7 @@ class Sequencer:
 
 			for row in range(MAX_NUMBER_OF_PATTERNS * MAX_NUMBER_OF_ROWS):
 				for event in range(NUMBER_OF_CHANNELS):
-					song.write(chr(24) + chr(0) + chr(0) + chr(0) + chr(0)) # Gate and CV
+					song.write(chr(DEFAULT_PITCH) + chr(0) + chr(0) + chr(0) + chr(0)) # Gate and CV
 
 				song.write(chr(0)) # Triggers
 
@@ -492,7 +517,7 @@ class Sequencer:
 
 	def setOctave(self, octave):
 		semitone = self.getSemitone()
-		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
+		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * SEMITONES_IN_OCTAVE_INT)
 
 	def setPitch(self, pitchInSixtieths):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = pitchInSixtieths
@@ -513,7 +538,7 @@ class Sequencer:
 
 	def setSemitone(self, semitone):
 		octave = self.getOctave()
-		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * 12)
+		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] = semitone + (octave * SEMITONES_IN_OCTAVE_INT)
 
 	def setSlide(self, slide):
 		self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['slide'] = slide
