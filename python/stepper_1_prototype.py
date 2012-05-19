@@ -102,8 +102,10 @@ while (True):
 	for row in patternInSixtieths:
 		if i - 1 == currentRowNumber:
 			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
-		else:
+		elif i - 1 < sequencer.numberOfRows:
 			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
+		else:
+			cursePrint(i, 55, '... .. .. ..')
 
 		i = i + 1
 

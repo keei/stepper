@@ -70,8 +70,10 @@ while (True):
 		for row in patternInSixtieths:
 			if i - 8 == currentRowNumber and channel == currentChannelNumber:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv2']), True)
-			else:
+			elif i - 8 < sequencer.numberOfRows:
 				cursePrint(i, channelOffset, sequencer.convertPitchInSixtiethsIntoChars(row[channel]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv1']) + ' ' + sequencer.convertSixtiethIntoChars(row[channel]['cv2']))
+			else:
+				cursePrint(i, channelOffset, '... .. .. .. ..')
 
 			i = i + 1
 
