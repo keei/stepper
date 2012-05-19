@@ -1,10 +1,6 @@
 # Stepper 1 library, for Python 3.
 
-from xml.etree import ElementTree
-from math import ceil, floor, pi, sin
-from random import uniform
-from struct import pack
-import wave
+from math import floor
 
 # Pseudo-constants:
 
