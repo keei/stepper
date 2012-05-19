@@ -23,7 +23,8 @@ try:
 except:
 	pass
 
-previousCycleTimeInSeconds = 0
+previousCycleTimeInMilliseconds = 0
+previousCycleTimeInSeconds = 0.0
 
 interface = curses.initscr()
 ttySize = interface.getmaxyx()
@@ -364,14 +365,16 @@ while (True):
 
 	timeInMilliseconds = millis()
 	timeInSeconds = timeInMilliseconds / 1000.0
+	incrementLengthInMilliseconds = timeInMilliseconds - previousCycleTimeInMilliseconds
 	incrementLengthInSeconds = timeInSeconds - previousCycleTimeInSeconds
-	sequencer.incrementTime(incrementLengthInSeconds)
+	sequencer.incrementTime(incrementLengthInMilliseconds)
 	iterationsThisSecond = iterationsThisSecond + 1
 
 	if math.floor(timeInSeconds) != math.floor(previousCycleTimeInSeconds):
 		iterationsPerSecond = iterationsThisSecond
 		iterationsThisSecond = 0
 
+	previousCycleTimeInMilliseconds = timeInMilliseconds
 	previousCycleTimeInSeconds = timeInSeconds
 
 	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)

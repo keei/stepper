@@ -64,7 +64,7 @@ except NameError:
 	SEMITONES_IN_OCTAVE_INT = 12
 
 class Sequencer:
-	averageRowLengthInSeconds = 0.0
+	averageRowLengthInMilliseconds = 0
 	clipboard = []
 	clipboardFull = False
 	currentChannelNumber = 0
@@ -76,7 +76,7 @@ class Sequencer:
 	gateInTwelveBits = []
 	nextPatternNumber = 0
 	numberOfRows = 0
-	patternPositionInSeconds = 0.0
+	patternPositionInMilliseconds = 0
 	patternInSixtieths = []
 	pitchInTwelveBits = []
 	playMode = 0
@@ -85,7 +85,7 @@ class Sequencer:
 	slidePitch = True
 	swing = 0 # In the range of -127 to +127, in other words a signed char in C.
 	tempo = DEFAULT_TEMPO # In the range of 1 to 255, in other words an unsigned char in C.
-	timeInSeconds = 0.0
+	timeInMilliseconds = 0
 	triggerClipboard = []
 	triggerInTwelveBits = []
 	triggerPattern = []
@@ -228,7 +228,7 @@ class Sequencer:
 		return self.tempo
 
 	def getTime(self):
-		return self.timeInSeconds
+		return self.timeInMilliseconds
 
 	def getTrackLength(self):
 		pass # This will involve loading in the pattern lengths from the file.
@@ -253,39 +253,39 @@ class Sequencer:
 		if self.tempo < 255:
 			self.setTempo(self.tempo + 1)
 
-	def incrementTime(self, incrementLengthInSeconds):
+	def incrementTime(self, incrementLengthInMilliseconds):
 		if self.playMode == 0:
 			return
 
-		self.timeInSeconds = self.timeInSeconds + incrementLengthInSeconds
-		self.patternPositionInSeconds = self.patternPositionInSeconds + incrementLengthInSeconds
-		rowPairLengthInSeconds = self.averageRowLengthInSeconds * 2
+		self.timeInMilliseconds = self.timeInMilliseconds + incrementLengthInMilliseconds
+		self.patternPositionInMilliseconds = self.patternPositionInMilliseconds + incrementLengthInMilliseconds
+		rowPairLengthInMilliseconds = self.averageRowLengthInMilliseconds * 2
 
 		# Work out the current event row
-		rowPairNumber = int(self.patternPositionInSeconds // rowPairLengthInSeconds)
+		rowPairNumber = int(self.patternPositionInMilliseconds // rowPairLengthInMilliseconds)
 		currentRowNumber = rowPairNumber * 2
 
 		swingAsDecimal = (self.swing + 127.0) / 254.0
-		firstRowLengthInSeconds = self.averageRowLengthInSeconds / 0.5 * swingAsDecimal
-		rowPairPositionInSeconds = self.patternPositionInSeconds - (rowPairLengthInSeconds * rowPairNumber)
+		firstRowLengthInMilliseconds = self.averageRowLengthInMilliseconds / 0.5 * swingAsDecimal
+		rowPairPositionInMilliseconds = self.patternPositionInMilliseconds - (rowPairLengthInMilliseconds * rowPairNumber)
 
-		if rowPairPositionInSeconds > firstRowLengthInSeconds:
+		if rowPairPositionInMilliseconds > firstRowLengthInMilliseconds:
 			currentRowNumber = currentRowNumber + 1
-			rowLengthInSeconds = rowPairLengthInSeconds - firstRowLengthInSeconds
-			rowPositionInSeconds = rowPairPositionInSeconds - firstRowLengthInSeconds
+			rowLengthInMilliseconds = rowPairLengthInMilliseconds - firstRowLengthInMilliseconds
+			rowPositionInMilliseconds = rowPairPositionInMilliseconds - firstRowLengthInMilliseconds
 		else:
-			rowLengthInSeconds = firstRowLengthInSeconds
-			rowPositionInSeconds = rowPairPositionInSeconds
+			rowLengthInMilliseconds = firstRowLengthInMilliseconds
+			rowPositionInMilliseconds = rowPairPositionInMilliseconds
 
 		if currentRowNumber > self.numberOfRows - 1:
-			self.patternPositionInSeconds = 0.0
-			# Do NOT increment self.timeInSeconds, that's the absolute time the sequencer's been running!
+			self.patternPositionInMilliseconds = 0
+			# Do NOT increment self.timeInMilliseconds, that's the absolute time the sequencer's been running!
 
 			# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
 			currentRowNumber = 0
 			rowPairNumber = 0
-			rowPairPositionInSeconds = 0.0
-			rowPositionInSeconds = 0.0
+			rowPairPositionInMilliseconds = 0
+			rowPositionInMilliseconds = 0
 
 			if self.playMode == 1:
 				self.currentPatternNumber = self.nextPatternNumber
@@ -325,10 +325,10 @@ class Sequencer:
 
 			# Set the gate length
 			gateInSixtieths = self.patternInSixtieths[self.currentRowNumber][channel]['gate']
-			gateLengthInSeconds = float(gateInSixtieths) / 60.0 * float(rowLengthInSeconds)
+			gateLengthInMilliseconds = int(float(gateInSixtieths) / 60.0 * float(rowLengthInMilliseconds))
 
 			# We need to make sure that we don't get any stray gate ons or gate offs, even for one single iteration
-			if rowPositionInSeconds > gateLengthInSeconds or (rowPositionInSeconds == gateLengthInSeconds and gateLengthInSeconds == 0):
+			if rowPositionInMilliseconds > gateLengthInMilliseconds or (rowPositionInMilliseconds == gateLengthInMilliseconds and gateLengthInMilliseconds == 0):
 				self.gateInTwelveBits[channel] = LOW
 			else:
 				self.gateInTwelveBits[channel] = HIGH
@@ -353,18 +353,14 @@ class Sequencer:
 				nextCV2InTwelveBits = int(float(nextCV2InSixtieths) * FROM_SIXTIETHS_TO_TWELVE_BITS)
 
 				# Glide effortlessly and gracefully from the current event to the next
-				if rowPositionInSeconds > rowLengthInSeconds / 2:
+				if rowPositionInMilliseconds > rowLengthInMilliseconds / 2:
 					pitchDifferenceInTwelveBits = nextPitchInTwelveBits - self.pitchInTwelveBits[channel]
 					cv1DifferenceInTwelveBits = nextCV1InTwelveBits - self.cv1InTwelveBits[channel]
 					cv2DifferenceInTwelveBits = nextCV2InTwelveBits - self.cv2InTwelveBits[channel]
 
 					# Work out how far along the slide we are, from 0 to 1
-					beginningInSeconds = rowLengthInSeconds / 2
-					endInSeconds = rowLengthInSeconds
-					positionInSeconds = rowPositionInSeconds
-					offsetPositionInSeconds = positionInSeconds - beginningInSeconds
-					offsetEndInSeconds = endInSeconds - beginningInSeconds
-					positionAsDecimal = offsetPositionInSeconds / offsetEndInSeconds
+					beginningInMilliseconds = rowLengthInMilliseconds / 2
+					positionAsDecimal = (rowPositionInMilliseconds - beginningInMilliseconds) / (rowLengthInMilliseconds - beginningInMilliseconds)
 
 					if self.slidePitch == True:
 						self.pitchInTwelveBits[channel] = int(self.pitchInTwelveBits[channel] + (pitchDifferenceInTwelveBits / 1 * positionAsDecimal))
@@ -384,7 +380,7 @@ class Sequencer:
 			else:
 				self.triggerInTwelveBits[7 - i] = LOW
 
-		return incrementLengthInSeconds
+		return incrementLengthInMilliseconds
 
 	def loadPattern(self, filename):
 		# Wipe the old pattern
@@ -529,10 +525,10 @@ class Sequencer:
 		if playMode == 0:
 			pass
 		elif playMode == 1:
-			self.patternPositionInSeconds = 0.0
+			self.patternPositionInMilliseconds = 0
 			self.nextPatternNumber = self.currentPatternNumber # Play mode 1 will use this default, unless the user queues up a pattern change in the meantime.
 		else:
-			self.patternPositionInSeconds = 0.0
+			self.patternPositionInMilliseconds = 0
 			self.finalPatternNumber = self.currentPatternNumber # Play modes 2 and 3 will use this.
 			self.currentPatternNumber = 0
 
@@ -548,9 +544,7 @@ class Sequencer:
 
 	def setTempo(self, tempo):
 		self.tempo = int(tempo)
-		crotchetLengthInSeconds = 60.0 / float(self.tempo)
-		semiquaverLengthInSeconds = crotchetLengthInSeconds / 4.0
-		self.averageRowLengthInSeconds = semiquaverLengthInSeconds
+		self.averageRowLengthInMilliseconds = 15000 / self.tempo # 60 seconds per minute; 60 / BPM = crotchet length in seconds; 60,000 / BPM = crotchet length in milliseconds; crotchet length in milliseconds / 4 = semiquaver length in milliseconds; 60,000 / 4 = 15,000; 15,000 / BPM = semiquaver length in milliseconds; average row length = semiquaver length.
 
 	def toggleTrigger(self, triggerChannel):
 		self.triggerPattern[self.currentRowNumber] = self.triggerPattern[self.currentRowNumber]^ 1 << 8 - triggerChannel
