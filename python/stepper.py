@@ -389,14 +389,15 @@ class Sequencer:
 			song = open(filename, 'r')
 
 		# Load the tempo
+		song.seek(3)
 		self.tempo = ord(song.read(1))
 
 		# Load the pattern length
-		song.seek(1 + self.currentPatternNumber)
+		song.seek(4 + self.currentPatternNumber)
 		self.numberOfRows = ord(song.read(1))
 
 		# Seek ahead
-		song.seek(1 + MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
+		song.seek(4 + MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
 
 		# Load the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
@@ -466,6 +467,7 @@ class Sequencer:
 			song = open(filename, 'w') # If it doesn't already exist, create it first.
 
 			# Write a whole file of defaults first
+			song.write("ST1") # Stepper 1 format (not yet finalised)
 			song.write(chr(DEFAULT_TEMPO))
 
 			for pattern in range(MAX_NUMBER_OF_PATTERNS):
@@ -483,15 +485,16 @@ class Sequencer:
 			song = open(filename, 'r+') # Now we know it already exists, open the file again, this time in read/write mode so seeking past some data won't blat those data.
 
 		# Save the tempo
+		song.seek(3)
 		song.write(chr(self.tempo))
 
 		# Save the pattern length
-		song.seek(1 + self.currentPatternNumber)
+		song.seek(4 + self.currentPatternNumber)
 		numberOfRows = chr(self.numberOfRows)
 		song.write(numberOfRows)
 
 		# Seek ahead
-		song.seek(1 + MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
+		song.seek(4 + MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
 
 		# Save the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
