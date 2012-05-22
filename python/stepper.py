@@ -288,7 +288,7 @@ class Sequencer:
 
 		else:
 			self.syncTriggerInTwelveBits = LOW
-		
+
 		# Play the pattern only if we're playing
 		if self.syncGateInTwelveBits == LOW:
 			return
