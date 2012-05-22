@@ -467,7 +467,7 @@ class Sequencer:
 			song = open(filename, 'w') # If it doesn't already exist, create it first.
 
 			# Write a whole file of defaults first
-			song.write("ST1") # Stepper 1 format (not yet finalised)
+			song.write("ST1") # Stepper 1 format, codenamed "Hanley" (not yet finalised)
 			song.write(chr(DEFAULT_TEMPO))
 
 			for pattern in range(MAX_NUMBER_OF_PATTERNS):

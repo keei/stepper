@@ -9,7 +9,7 @@ import os
 import stepper
 import time
 
-FILENAME = 'memory.stepper1'
+FILENAME = 'stepper1.stp'
 
 stepper.DEFAULT_NUMBER_OF_ROWS = 16
 stepper.MAX_NUMBER_OF_PATTERNS = 64
