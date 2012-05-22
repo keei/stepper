@@ -9,9 +9,8 @@ import os
 import stepper
 import time
 
-FILENAME = 'stepper1.stp'
-
 stepper.DEFAULT_NUMBER_OF_ROWS = 16
+stepper.FILENAME = 'stepper1.stp'
 stepper.MAX_NUMBER_OF_PATTERNS = 64
 stepper.MAX_NUMBER_OF_ROWS = 16
 stepper.NUMBER_OF_CHANNELS = 1
@@ -21,7 +20,7 @@ sequencer.slideCV1 = False # This won't have a DAC
 sequencer.slideCV2 = False # This won't exist at all
 
 try:
-	sequencer.loadPattern(FILENAME)
+	sequencer.loadPattern(stepper.FILENAME)
 except:
 	pass
 
@@ -204,31 +203,31 @@ while (True):
 
 	if key == 'w':
 		if lcdMode == 'patternSelect':
-			sequencer.savePattern(FILENAME) # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
+			sequencer.savePattern(stepper.FILENAME) # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
 
 			if sequencer.getPlayMode() == 1:
 				sequencer.decrementNextPatternNumber()
 			elif sequencer.getPlayMode() == 0:
 				sequencer.decrementCurrentPatternNumber()
-				sequencer.loadPattern(FILENAME)
+				sequencer.loadPattern(stepper.FILENAME)
 		elif lcdMode == 'patternLength':
 			sequencer.removeRow()
-			sequencer.savePattern(FILENAME)
+			sequencer.savePattern(stepper.FILENAME)
 		elif lcdMode == 'tempo':
 			sequencer.decrementTempo()
 
 	if key == 'e':
 		if lcdMode == 'patternSelect':
-			sequencer.savePattern(FILENAME)
+			sequencer.savePattern(stepper.FILENAME)
 
 			if sequencer.getPlayMode() == 1:
 				sequencer.incrementNextPatternNumber()
 			elif sequencer.getPlayMode() == 0:
 				sequencer.incrementCurrentPatternNumber()
-				sequencer.loadPattern(FILENAME)
+				sequencer.loadPattern(stepper.FILENAME)
 		elif lcdMode == 'patternLength':
 			sequencer.addRow()
-			sequencer.savePattern(FILENAME)
+			sequencer.savePattern(stepper.FILENAME)
 		elif lcdMode == 'tempo':
 			sequencer.incrementTempo()
 
@@ -244,7 +243,7 @@ while (True):
 	if key == 'i':
 		if clipboardFull == True:
 			sequencer.pastePattern()
-			sequencer.savePattern(FILENAME)
+			sequencer.savePattern(stepper.FILENAME)
 		else:
 			sequencer.copyPattern()
 
@@ -284,7 +283,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 's':
 		if sequencer.getSemitone() == 1 and sequencer.getGateInSixtieths() != 0:
@@ -298,7 +297,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'x':
 		if sequencer.getSemitone() == 2 and sequencer.getGateInSixtieths() != 0:
@@ -312,7 +311,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'd':
 		if sequencer.getSemitone() == 3 and sequencer.getGateInSixtieths() != 0:
@@ -326,7 +325,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'c':
 		if sequencer.getSemitone() == 4 and sequencer.getGateInSixtieths() != 0:
@@ -340,7 +339,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'v':
 		if sequencer.getSemitone() == 5 and sequencer.getGateInSixtieths() != 0:
@@ -354,7 +353,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'g':
 		if sequencer.getSemitone() == 6 and sequencer.getGateInSixtieths() != 0:
@@ -368,7 +367,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'b':
 		if sequencer.getSemitone() == 7 and sequencer.getGateInSixtieths() != 0:
@@ -382,7 +381,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'h':
 		if sequencer.getSemitone() == 8 and sequencer.getGateInSixtieths() != 0:
@@ -396,7 +395,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'n':
 		if sequencer.getSemitone() == 9 and sequencer.getGateInSixtieths() != 0:
@@ -410,7 +409,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'j':
 		if sequencer.getSemitone() == 10 and sequencer.getGateInSixtieths() != 0:
@@ -424,7 +423,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'm':
 		if sequencer.getSemitone() == 11 and sequencer.getGateInSixtieths() != 0:
@@ -438,7 +437,7 @@ while (True):
 				sequencer.setGate(30)
 
 		sequencer.incrementCurrentRowNumber()
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == ';':
 		if sequencer.getGateInSixtieths() == 0:
@@ -449,7 +448,7 @@ while (True):
 		else:
 			sequencer.setGate(0)
 
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == ',':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -457,7 +456,7 @@ while (True):
 		if currentPitch > 11:
 			sequencer.setPitch(currentPitch - 12)
 
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == '.':
 		currentPitch = sequencer.getPitchInSixtieths()
@@ -465,7 +464,7 @@ while (True):
 		if currentPitch < 49:
 			sequencer.setPitch(currentPitch + 12)
 
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == '\'':
 		if sequencer.getCV1InSixtieths() == 0:
@@ -473,7 +472,7 @@ while (True):
 		else:
 			sequencer.setCV1(0)
 
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == '/':
 		if sequencer.getSlideInSixtieths() == 60:
@@ -487,7 +486,7 @@ while (True):
 			if sequencer.getGateInSixtieths() == 30:
 				sequencer.setGate(60)
 
-		sequencer.savePattern(FILENAME)
+		sequencer.savePattern(stepper.FILENAME)
 
 	if key == 'q':
 		sequencer.decrementCurrentRowNumber()

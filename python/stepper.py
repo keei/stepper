@@ -18,6 +18,11 @@ except NameError:
 	DEFAULT_TEMPO = 120
 
 try:
+	FILENAME
+except NameError:
+	FILENAME = 'stepper.stp'
+
+try:
 	FROM_SIXTIETHS_TO_TWELVE_BITS
 except NameError:
 	FROM_SIXTIETHS_TO_TWELVE_BITS = 68.25 # Multiplying by 68.25 is the same as dividing by 60.0 and multiplying by 4095.0
