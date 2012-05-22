@@ -283,14 +283,14 @@ class Sequencer:
 
 			if self.playMode == 1:
 				self.currentPatternNumber = self.nextPatternNumber
-				self.loadPattern('memory.stepper1')
+				self.loadPattern(FILENAME)
 			elif self.playMode == 2:
 				self.currentPatternNumber = self.currentPatternNumber + 1
 
 				if self.currentPatternNumber > self.finalPatternNumber:
 					self.currentPatternNumber = 0
 
-				self.loadPattern('memory.stepper1')
+				self.loadPattern(FILENAME)
 			elif self.playMode == 3:
 				self.currentPatternNumber = self.currentPatternNumber + 1
 
@@ -298,7 +298,7 @@ class Sequencer:
 					self.currentPatternNumber = 0
 					self.playMode = 0
 
-				self.loadPattern('memory.stepper1')
+				self.loadPattern(FILENAME)
 
 		self.currentRowNumber = currentRowNumber
 
