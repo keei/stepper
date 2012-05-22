@@ -62,10 +62,14 @@ while (True):
 	sequencer.incrementTime(incrementLengthInMilliseconds)
 	previousCycleTimeInMilliseconds = timeInMilliseconds
 
+	# Outputs for synthesisers
 	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
 	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
 	gateInTwelveBits = sequencer.getGateInTwelveBits(0)
+	syncGateInTwelveBits = sequencer.getSyncGateInTwelveBits()
+	syncTriggerInTwelveBits = sequencer.getSyncTriggerInTwelveBits()
 
+	# Outputs for LEDs, LCDs etc (internal components generally)
 	clipboardFull = sequencer.getClipboardStatus()
 	cv1 = sequencer.getCV1InSixtieths()
 	gate = sequencer.getGateInSixtieths()
@@ -73,6 +77,10 @@ while (True):
 	pitch = sequencer.getPitchInSixtieths()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlideInSixtieths()
+
+	# Outputs for debugging
+	absoluteTime = sequencer.getAbsoluteTime()
+	playTime = sequencer.getPlayTime()
 
 	# Output
 	currentRowNumber = sequencer.getCurrentRowNumber()
@@ -95,6 +103,11 @@ while (True):
 	cursePrint(13, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
 	cursePrint(14, 0, 'CV2             N/A')
 	cursePrint(15, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
+	cursePrint(16, 0, 'Sync24 run/stop ' + sequencer.convertTwelveBitsIntoChars(syncGateInTwelveBits))
+	cursePrint(17, 0, 'Sync24 clock    ' + sequencer.convertTwelveBitsIntoChars(syncTriggerInTwelveBits))
+
+	cursePrint(19, 0, 'Absolute time   ' + sequencer.convertTwelveBitsIntoChars(absoluteTime))
+	cursePrint(20, 0, 'Play time       ' + sequencer.convertTwelveBitsIntoChars(playTime))
 
 	# Print out the whole current pattern's rows
 	cursePrint(0, 55, 'NTE SL GT AC')

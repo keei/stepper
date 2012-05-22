@@ -53,6 +53,11 @@ except NameError:
 	NUMBER_OF_CHANNELS = 4
 
 try:
+	PULSES_PER_QUARTER_NOTE
+except NameError:
+	PULSES_PER_QUARTER_NOTE = 24 # 24PPQN for Roland compatability; 48PPQN for Korg compatability.
+
+try:
 	SEMITONES_IN_OCTAVE_FLOAT
 except NameError:
 	SEMITONES_IN_OCTAVE_FLOAT = 12.0
@@ -63,6 +68,7 @@ except NameError:
 	SEMITONES_IN_OCTAVE_INT = 12
 
 class Sequencer:
+	absoluteTimeInMilliseconds = 0
 	averageRowLengthInMilliseconds = 0
 	clipboard = []
 	clipboardFull = False
@@ -79,12 +85,16 @@ class Sequencer:
 	patternInSixtieths = []
 	pitchInTwelveBits = []
 	playMode = 0
+	playTimeInMilliseconds = 0
+	queuedSyncGate = LOW # What the sync gate (run/stop) should be at the time of the next sync trigger (clock pulse).  I'm guessing it needs to patiently wait until the next one, so let's do that.
 	slideCV1 = True
 	slideCV2 = True
 	slidePitch = True
 	swing = 0 # In the range of -127 to +127, in other words a signed char in C.
+	syncGateInTwelveBits = LOW
+	syncTriggerInTwelveBits = LOW
+	syncTriggerLengthInMilliseconds = 1000
 	tempo = DEFAULT_TEMPO # In the range of 1 to 255, in other words an unsigned char in C.
-	timeInMilliseconds = 0
 	triggerClipboard = []
 	triggerInTwelveBits = []
 	triggerPattern = []
@@ -93,11 +103,11 @@ class Sequencer:
 		for channel in range(NUMBER_OF_CHANNELS):
 			self.cv1InTwelveBits.append(0)
 			self.cv2InTwelveBits.append(0)
-			self.gateInTwelveBits.append(0)
-			self.pitchInTwelveBits.append(0)
+			self.gateInTwelveBits.append(LOW)
+			self.pitchInTwelveBits.append(1638) # C-2
 
 		for channel in range(8):
-			self.triggerInTwelveBits.append(0)
+			self.triggerInTwelveBits.append(LOW)
 
 		self.setTempo(DEFAULT_TEMPO)
 		self.reset()
@@ -169,6 +179,9 @@ class Sequencer:
 		if self.tempo > 1:
 			self.setTempo(self.tempo - 1)
 
+	def getAbsoluteTime(self):
+		return self.absoluteTimeInMilliseconds
+
 	def getClipboardStatus(self):
 		return self.clipboardFull
 
@@ -214,6 +227,9 @@ class Sequencer:
 	def getPlayMode(self):
 		return self.playMode
 
+	def getPlayTime(self):
+		return self.playTimeInMilliseconds
+
 	def getSemitone(self):
 		return self.patternInSixtieths[self.currentRowNumber][self.currentChannelNumber]['pitch'] % SEMITONES_IN_OCTAVE_INT
 
@@ -223,11 +239,14 @@ class Sequencer:
 	def getSwing(self):
 		return self.swing
 
+	def getSyncGateInTwelveBits(self):
+		return self.syncGateInTwelveBits
+
+	def getSyncTriggerInTwelveBits(self):
+		return self.syncTriggerInTwelveBits
+
 	def getTempo(self):
 		return self.tempo
-
-	def getTime(self):
-		return self.timeInMilliseconds
 
 	def getTrackLength(self):
 		pass # This will involve loading in the pattern lengths from the file.
@@ -253,10 +272,28 @@ class Sequencer:
 			self.setTempo(self.tempo + 1)
 
 	def incrementTime(self, incrementLengthInMilliseconds):
-		if self.playMode == 0:
+		# Send out a sync trigger as appropriate, even if we're paused
+		self.absoluteTimeInMilliseconds = self.absoluteTimeInMilliseconds + incrementLengthInMilliseconds
+
+		# The sync trigger (clock pulse) has a duty cycle of 50%.  Let's use simple modulo arithmetic.
+		if self.absoluteTimeInMilliseconds % self.syncTriggerLengthInMilliseconds < self.syncTriggerLengthInMilliseconds / 2:
+			# If the sync trigger's making the transition from low to high RIGHT NOW, then it's the first iteration of the loop during this clock cycle.  That's the only time we can change whether we're playing or paused, for bang on timing.
+			if self.syncTriggerInTwelveBits == LOW:
+				if self.queuedSyncGate == HIGH:
+					self.syncGateInTwelveBits = HIGH
+				else:
+					self.syncGateInTwelveBits = LOW
+
+			self.syncTriggerInTwelveBits = HIGH
+
+		else:
+			self.syncTriggerInTwelveBits = LOW
+		
+		# Play the pattern only if we're playing
+		if self.syncGateInTwelveBits == LOW:
 			return
 
-		self.timeInMilliseconds = self.timeInMilliseconds + incrementLengthInMilliseconds
+		self.playTimeInMilliseconds = self.playTimeInMilliseconds + incrementLengthInMilliseconds
 		self.patternPositionInMilliseconds = self.patternPositionInMilliseconds + incrementLengthInMilliseconds
 		rowPairLengthInMilliseconds = self.averageRowLengthInMilliseconds * 2
 
@@ -278,7 +315,6 @@ class Sequencer:
 
 		if currentRowNumber > self.numberOfRows - 1:
 			self.patternPositionInMilliseconds = 0
-			# Do NOT increment self.timeInMilliseconds, that's the absolute time the sequencer's been running!
 
 			# It doesn't look like we can continue on to the next iteration of the loop, so let's just reset everything to 0 instead, which is what would happen anyway.
 			currentRowNumber = 0
@@ -302,6 +338,8 @@ class Sequencer:
 				if self.currentPatternNumber > self.finalPatternNumber:
 					self.currentPatternNumber = 0
 					self.playMode = 0
+					self.queuedSyncGate = LOW
+					self.playTimeInMilliseconds = 0
 
 				self.loadPattern(FILENAME)
 
@@ -537,11 +575,15 @@ class Sequencer:
 
 		# Technically, nextPatternNumber and finalPatternNumber could probably be the same variable, but I wouldn't advise that as it would be needlessly confusing.
 		if playMode == 0:
+			self.queuedSyncGate = LOW
+			self.playTimeInMilliseconds = 0
 			pass
 		elif playMode == 1:
+			self.queuedSyncGate = HIGH
 			self.patternPositionInMilliseconds = 0
 			self.nextPatternNumber = self.currentPatternNumber # Play mode 1 will use this default, unless the user queues up a pattern change in the meantime.
 		else:
+			self.queuedSyncGate = HIGH
 			self.patternPositionInMilliseconds = 0
 			self.finalPatternNumber = self.currentPatternNumber # Play modes 2 and 3 will use this.
 			self.currentPatternNumber = 0
@@ -559,6 +601,7 @@ class Sequencer:
 	def setTempo(self, tempo):
 		self.tempo = int(tempo)
 		self.averageRowLengthInMilliseconds = 15000 / self.tempo # 60 seconds per minute; 60 / BPM = crotchet length in seconds; 60,000 / BPM = crotchet length in milliseconds; crotchet length in milliseconds / 4 = semiquaver length in milliseconds; 60,000 / 4 = 15,000; 15,000 / BPM = semiquaver length in milliseconds; average row length = semiquaver length.
+		self.syncTriggerLengthInMilliseconds = (60000 / PULSES_PER_QUARTER_NOTE) / self.tempo # Quarter note = crotchet.
 
 	def toggleTrigger(self, triggerChannel):
 		self.triggerPattern[self.currentRowNumber] = self.triggerPattern[self.currentRowNumber]^ 1 << 8 - triggerChannel
