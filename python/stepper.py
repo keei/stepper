@@ -388,12 +388,15 @@ class Sequencer:
 			self.savePattern(filename)
 			song = open(filename, 'r')
 
+		# Load the tempo
+		self.tempo = ord(song.read(1))
+
 		# Load the pattern length
-		song.seek(self.currentPatternNumber)
+		song.seek(1 + self.currentPatternNumber)
 		self.numberOfRows = ord(song.read(1))
 
 		# Seek ahead
-		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
+		song.seek(1 + MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
 
 		# Load the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
@@ -440,6 +443,7 @@ class Sequencer:
 
 	def reset(self):
 		"""Clear the pattern held in memory."""
+		self.tempo = DEFAULT_TEMPO
 		self.numberOfRows = DEFAULT_NUMBER_OF_ROWS
 		self.patternInSixtieths = []
 		self.triggerPattern = []
@@ -462,6 +466,8 @@ class Sequencer:
 			song = open(filename, 'w') # If it doesn't already exist, create it first.
 
 			# Write a whole file of defaults first
+			song.write(chr(DEFAULT_TEMPO))
+
 			for pattern in range(MAX_NUMBER_OF_PATTERNS):
 				song.write(chr(DEFAULT_NUMBER_OF_ROWS))
 
@@ -476,13 +482,16 @@ class Sequencer:
 			# Now re-open the file as normal
 			song = open(filename, 'r+') # Now we know it already exists, open the file again, this time in read/write mode so seeking past some data won't blat those data.
 
+		# Save the tempo
+		song.write(chr(self.tempo))
+
 		# Save the pattern length
-		song.seek(self.currentPatternNumber)
+		song.seek(1 + self.currentPatternNumber)
 		numberOfRows = chr(self.numberOfRows)
 		song.write(numberOfRows)
 
 		# Seek ahead
-		song.seek(MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
+		song.seek(1 + MAX_NUMBER_OF_PATTERNS + (self.currentPatternNumber * MAX_NUMBER_OF_ROWS * ((NUMBER_OF_CHANNELS * 5) + 1))) # 5 bytes per event, plus 1 byte per row for the triggers
 
 		# Save the current pattern
 		for currentRowNumber in range(MAX_NUMBER_OF_ROWS):
