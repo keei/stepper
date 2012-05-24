@@ -66,8 +66,8 @@ while (True):
 	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
 	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
 	gateInTwelveBits = sequencer.getGateInTwelveBits(0)
-	syncGateInTwelveBits = sequencer.getSyncGateInTwelveBits()
-	syncTriggerInTwelveBits = sequencer.getSyncTriggerInTwelveBits()
+	syncGateOutputInTwelveBits = sequencer.getSyncGateOutputInTwelveBits()
+	syncTriggerOutputInTwelveBits = sequencer.getSyncTriggerOutputInTwelveBits()
 
 	# Outputs for LEDs, LCDs etc (internal components generally)
 	clipboardFull = sequencer.getClipboardStatus()
@@ -103,8 +103,8 @@ while (True):
 	cursePrint(13, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
 	cursePrint(14, 0, 'CV2             N/A')
 	cursePrint(15, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
-	cursePrint(16, 0, 'Sync24 run/stop ' + sequencer.convertTwelveBitsIntoChars(syncGateInTwelveBits))
-	cursePrint(17, 0, 'Sync24 clock    ' + sequencer.convertTwelveBitsIntoChars(syncTriggerInTwelveBits))
+	cursePrint(16, 0, 'Sync24 run/stop ' + sequencer.convertTwelveBitsIntoChars(syncGateOutputInTwelveBits) + ' O')
+	cursePrint(17, 0, 'Sync24 clock    ' + sequencer.convertTwelveBitsIntoChars(syncTriggerOutputInTwelveBits) + ' P')
 
 	cursePrint(19, 0, 'Absolute time   ' + sequencer.convertTwelveBitsIntoChars(absoluteTime))
 	cursePrint(20, 0, 'Play time       ' + sequencer.convertTwelveBitsIntoChars(playTime))
@@ -507,3 +507,12 @@ while (True):
 	if key == 'a':
 		sequencer.incrementCurrentRowNumber()
 
+	if key == 'o':
+		sequencer.setSyncGate(stepper.HIGH)
+	else:
+		sequencer.setSyncGate(stepper.LOW)
+
+	if key == 'p':
+		sequencer.setSyncTrigger(stepper.HIGH)
+	else:
+		sequencer.setSyncTrigger(stepper.LOW)
