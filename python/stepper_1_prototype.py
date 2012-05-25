@@ -1,6 +1,6 @@
 # Stepper 1 prototype application, for Python 3.
 
-# This isn't a real Arduino emulator.  It just emulates millis(),
+# This isn't a real Arduino emulator.  It just emulates micros(),
 # and allows realtime testing of what the sequencer would output.
 
 import curses
@@ -24,7 +24,7 @@ try:
 except:
 	pass
 
-previousCycleTimeInMilliseconds = 0
+previousCycleTimeInMicroseconds = 0
 
 interface = curses.initscr()
 ttySize = interface.getmaxyx()
@@ -52,22 +52,22 @@ def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 
 		columnNumber = columnNumber + 1
 
-def millis():
-	return int((time.time() - startTimeInSeconds) * 1000)
+def micros():
+	return int((time.time() - startTimeInSeconds) * 1000000)
 
 while (True):
 	# Updating values in real time
-	timeInMilliseconds = millis()
-	incrementLengthInMilliseconds = timeInMilliseconds - previousCycleTimeInMilliseconds
-	sequencer.incrementTime(incrementLengthInMilliseconds)
-	previousCycleTimeInMilliseconds = timeInMilliseconds
+	timeInMicroseconds = micros()
+	incrementLengthInMicroseconds = timeInMicroseconds - previousCycleTimeInMicroseconds
+	sequencer.incrementTime(incrementLengthInMicroseconds)
+	previousCycleTimeInMicroseconds = timeInMicroseconds
 
 	# Outputs for synthesisers
 	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
 	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
 	gateInTwelveBits = sequencer.getGateInTwelveBits(0)
-	syncGateOutputInTwelveBits = sequencer.getSyncGateOutputInTwelveBits()
-	syncTriggerOutputInTwelveBits = sequencer.getSyncTriggerOutputInTwelveBits()
+	dinSyncGateOutputInTwelveBits = sequencer.getDinSyncGateOutputInTwelveBits()
+	dinSyncTriggerOutputInTwelveBits = sequencer.getDinSyncTriggerOutputInTwelveBits()
 
 	# Outputs for LEDs, LCDs etc (internal components generally)
 	clipboardFull = sequencer.getClipboardStatus()
@@ -103,8 +103,8 @@ while (True):
 	cursePrint(13, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
 	cursePrint(14, 0, 'CV2             N/A')
 	cursePrint(15, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
-	cursePrint(16, 0, 'Sync24 run/stop ' + sequencer.convertTwelveBitsIntoChars(syncGateOutputInTwelveBits) + ' O')
-	cursePrint(17, 0, 'Sync24 clock    ' + sequencer.convertTwelveBitsIntoChars(syncTriggerOutputInTwelveBits) + ' P')
+	cursePrint(16, 0, 'Sync24 run/stop ' + sequencer.convertTwelveBitsIntoChars(dinSyncGateOutputInTwelveBits) + ' O')
+	cursePrint(17, 0, 'Sync24 clock    ' + sequencer.convertTwelveBitsIntoChars(dinSyncTriggerOutputInTwelveBits) + ' P')
 
 	cursePrint(19, 0, 'Absolute time   ' + sequencer.convertTwelveBitsIntoChars(absoluteTime))
 	cursePrint(20, 0, 'Play time       ' + sequencer.convertTwelveBitsIntoChars(playTime))
@@ -508,11 +508,11 @@ while (True):
 		sequencer.incrementCurrentRowNumber()
 
 	if key == 'o':
-		sequencer.setSyncGate(stepper.HIGH)
+		sequencer.setDinSyncGate(stepper.HIGH)
 	else:
-		sequencer.setSyncGate(stepper.LOW)
+		sequencer.setDinSyncGate(stepper.LOW)
 
 	if key == 'p':
-		sequencer.setSyncTrigger(stepper.HIGH)
+		sequencer.setDinSyncTrigger(stepper.HIGH)
 	else:
-		sequencer.setSyncTrigger(stepper.LOW)
+		sequencer.setDinSyncTrigger(stepper.LOW)
