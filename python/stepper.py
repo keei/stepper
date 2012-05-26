@@ -386,7 +386,7 @@ class Clock:
 		self.pulseLength = int(FROM_TEMPO_TO_MILLISECONDS / self.tempo)
 
 	def setTime(self, time):
-		# The pulse has a duty cycle of 50%.  Let's use simple modulo arithmetic.
+		# The pulse has a duty cycle of 50%.
 		if (time - self.lastTime) < (self.pulseLength / 2):
 			self.pulse = HIGH # The last pulse is still happening
 		elif (time - self.lastTime) > self.pulseLength:
