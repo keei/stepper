@@ -1,4 +1,4 @@
-# Stepper 1 prototype application, for Python 3.
+# Stepper Acid prototype application, for Python 3.
 
 # This isn't a real Arduino emulator.  It just emulates millis(),
 # and allows realtime testing of what the sequencer would output.
@@ -10,21 +10,18 @@ import stepper
 import time
 
 stepper.DEFAULT_NUMBER_OF_ROWS = 16
-stepper.FILENAME = 'stepper1.stp'
+stepper.FILENAME = 'memory.sa'
 stepper.MAX_NUMBER_OF_PATTERNS = 64
 stepper.MAX_NUMBER_OF_ROWS = 16
-stepper.NUMBER_OF_CHANNELS = 1
 
-sequencer = stepper.Sequencer()
-sequencer.slideCV1 = False # This won't have a DAC
-sequencer.slideCV2 = False # This won't exist at all
+clock = stepper.Clock()
+sequencer = stepper.AcidSequencer()
+slewLimiter = stepper.SlewLimiter()
 
 try:
 	sequencer.loadPattern(stepper.FILENAME)
 except:
 	pass
-
-previousCycleTimeInMilliseconds = 0
 
 interface = curses.initscr()
 ttySize = interface.getmaxyx()
@@ -40,6 +37,7 @@ os.system('clear')
 
 startTimeInSeconds = time.time()
 lcdMode = 'tempo'
+oddPulse = True # Think of it as starting at -1
 
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
@@ -58,29 +56,36 @@ def millis():
 while (True):
 	# Updating values in real time
 	timeInMilliseconds = millis()
-	incrementLengthInMilliseconds = timeInMilliseconds - previousCycleTimeInMilliseconds
-	sequencer.incrementTime(incrementLengthInMilliseconds)
-	previousCycleTimeInMilliseconds = timeInMilliseconds
+	lastPulse = clock.getPulse()
+	clock.setTime(millis())
+	pulse = clock.getPulse()
+	run = clock.getRun()
+
+	# Count every other pulse, going from 96 PPQN to 48 PPQN
+	if run == stepper.HIGH and lastPulse == stepper.LOW and pulse == stepper.HIGH:
+		# In C, we can use a bitwise mutually-exclusive-or for this
+		if oddPulse == True:
+			oddPulse = False
+		else:
+			oddPulse = True
+
+		if oddPulse == False:
+			sequencer.incrementPulseCount()
 
 	# Outputs for synthesisers
-	pitchInTwelveBits = sequencer.getPitchInTwelveBits(0)
-	cv1InTwelveBits = sequencer.getCV1InTwelveBits(0)
-	gateInTwelveBits = sequencer.getGateInTwelveBits(0)
-	syncGateOutputInTwelveBits = sequencer.getSyncGateOutputInTwelveBits()
-	syncTriggerOutputInTwelveBits = sequencer.getSyncTriggerOutputInTwelveBits()
+	slewLimiter.setPitch(sequencer.getPitchInTwelveBits(), sequencer.getSlideInTwelveBits(), millis())
+	pitchInTwelveBits = slewLimiter.getPitchInTwelveBits()
+	accentInTwelveBits = sequencer.getAccentInTwelveBits()
+	gateInTwelveBits = sequencer.getGateInTwelveBits()
 
 	# Outputs for LEDs, LCDs etc (internal components generally)
 	clipboardFull = sequencer.getClipboardStatus()
-	cv1 = sequencer.getCV1InSixtieths()
+	accent = sequencer.getAccentInSixtieths()
 	gate = sequencer.getGateInSixtieths()
 	# octave = sequencer.getOctave()
 	pitch = sequencer.getPitchInSixtieths()
 	semitone = sequencer.getSemitone()
 	slide = sequencer.getSlideInSixtieths()
-
-	# Outputs for debugging
-	absoluteTime = sequencer.getAbsoluteTime()
-	playTime = sequencer.getPlayTime()
 
 	# Output
 	currentRowNumber = sequencer.getCurrentRowNumber()
@@ -94,20 +99,12 @@ while (True):
 	cursePrint(5, 0, 'C-  S D-  D E- F-  G G-  H A-  J B- NT DN UP AC SL BK')
 	cursePrint(6, 0, ' Z     X     C  V     B     N     M  ;  ,  .  \'  /  Q')
 	cursePrint(7, 0, '                                                   FW')
-	cursePrint(8, 0, '    . Pattern loop  1                               A')
-	cursePrint(9, 0, '    . Song loop     2                                ')
-	cursePrint(10, 0, '    . Song one-shot 3                                ')
+	cursePrint(8, 0, '    . Run/stop 1                                    A')
 	cursePrint(11, 0, '                                    Space bar to quit')
 
 	cursePrint(12, 0, 'Pitch           ' + sequencer.convertTwelveBitsIntoChars(pitchInTwelveBits))
-	cursePrint(13, 0, 'CV1             ' + sequencer.convertTwelveBitsIntoChars(cv1InTwelveBits))
-	cursePrint(14, 0, 'CV2             N/A')
-	cursePrint(15, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
-	cursePrint(16, 0, 'Sync24 run/stop ' + sequencer.convertTwelveBitsIntoChars(syncGateOutputInTwelveBits) + ' O')
-	cursePrint(17, 0, 'Sync24 clock    ' + sequencer.convertTwelveBitsIntoChars(syncTriggerOutputInTwelveBits) + ' P')
-
-	cursePrint(19, 0, 'Absolute time   ' + sequencer.convertTwelveBitsIntoChars(absoluteTime))
-	cursePrint(20, 0, 'Play time       ' + sequencer.convertTwelveBitsIntoChars(playTime))
+	cursePrint(13, 0, 'Accent          ' + sequencer.convertTwelveBitsIntoChars(accentInTwelveBits))
+	cursePrint(14, 0, 'Gate            ' + sequencer.convertTwelveBitsIntoChars(gateInTwelveBits))
 
 	# Print out the whole current pattern's rows
 	cursePrint(0, 55, 'NTE SL GT AC')
@@ -115,9 +112,9 @@ while (True):
 
 	for row in patternInSixtieths:
 		if i - 1 == currentRowNumber:
-			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']), True)
+			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row['accent']), True)
 		elif i - 1 < sequencer.numberOfRows:
-			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row[0]['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row[0]['cv1']))
+			cursePrint(i, 55, sequencer.convertPitchInSixtiethsIntoChars(row['pitch']) + ' ' + sequencer.convertSixtiethIntoChars(row['slide']) + ' ' + sequencer.convertSixtiethIntoChars(row['gate']) + ' ' + sequencer.convertSixtiethIntoChars(row['accent']))
 		else:
 			cursePrint(i, 55, '... .. .. ..')
 
@@ -131,20 +128,14 @@ while (True):
 		cursePrint(0, 0, sequencer.convertNumberIntoChars(sequencer.getPatternLength()))
 		cursePrint(0, 21, 'o')
 	elif lcdMode == 'tempo':
-		cursePrint(0, 0, sequencer.convertNumberIntoChars(sequencer.getTempo()))
+		cursePrint(0, 0, sequencer.convertNumberIntoChars(clock.getTempo()))
 		cursePrint(0, 38, 'o')
 
 	if clipboardFull == True:
 		cursePrint(0, 48, 'o')
 
-	playMode = sequencer.getPlayMode()
-
-	if playMode == 1:
+	if run == stepper.HIGH:
 		cursePrint(8, 4, 'o')
-	elif playMode == 2:
-		cursePrint(9, 4, 'o')
-	elif playMode == 3:
-		cursePrint(10, 4, 'o')
 
 	# Print out the current row
 	if semitone == 0:
@@ -187,10 +178,10 @@ while (True):
 		octaveDownCharacter = '.'
 		octaveUpCharacter = '.'
 
-	if cv1 != 0:
-		cv1Character = 'o'
+	if accent != 0:
+		accentCharacter = 'o'
 	else:
-		cv1Character = '.'
+		accentCharacter = '.'
 
 	if slide == 60:
 		slideCharacter = 'o'
@@ -200,7 +191,7 @@ while (True):
 	cursePrint(4, 37, gateCharacter)
 	cursePrint(4, 40, octaveDownCharacter)
 	cursePrint(4, 43, octaveUpCharacter)
-	cursePrint(4, 46, cv1Character)
+	cursePrint(4, 46, accentCharacter)
 	cursePrint(4, 49, slideCharacter)
 
 	# Input
@@ -218,31 +209,29 @@ while (True):
 		if lcdMode == 'patternSelect':
 			sequencer.savePattern(stepper.FILENAME) # This is needed in case the user is going to a hitherto non-existent pattern, without saving (ie changing, which auto-saves) the current one first
 
-			if sequencer.getPlayMode() == 1:
+			if run == stepper.HIGH:
 				sequencer.decrementNextPatternNumber()
-			elif sequencer.getPlayMode() == 0:
+			else:
 				sequencer.decrementCurrentPatternNumber()
-				sequencer.loadPattern(stepper.FILENAME)
 		elif lcdMode == 'patternLength':
 			sequencer.removeRow()
 			sequencer.savePattern(stepper.FILENAME)
 		elif lcdMode == 'tempo':
-			sequencer.decrementTempo()
+			clock.decrementTempo()
 
 	if key == 'e':
 		if lcdMode == 'patternSelect':
 			sequencer.savePattern(stepper.FILENAME)
 
-			if sequencer.getPlayMode() == 1:
+			if run == stepper.HIGH:
 				sequencer.incrementNextPatternNumber()
-			elif sequencer.getPlayMode() == 0:
+			else:
 				sequencer.incrementCurrentPatternNumber()
-				sequencer.loadPattern(stepper.FILENAME)
 		elif lcdMode == 'patternLength':
 			sequencer.addRow()
 			sequencer.savePattern(stepper.FILENAME)
 		elif lcdMode == 'tempo':
-			sequencer.incrementTempo()
+			clock.incrementTempo()
 
 	if key == 'r':
 		lcdMode = 'patternSelect'
@@ -267,22 +256,12 @@ while (True):
 		sequencer.transposePatternUp()
 
 	if key == '1':
-		if sequencer.getPlayMode() == 1:
-			sequencer.setPlayMode(0)
+		if clock.getRunRequest() == stepper.HIGH:
+			clock.setRunRequest(stepper.LOW)
+			sequencer.resetPulseCount()
 		else:
-			sequencer.setPlayMode(1)
-
-	if key == '2':
-		if sequencer.getPlayMode() == 2:
-			sequencer.setPlayMode(0)
-		else:
-			sequencer.setPlayMode(2)
-
-	if key == '3':
-		if sequencer.getPlayMode() == 3:
-			sequencer.setPlayMode(0)
-		else:
-			sequencer.setPlayMode(3)
+			clock.setRunRequest(stepper.HIGH)
+			sequencer.setNextPatternNumber(sequencer.getCurrentPatternNumber())
 
 	if key == 'z':
 		if sequencer.getSemitone() == 0 and sequencer.getGateInSixtieths() != 0:
@@ -293,7 +272,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -307,7 +286,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -321,7 +300,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -335,7 +314,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -349,7 +328,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -363,7 +342,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -377,7 +356,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -391,7 +370,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -405,7 +384,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -419,7 +398,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -433,7 +412,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -447,7 +426,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 
 		sequencer.incrementCurrentRowNumber()
 		sequencer.savePattern(stepper.FILENAME)
@@ -457,7 +436,7 @@ while (True):
 			if sequencer.getSlideInSixtieths() == 60:
 				sequencer.setGate(60)
 			else:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 		else:
 			sequencer.setGate(0)
 
@@ -480,10 +459,10 @@ while (True):
 		sequencer.savePattern(stepper.FILENAME)
 
 	if key == '\'':
-		if sequencer.getCV1InSixtieths() == 0:
-			sequencer.setCV1(60)
+		if sequencer.getAccentInSixtieths() == 0:
+			sequencer.setAccent(60)
 		else:
-			sequencer.setCV1(0)
+			sequencer.setAccent(0)
 
 		sequencer.savePattern(stepper.FILENAME)
 
@@ -492,11 +471,11 @@ while (True):
 			sequencer.setSlide(0)
 
 			if sequencer.getGateInSixtieths() == 60:
-				sequencer.setGate(30)
+				sequencer.setGate(35)
 		else:
 			sequencer.setSlide(60)
 
-			if sequencer.getGateInSixtieths() == 30:
+			if sequencer.getGateInSixtieths() == 35:
 				sequencer.setGate(60)
 
 		sequencer.savePattern(stepper.FILENAME)
@@ -506,13 +485,3 @@ while (True):
 
 	if key == 'a':
 		sequencer.incrementCurrentRowNumber()
-
-	if key == 'o':
-		sequencer.setSyncGate(stepper.HIGH)
-	else:
-		sequencer.setSyncGate(stepper.LOW)
-
-	if key == 'p':
-		sequencer.setSyncTrigger(stepper.HIGH)
-	else:
-		sequencer.setSyncTrigger(stepper.LOW)

@@ -1,6 +1,7 @@
 python/__pycache__
 *.out
 *.pyc
-*.stp
+*.sa
+*.sd
 *.swp
 *.wav

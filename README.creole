@@ -21,18 +21,16 @@ actual hardware synthesisers via pitch and gate CV outputs.  To this
 end, its outputs are integers in the range of 0 to 4095, to enable
 it to be used with reasonably cheap 12-bit DACs.
 
-== Stepper 1 ==
+== Stepper Acid ==
 
-Stepper 1 is an application that uses the Stepper library.  It's a
-single channel step sequencer.  As it's implemented primarily in
-tangible hardware, its interface centers around (in the prototype,
-rough emulations of) LEDs, buttons, LCDs and rotary encoders.
+Stepper Acid is an application that uses the Stepper library.  It's
+a single channel step sequencer that can play acidlines with accent
+and slide.
 
-== Tracker 1 ==
+== Stepper Drum ==
 
-Tracker 1 is another application that uses the Stepper library.  It's
-a four channel step sequencer.  As it's implemented primarily in
-software, its interface centers around a terminal screen and keyboard.
+Stepper Drum is also an application that uses the Stepper library.
+It's an eight channel drum machine.
 
 == Appendices ==
 
