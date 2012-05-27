@@ -72,7 +72,7 @@ unsigned char patternNumber = 0;
 unsigned char patternNumberRequest = 0;
 unsigned char numberOfRows = MAX_NUMBER_OF_ROWS;
 unsigned char pattern[MAX_NUMBER_OF_ROWS][4]; /* 4: Pitch, slide, gate, accent */
-unsigned char pitchRequest = 0; /* Used by both the sequencer and slew limiter.  The proposed pitch CV output of the slew limiter, in 12 bits. */
+unsigned short pitchRequest = 0; /* Used by both the sequencer and slew limiter.  The proposed pitch CV output of the slew limiter, in 12 bits. */
 unsigned char rowNumber = 0;
 unsigned short sequencerPulseCount = 0; /* The number of pulses that have happened so far in this pattern.  Note that although the internal clock is 96 PPQN, the sequencer is only 48 PPQN.  This is so that both can be compatible with other machines. */
 unsigned char slide = LOW; /* Used by both the sequencer and slew limiter.  Whether the slew limiter should lag or not. */
@@ -83,7 +83,8 @@ unsigned char slide = LOW; /* Used by both the sequencer and slew limiter.  Whet
 
 unsigned long slewLimiterLastTime = 0; /* When the slew limiter was last invoked, in milliseconds */
 unsigned long slewLimiterInterval = 0; /* The distance between last time and this time, in milliseconds */
-unsigned char pitch = 0; /* The actual pitch CV output of the slew limiter, in 12 bits */
+unsigned short pitch = 0; /* The actual pitch CV output of the slew limiter, in 12 bits */
+unsigned short slideAmount = 0; /* The difference between the requested pitch and the current pitch. */
 
 /*
  *  Custom functions
@@ -106,7 +107,7 @@ void savePattern()
 {
 }
 
-void dacWrite(unsigned char deviceNumber, short twelveBits)
+void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
 {
 	byte firstFourBits = twelveBits >> 4;
 	byte lastEightBits = twelveBits & 255;
@@ -306,12 +307,24 @@ void loop()
 	if (slide == LOW) {
 		pitch = pitchRequest;
 	} else {
-		if (pitchRequest > pitch + (slewLimiterInterval * 2)) {
-			pitch = pitch + slewLimiterInterval;
-		} else if (pitchRequest < pitch - (slewLimiterInterval * 2)) {
-			pitch = pitch - slewLimiterInterval;
+		/* Work out how much to change the pitch by with each iteration, but then keep that value fixed to avoid exponential slides */
+		if (pitch != pitchRequest && slideAmount == 0) {
+			/* Work out how far to slide in total */
+			if (pitchRequest > pitch) {
+				slideAmount = pitchRequest - pitch;
+			} else if (pitchRequest < pitch) {
+				slideAmount = pitch - pitchRequest;
+			}
+		}
+
+		if (pitchRequest > pitch + (slideAmount * slewLimiterInterval * 0.2)) {
+			pitch = pitch + (slideAmount * slewLimiterInterval * 0.1);
+		} else if (pitchRequest < pitch - (slideAmount * slewLimiterInterval * 0.2)) {
+			pitch = pitch - (slideAmount * slewLimiterInterval * 0.1);
 		} else {
+			/* The requested pitch has been attained.  Stop sliding. */
 			pitch = pitchRequest;
+			slideAmount = 0;
 		}
 	}
 
