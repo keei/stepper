@@ -109,8 +109,8 @@ void savePattern()
 
 void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
 {
-	byte firstFourBits = twelveBits >> 4;
-	byte lastEightBits = twelveBits & 255;
+	unsigned char firstFourBits = twelveBits >> 4;
+	unsigned char lastEightBits = twelveBits & 255;
 	Wire.beginTransmission(deviceNumber);
 	Wire.write(64); /* Set the DAC to receive new data. */
 	Wire.write(firstFourBits);
@@ -124,6 +124,7 @@ void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
 
 void setup()
 {
+	Wire.begin();
 	pinMode(2, OUTPUT); /* Gate */
 	pinMode(3, OUTPUT); /* Accent */
 	pinMode(13, OUTPUT); /* The beat flashes the internal LED */
@@ -153,7 +154,7 @@ void setup()
 	pattern[4][PITCH] = 35;
 	pattern[4][SLIDE] = 60;
 	pattern[4][GATE] = 60;
-	pattern[4][ACCENT] = 0;
+	pattern[4][ACCENT] = 60;
 
 	pattern[5][PITCH] = 40;
 	pattern[5][SLIDE] = 60;
@@ -178,7 +179,7 @@ void setup()
 	pattern[9][PITCH] = 16;
 	pattern[9][SLIDE] = 60;
 	pattern[9][GATE] = 0;
-	pattern[9][ACCENT] = 0;
+	pattern[9][ACCENT] = 60;
 
 	pattern[10][PITCH] = 28;
 	pattern[10][SLIDE] = 0;
@@ -332,7 +333,7 @@ void loop()
  *  Set output
  */
 
-	/*dacWrite(96, pitch);*/
+	dacWrite(96, pitch);
 	digitalWrite(2, gate);
 	digitalWrite(3, accent);
 
