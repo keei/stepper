@@ -630,4 +630,4 @@ class SlewLimiter:
 			elif newPitchInTwelveBits < self.pitchInTwelveBits - (interval * 2):
 				self.pitchInTwelveBits = self.pitchInTwelveBits - interval
 			else:
-				self.pitchInTwelveBits = interval
+				self.pitchInTwelveBits = newPitchInTwelveBits
