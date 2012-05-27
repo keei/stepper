@@ -251,13 +251,13 @@ void loop()
  *  Update the sequencer
  */
 
-	if (clockPulseStarting == HIGH) {
+	if (clockPulseStarting == HIGH /* && clockRun == HIGH */) { /* For testing, pre-interface purposes, we'll pretend the musician doesn't have to press run/stop first to start the sequence. */
 		if ((oddPulse = oddPulse ^ 1) == 0) {
 			/* It's an even numbered pulse.  So we're stepping down from 96 PPQN (which the clock uses) to 48 PPQN (which the sequencer uses). */
 			sequencerPulseCount++;
 
 			/* Once we reach the end of the pattern, loop back to the beginning, and load in the queued pattern if necessary. */
-			if (sequencerPulseCount > SEQUENCER_PPSN * numberOfRows) {
+			if (sequencerPulseCount >= SEQUENCER_PPSN * numberOfRows) {
 				sequencerPulseCount = 0;
 
 				if (patternNumber != patternNumberRequest) {
@@ -318,10 +318,10 @@ void loop()
 			}
 		}
 
-		if (pitchRequest > pitch + (slideAmount * slewLimiterInterval * 0.2)) {
-			pitch = pitch + (slideAmount * slewLimiterInterval * 0.1);
-		} else if (pitchRequest < pitch - (slideAmount * slewLimiterInterval * 0.2)) {
-			pitch = pitch - (slideAmount * slewLimiterInterval * 0.1);
+		if (pitchRequest > pitch + (slideAmount * slewLimiterInterval * 0.05)) {
+			pitch = pitch + (slideAmount * slewLimiterInterval * 0.025);
+		} else if (pitchRequest < pitch - (slideAmount * slewLimiterInterval * 0.05)) {
+			pitch = pitch - (slideAmount * slewLimiterInterval * 0.025);
 		} else {
 			/* The requested pitch has been attained.  Stop sliding. */
 			pitch = pitchRequest;
