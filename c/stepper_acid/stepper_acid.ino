@@ -106,11 +106,11 @@ void savePattern()
 {
 }
 
-void dacWrite(short twelveBits)
+void dacWrite(unsigned char deviceNumber, short twelveBits)
 {
 	byte firstFourBits = twelveBits >> 4;
 	byte lastEightBits = twelveBits & 255;
-	Wire.beginTransmission(96);
+	Wire.beginTransmission(deviceNumber);
 	Wire.write(64); /* Set the DAC to receive new data. */
 	Wire.write(firstFourBits);
 	Wire.write(lastEightBits);
@@ -319,7 +319,7 @@ void loop()
  *  Set output
  */
 
-	/*dacWrite(pitch);*/
+	/*dacWrite(96, pitch);*/
 	digitalWrite(2, gate);
 	digitalWrite(3, accent);
 
