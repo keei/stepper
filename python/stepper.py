@@ -256,7 +256,7 @@ class AcidSequencer:
 			self.patternInSixtieths[row] = {'pitch': DEFAULT_PITCH, 'slide': 0, 'gate': 0, 'accent': 0} # Reset removed row to defaults, namely silent Cs
 
 	def resetPulseCount(self):
-		self.pulseCount = (48 * self.numberOfRows) - 1 # The next time the pulse is incremented, it'll flip back over to 0
+		self.pulseCount = (SEQUENCER_PPSN * self.numberOfRows) - 1 # The next time the pulse is incremented, it'll flip back over to 0
 
 	def savePattern(self, filename):
 		# Save the current song
@@ -567,7 +567,7 @@ class DrumSequencer:
 			self.pattern.append(0)
 
 	def resetPulseCount(self):
-		self.pulseCount = (48 * self.numberOfRows) - 1 # The next time the pulse is incremented, it'll flip back over to 0
+		self.pulseCount = (SEQUENCER_PPSN * self.numberOfRows) - 1 # The next time the pulse is incremented, it'll flip back over to 0
 
 	def savePattern(self, filename):
 		# Save the current song
