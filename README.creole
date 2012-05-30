@@ -1,36 +1,31 @@
 == Stepper ==
 
-Stepper is a step sequencer.  Its main core is a library, rather
-than an actual application.  This allows the same parts to be re-used
-by different applications, each one providing a unique user interface
-to the same core, and many of them representing a tangible
-implementation.  The library is reasonably open ended, whereas some
-of the actual applications importing the library are much more
-specific, some of them roughly emulating vintage hardware synthesisers,
-for instance.
-
-The library is flexible enough to allow an arbitrary number of
-channels, notes per pattern, and patterns, but rigid enough to only
-encourage you to write completely quantised music (techno, house,
-etc).  It's not good for expressive musicianship.  It is good for
-making something you can dance to.
-
-Stepper is prototyped in Python in order to quickly try out new
-features, then translated into C, in order to be hooked up to
-actual hardware synthesisers via pitch and gate CV outputs.  To this
-end, its outputs are integers in the range of 0 to 4095, to enable
-it to be used with reasonably cheap 12-bit DACs.
+Stepper is a suite of step sequencers with CV, gate and trigger
+outputs.  They run on Arduino compatible hardware, and are completely
+open source in both software and hardware.  They are intended to be
+used with modular synthesisers, although they can be connected to
+many other synthesisers from the 1970s and 1980s.  They are intended
+for a technically savvy audience and come with **NO WARRANTY**.
+Please test the levels of all voltages etc before you connect them
+to any synthesisers.
 
 == Stepper Acid ==
 
-Stepper Acid is an application that uses the Stepper library.  It's
-a single channel step sequencer that can play acidlines with accent
-and slide.
+Stepper Acid is a monophonic step sequencer that plays
+[[http://bytenoise.co.uk/Acid_line|acid lines]], complete with accent
+and slide.  It outputs three signals: a 12-bit pitch
+[[http://bytenoise.co.uk/CV%252Fgate|CV]], plus digital note length
+and accent gates.  It has an internal software slew limiter for
+slides, so you don't need to connect it to an external slew limiter
+module.
 
 == Stepper Drum ==
 
-Stepper Drum is also an application that uses the Stepper library.
-It's an eight channel drum machine.
+Stepper Drum is an eight channel step sequencer that plays drum
+rhythms.  It outputs eight signals, all of which are digital triggers.
+As many drum modules have separate accent inputs, you can use one
+or more of Stepper Drum's trigger outputs to control the accent of
+one or more instruments each.
 
 == Appendices ==
 
