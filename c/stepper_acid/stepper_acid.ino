@@ -21,7 +21,9 @@
 
 #define FROM_SIXTIETHS_TO_PULSES 0.2 /* Multiplying by 0.8 is the same as dividing by 60 and multiplying by 12, as in 12 PPSNs */
 #define FROM_SIXTIETHS_TO_TWELVE_BITS 68.25 /* Multiplying by 68.25 is the same as dividing by 60 and multiplying by 4095 */
+#define MAX_NUMBER_OF_PATTERNS 64
 #define MAX_NUMBER_OF_ROWS 16
+#define SEMITONES_IN_OCTAVE 12
 #define SEQUENCER_PPSN 12 /* 48 PPQN = 12 PPSN */
 
 /* Array indeces */
@@ -29,6 +31,33 @@
 #define SLIDE 1
 #define GATE 2
 #define ACCENT 3
+
+/* Pitches */
+#define C_NATURAL 0
+#define C_SHARP 1
+#define D_NATURAL 2
+#define D_SHARP 3
+#define E_NATURAL 4
+#define F_NATURAL 5
+#define F_SHARP 6
+#define G_NATURAL 7
+#define G_SHARP 8
+#define A_NATURAL 9
+#define A_SHARP 10
+#define B_NATURAL 11
+
+/* Note lengths */
+#define REST 0
+#define THIRTYSECOND 35 /* Technically, this should be 30, but apparently a certain popular acid machine uses 35. */
+#define SIXTEENTH 60
+
+/* Slide */
+#define SLIDE_OFF 0
+#define SLIDE_ON 60 /* For comparisons, I generally tend to use "!= SLIDE_OFF" rather than "== SLIDE_ON".  This is so I can reserve the right to make an upgrade with non-boolean sliding, so that the value of the slide dictates its length, 0 still being off or instant. */
+
+/* Accent */
+#define ACCENT_OFF 0
+#define ACCENT_ON 60
 
 /*
  *  Universal, disposable variables
@@ -97,9 +126,9 @@ void loadPattern()
 
 	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
 		pattern[row][PITCH] = 24;
-		pattern[row][SLIDE] = 0;
-		pattern[row][GATE] = 0;
-		pattern[row][ACCENT] = 0;
+		pattern[row][SLIDE] = SLIDE_OFF;
+		pattern[row][GATE] = REST;
+		pattern[row][ACCENT] = ACCENT_OFF;
 	}
 }
 
@@ -124,92 +153,49 @@ void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
 
 void setup()
 {
+	clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo; /* If you want to change the default clockTempo at the beginning, this now notices that, so you don't need to manually work out the corresponding clockPulseLength. */
+/* Handy Python code to work out the scales:
+
+for i in range(0, 48, 12):
+	print(i, i+4, i+7)
+
+for i in range(0, 48, 12):
+	print(i, i+3, i+7)
+
+*/
+
+	unsigned char randomRootNote = 0;
+	unsigned char randomMajorOrMinor = 0; /* 1 = major, 0 = minor */
+	unsigned char majorScale[12] = {0,4,7,12,16,19,24,28,31,36,40,43};
+	unsigned char minorScale[12] = {0,3,7,12,15,19,24,27,31,36,39,43};
+
 	Wire.begin();
 	pinMode(2, OUTPUT); /* Gate */
 	pinMode(3, OUTPUT); /* Accent */
 	pinMode(13, OUTPUT); /* The beat flashes the internal LED */
 	loadPattern();
 
-	/* Load a preset pattern into the first slot */
-	pattern[0][PITCH] = 28;
-	pattern[0][SLIDE] = 0;
-	pattern[0][GATE] = 0;
-	pattern[0][ACCENT] = 0;
+	/* Load a random pattern into the first slot */
+	randomSeed(analogRead(0));
+	randomRootNote = random(11);
+	randomMajorOrMinor = random(1);
 
-	pattern[1][PITCH] = 28;
-	pattern[1][SLIDE] = 0;
-	pattern[1][GATE] = 0;
-	pattern[1][ACCENT] = 0;
+	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
+		if (randomMajorOrMinor == 1) {
+			pattern[row][PITCH] = randomRootNote + majorScale[random(11)];
+		} else {
+			pattern[row][PITCH] = randomRootNote + minorScale[random(11)];
+		}
 
-	pattern[2][PITCH] = 28;
-	pattern[2][SLIDE] = 0;
-	pattern[2][GATE] = 35;
-	pattern[2][ACCENT] = 0;
+		pattern[row][SLIDE] = SLIDE_ON * (random(3) % 4 == 0); /* 1 in 4 chance of being SLIDE_ON, else 0 (SLIDE_OFF) */
+		pattern[row][GATE] = THIRTYSECOND * (random(1) % 2 == 0); /* 1 in 2 chance of being THIRTYSECOND, else 0 (REST).  Don't just multiply THIRTYSECOND by random(1). */
+		pattern[row][ACCENT] = ACCENT_ON * (random(3) % 4 == 0); /* 1 in 4 chance of being ACCENT_ON, else 0 (ACCENT_OFF) */
 
-	pattern[3][PITCH] = 28;
-	pattern[3][SLIDE] = 0;
-	pattern[3][GATE] = 0;
-	pattern[3][ACCENT] = 0;
-
-	pattern[4][PITCH] = 35;
-	pattern[4][SLIDE] = 60;
-	pattern[4][GATE] = 60;
-	pattern[4][ACCENT] = 60;
-
-	pattern[5][PITCH] = 40;
-	pattern[5][SLIDE] = 60;
-	pattern[5][GATE] = 0;
-	pattern[5][ACCENT] = 0;
-
-	pattern[6][PITCH] = 28;
-	pattern[6][SLIDE] = 0;
-	pattern[6][GATE] = 0;
-	pattern[6][ACCENT] = 0;
-
-	pattern[7][PITCH] = 23;
-	pattern[7][SLIDE] = 0;
-	pattern[7][GATE] = 35;
-	pattern[7][ACCENT] = 0;
-
-	pattern[8][PITCH] = 31;
-	pattern[8][SLIDE] = 60;
-	pattern[8][GATE] = 60;
-	pattern[8][ACCENT] = 0;
-
-	pattern[9][PITCH] = 16;
-	pattern[9][SLIDE] = 60;
-	pattern[9][GATE] = 0;
-	pattern[9][ACCENT] = 60;
-
-	pattern[10][PITCH] = 28;
-	pattern[10][SLIDE] = 0;
-	pattern[10][GATE] = 0;
-	pattern[10][ACCENT] = 0;
-
-	pattern[11][PITCH] = 28;
-	pattern[11][SLIDE] = 0;
-	pattern[11][GATE] = 35;
-	pattern[11][ACCENT] = 0;
-
-	pattern[12][PITCH] = 28;
-	pattern[12][SLIDE] = 0;
-	pattern[12][GATE] = 0;
-	pattern[12][ACCENT] = 0;
-
-	pattern[13][PITCH] = 28;
-	pattern[13][SLIDE] = 0;
-	pattern[13][GATE] = 0;
-	pattern[13][ACCENT] = 0;
-
-	pattern[14][PITCH] = 28;
-	pattern[14][SLIDE] = 0;
-	pattern[14][GATE] = 0;
-	pattern[14][ACCENT] = 0;
-
-	pattern[15][PITCH] = 28;
-	pattern[15][SLIDE] = 0;
-	pattern[15][GATE] = 0;
-	pattern[15][ACCENT] = 0;
+		/* Slides always have full length, not half length, notes.  Or no notes.  No note is fine. */
+		if (pattern[row][SLIDE] == SLIDE_ON && pattern[row][GATE] == THIRTYSECOND) {
+			pattern[row][GATE] = SIXTEENTH;
+		}
+	}
 }
 
 /*
@@ -372,9 +358,45 @@ void loop()
 		}
 	}
 
-	if (0) { /* Add a row to the pattern */
-		if (numberOfRows < MAX_NUMBER_OF_ROWS) {
-			numberOfRows++;
+	if (0) { /* Cursor up (backwards) */
+		if (rowNumber > 0) {
+			rowNumber--;
+		}
+	}
+
+	if (0) { /* Cursor down (forwards) */
+		if (rowNumber < numberOfRows - 1) {
+			rowNumber++;
+		}
+	}
+
+	if (0) { /* Decrement the selected (current or next) pattern */
+		savePattern();
+
+		if (clockRun == HIGH) {
+			if (patternNumberRequest > 0) {
+				patternNumberRequest--;
+			}
+		} else {
+			if (patternNumber > 0) {
+				patternNumber--;
+				loadPattern();
+			}
+		}
+	}
+
+	if (0) { /* Increment the selected (current or next) pattern */
+		savePattern();
+
+		if (clockRun == HIGH) {
+			if (patternNumberRequest < MAX_NUMBER_OF_PATTERNS - 1) {
+				patternNumberRequest++;
+			}
+		} else {
+			if (patternNumber < MAX_NUMBER_OF_PATTERNS - 1) {
+				patternNumber++;
+				loadPattern();
+			}
 		}
 	}
 
@@ -389,10 +411,20 @@ void loop()
 
 			/* Clear the removed row */
 			pattern[numberOfRows][PITCH] = 24;
-			pattern[numberOfRows][SLIDE] = 0;
-			pattern[numberOfRows][GATE] = 0;
-			pattern[numberOfRows][ACCENT] = 0;
+			pattern[numberOfRows][SLIDE] = SLIDE_OFF;
+			pattern[numberOfRows][GATE] = REST;
+			pattern[numberOfRows][ACCENT] = ACCENT_OFF;
 		}
+
+		savePattern();
+	}
+
+	if (0) { /* Add a row to the pattern */
+		if (numberOfRows < MAX_NUMBER_OF_ROWS) {
+			numberOfRows++;
+		}
+
+		savePattern();
 	}
 
 	if (0) { /* Copy a pattern to the clipboard */
@@ -415,5 +447,119 @@ void loop()
 
 		numberOfRows = clipboardNumberOfRows;
 		clipboardFull = LOW;
+		savePattern();
+	}
+
+	if (0) { /* Transpose pattern down a semitone */
+		/* Only transpose down if every note in the pattern will still be in the 0 to 60 range afterwards */
+		unsigned char lowestPitch = 60;
+
+		for (row = 0; row < numberOfRows; row++) {
+			if (pattern[row][PITCH] < lowestPitch) {
+				lowestPitch = pattern[row][PITCH];
+			}
+		}
+
+		if (lowestPitch > 0) {
+			/* Go ahead and transpose the pattern */
+			for (row = 0; row < numberOfRows; row++) {
+				pattern[row][PITCH]--;
+			}
+		}
+	}
+
+	if (0) { /* Transpose pattern up a semitone */
+		/* Only transpose up if every note in the pattern will still be in the 0 to 60 range afterwards */
+		unsigned char highestPitch = 0;
+
+		for (row = 0; row < numberOfRows; row++) {
+			if (pattern[row][PITCH] > highestPitch) {
+				highestPitch = pattern[row][PITCH];
+			}
+		}
+
+		if (highestPitch < 60) {
+			/* Go ahead and transpose the pattern */
+			for (row = 0; row < numberOfRows; row++) {
+				pattern[row][PITCH]++;
+			}
+		}
+	}
+
+	/* I won't show the code for the other 11 semitones here, as there's a chance we can use a simple for-loop and forego the constant names for the semitones. */
+	if (0) { /* Store a "C" note */
+		if (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE == C_NATURAL && pattern[rowNumber][GATE] != REST) {
+			pattern[rowNumber][GATE] = REST;
+		} else {
+			pattern[rowNumber][PITCH] = C_NATURAL;
+
+			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
+				pattern[rowNumber][GATE] = SIXTEENTH;
+			} else {
+				pattern[rowNumber][GATE] = THIRTYSECOND;
+			}
+		}
+
+		if (rowNumber < numberOfRows - 1) {
+			rowNumber++;
+		}
+
+		savePattern();
+	}
+
+	if (0) { /* Move the current note down an octave */
+		if (pattern[rowNumber][PITCH] > 11) {
+			pattern[rowNumber][PITCH] -= 12;
+			savePattern();
+		}
+	}
+
+	if (0) { /* Move the current note up an octave */
+		if (pattern[rowNumber][PITCH] < 49) {
+			pattern[rowNumber][PITCH] += 12;
+			savePattern();
+		}
+	}
+
+	if (0) { /* Toggle gate between rest and slide-appropriate note length */
+		if (pattern[rowNumber][GATE] == REST) {
+			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
+				pattern[rowNumber][GATE] = SIXTEENTH;
+			} else {
+				pattern[rowNumber][GATE] = THIRTYSECOND;
+			}
+		} else {
+			pattern[rowNumber][GATE] = REST;
+		}
+
+		savePattern();
+	}
+
+	if (0) { /* Toggle accent on/off */
+		if (pattern[rowNumber][ACCENT] == ACCENT_OFF) {
+			pattern[rowNumber][ACCENT] = ACCENT_ON;
+		} else {
+			pattern[rowNumber][ACCENT] = ACCENT_OFF;
+		}
+
+		savePattern();
+	}
+
+	if (0) { /* Toggle slide on/off */
+		if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
+			pattern[rowNumber][SLIDE] = SLIDE_OFF;
+
+			if (pattern[rowNumber][GATE] == SIXTEENTH) {
+				pattern[rowNumber][GATE] = THIRTYSECOND;
+			}
+		} else {
+			pattern[rowNumber][SLIDE] = SLIDE_ON;
+
+			if (pattern[rowNumber][GATE] == THIRTYSECOND) {
+				pattern[rowNumber][GATE] = SIXTEENTH;
+			}
+		}
+
+		savePattern();
 	}
 }
