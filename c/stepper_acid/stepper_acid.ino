@@ -618,7 +618,9 @@ void loop()
 		if (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE == input - TOGGLE_C_NATURAL && pattern[rowNumber][GATE] != REST) {
 			pattern[rowNumber][GATE] = REST;
 		} else {
-			pattern[rowNumber][PITCH] = input - TOGGLE_C_NATURAL;
+			/* These two lines do the exact same thing.  Either one is fine.  I'm leaving them both here in the hope that it clarifies what's happening. */
+			/* pattern[rowNumber][PITCH] = (SEMITONES_IN_OCTAVE * (pattern[rowNumber][PITCH] / SEMITONES_IN_OCTAVE)) + (input - TOGGLE_C_NATURAL); */
+			pattern[rowNumber][PITCH] = pattern[rowNumber][PITCH] - (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE) + (input - TOGGLE_C_NATURAL); /* Keep the old octave, but update the semitone. */
 
 			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
 				pattern[rowNumber][GATE] = SIXTEENTH;
