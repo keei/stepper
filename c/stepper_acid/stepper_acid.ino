@@ -7,6 +7,7 @@
  */
 
 #include "Arduino.h"
+#include "EEPROM.h"
 #include "Wire.h"
 
 /*
@@ -21,7 +22,7 @@
 
 #define FROM_SIXTIETHS_TO_PULSES 0.2 /* Multiplying by 0.8 is the same as dividing by 60 and multiplying by 12, as in 12 PPSNs */
 #define FROM_SIXTIETHS_TO_TWELVE_BITS 68.25 /* Multiplying by 68.25 is the same as dividing by 60 and multiplying by 4095 */
-#define MAX_NUMBER_OF_PATTERNS 64
+#define MAX_NUMBER_OF_PATTERNS 15 /* We only have 1k of EEPROM to play with */
 #define MAX_NUMBER_OF_ROWS 16
 #define SEMITONES_IN_OCTAVE 12
 #define SEQUENCER_PPSN 12 /* 48 PPQN = 12 PPSN */
@@ -167,19 +168,40 @@ unsigned short slideAmount = 0; /* The difference between the requested pitch an
 
 void loadPattern()
 {
-/* This ought to load the pattern.  We don't have data read/write capabilities yet.  In the meantime, let's reset the pattern, so we can at least guarantee there won't be garbage in the pattern. */
-	numberOfRows = MAX_NUMBER_OF_ROWS;
+	numberOfRows = EEPROM.read(((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber);
 
 	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
-		pattern[row][PITCH] = 24;
-		pattern[row][SLIDE] = SLIDE_OFF;
-		pattern[row][GATE] = REST;
-		pattern[row][ACCENT] = ACCENT_OFF;
+		pattern[row][PITCH] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 1 + (row * 4));
+		pattern[row][SLIDE] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 2 + (row * 4)); /* Really, we're adding 1 as before to skip the pattern length, plus adding another 1 at the end to skip the pitch.  But to save processing time, let's add them together in the source code, as even though it makes no semantic sense, it makes no practical difference to do it that way. */
+		pattern[row][GATE] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 3 + (row * 4));
+		pattern[row][ACCENT] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 4 + (row * 4));
+	}
+
+	/* Ignore obvious errors, as in virgin EEPROM addresses */
+	if (numberOfRows > MAX_NUMBER_OF_ROWS) {
+		numberOfRows = MAX_NUMBER_OF_ROWS;
+	}
+
+	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
+		if (pattern[row][PITCH] > 60) {
+			pattern[row][PITCH] = 24;
+			pattern[row][SLIDE] = SLIDE_OFF;
+			pattern[row][GATE] = REST;
+			pattern[row][ACCENT] = ACCENT_OFF;
+		}
 	}
 }
 
 void savePattern()
 {
+	EEPROM.write((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber), numberOfRows);
+
+	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
+		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 1 + (row * 4)), pattern[row][PITCH]);
+		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 2 + (row * 4)), pattern[row][SLIDE]); /* Really, we're adding 1 as before to skip the pattern length, plus adding another 1 at the end to skip the pitch.  But to save processing time, let's add them together in the source code, as even though it makes no semantic sense, it makes no practical difference to do it that way. */
+		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 3 + (row * 4)), pattern[row][GATE]);
+		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 4 + (row * 4)), pattern[row][ACCENT]);
+	}
 }
 
 void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
