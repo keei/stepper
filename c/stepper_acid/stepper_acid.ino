@@ -200,20 +200,6 @@ void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
 void setup()
 {
 	clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo; /* If you want to change the default clockTempo at the beginning, this now notices that, so you don't need to manually work out the corresponding clockPulseLength. */
-/* Handy Python code to work out the scales:
-
-for i in range(0, 48, 12):
-	print(i, i+4, i+7)
-
-for i in range(0, 48, 12):
-	print(i, i+3, i+7)
-
-*/
-
-	unsigned char randomRootNote = 0;
-	unsigned char randomMajorOrMinor = 0; /* 1 = major, 0 = minor */
-	unsigned char majorScale[12] = {0,4,7,12,16,19,24,28,31,36,40,43};
-	unsigned char minorScale[12] = {0,3,7,12,15,19,24,27,31,36,39,43};
 
 	/* Setup inputs and outputs */
 	Wire.begin();
@@ -223,28 +209,6 @@ for i in range(0, 48, 12):
 	Serial.begin(115200);
 
 	loadPattern();
-
-	/* Load a random pattern into the first slot */
-	randomSeed(analogRead(0));
-	randomRootNote = random(11);
-	randomMajorOrMinor = random(1);
-
-	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
-		if (randomMajorOrMinor == 1) {
-			pattern[row][PITCH] = randomRootNote + majorScale[random(11)];
-		} else {
-			pattern[row][PITCH] = randomRootNote + minorScale[random(11)];
-		}
-
-		pattern[row][SLIDE] = SLIDE_ON * (random(3) % 4 == 0); /* 1 in 4 chance of being SLIDE_ON, else 0 (SLIDE_OFF) */
-		pattern[row][GATE] = THIRTYSECOND * (random(1) % 2 == 0); /* 1 in 2 chance of being THIRTYSECOND, else 0 (REST).  Don't just multiply THIRTYSECOND by random(1). */
-		pattern[row][ACCENT] = ACCENT_ON * (random(3) % 4 == 0); /* 1 in 4 chance of being ACCENT_ON, else 0 (ACCENT_OFF) */
-
-		/* Slides always have full length, not half length, notes.  Or no notes.  No note is fine. */
-		if (pattern[row][SLIDE] == SLIDE_ON && pattern[row][GATE] == THIRTYSECOND) {
-			pattern[row][GATE] = SIXTEENTH;
-		}
-	}
 }
 
 /*
