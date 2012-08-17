@@ -60,6 +60,43 @@
 #define ACCENT_ON 60
 
 /*
+ *  Main constants
+ */
+
+/* Input */
+#define NO_INPUT -1
+#define RUN_STOP 0
+#define DECREMENT_TEMPO 1
+#define INCREMENT_TEMPO 2
+#define DECREMENT_ROW_NUMBER 3
+#define INCREMENT_ROW_NUMBER 4
+#define DECREMENT_PATTERN_NUMBER 5
+#define INCREMENT_PATTERN_NUMBER 6
+#define DECREMENT_NUMBER_OF_ROWS 7
+#define INCREMENT_NUMBER_OF_ROWS 8
+#define COPY_PATTERN 9
+#define PASTE_PATTERN 10
+#define TRANSPOSE_PATTERN_DOWN_SEMITONE 11
+#define TRANSPOSE_PATTERN_UP_SEMITONE 12
+#define TOGGLE_C_NATURAL 13
+#define TOGGLE_C_SHARP 14
+#define TOGGLE_D_NATURAL 15
+#define TOGGLE_D_SHARP 16
+#define TOGGLE_E_NATURAL 17
+#define TOGGLE_F_NATURAL 18
+#define TOGGLE_F_SHARP 19
+#define TOGGLE_G_NATURAL 20
+#define TOGGLE_G_SHARP 21
+#define TOGGLE_A_NATURAL 22
+#define TOGGLE_A_SHARP 23
+#define TOGGLE_B_NATURAL 24
+#define TRANSPOSE_NOTE_DOWN_OCTAVE 25
+#define TRANSPOSE_NOTE_UP_OCTAVE 26
+#define TOGGLE_SLIDE 27
+#define TOGGLE_GATE 28
+#define TOGGLE_ACCENT 29
+
+/*
  *  Universal, disposable variables
  *  These can be used and overwritten at any time by anything.  Be careful!
  */
@@ -72,6 +109,15 @@ unsigned char item = 0;
  */
 
 unsigned char oddPulse = 1; /* Think of it as starting at -1, getting ready to increment to 0 in the first iteration */
+
+/* Output */
+char *output = "GLOBAL RSxxTMxxRNxxPNxxPLxxCFxx\nROW 00 PIxxSLxxGTxxACxx\nROW 01 PIxxSLxxGTxxACxx\nROW 02 PIxxSLxxGTxxACxx\nROW 03 PIxxSLxxGTxxACxx\nROW 04 PIxxSLxxGTxxACxx\nROW 05 PIxxSLxxGTxxACxx\nROW 06 PIxxSLxxGTxxACxx\nROW 07 PIxxSLxxGTxxACxx\nROW 08 PIxxSLxxGTxxACxx\nROW 09 PIxxSLxxGTxxACxx\nROW 0A PIxxSLxxGTxxACxx\nROW 0B PIxxSLxxGTxxACxx\nROW 0C PIxxSLxxGTxxACxx\nROW 0D PIxxSLxxGTxxACxx\nROW 0E PIxxSLxxGTxxACxx\nROW 0F PIxxSLxxGTxxACxx\nFOOTER\n\n";
+char *hexDigit = "xx"; /* Converted to ASCII */
+
+/* Input */
+signed char input = -2; /* -2 = very first cycle, no input yet as the user hasn't had a chance; -1 = no input on this particular cycle */
+unsigned char lowestPitch = 60;
+unsigned char highestPitch = 0;
 
 /*
  *  Clock variables
@@ -96,7 +142,7 @@ unsigned char clipboardFull = LOW;
 unsigned char clipboardNumberOfRows = MAX_NUMBER_OF_ROWS;
 unsigned char gate = LOW;
 unsigned char lastRowNumber = 0;
-unsigned char newCurrentRowNumber = 0;
+unsigned char newRowNumber = 0;
 unsigned char patternNumber = 0;
 unsigned char patternNumberRequest = 0;
 unsigned char numberOfRows = MAX_NUMBER_OF_ROWS;
@@ -169,10 +215,13 @@ for i in range(0, 48, 12):
 	unsigned char majorScale[12] = {0,4,7,12,16,19,24,28,31,36,40,43};
 	unsigned char minorScale[12] = {0,3,7,12,15,19,24,27,31,36,39,43};
 
+	/* Setup inputs and outputs */
 	Wire.begin();
 	pinMode(2, OUTPUT); /* Gate */
 	pinMode(3, OUTPUT); /* Accent */
 	pinMode(13, OUTPUT); /* The beat flashes the internal LED */
+	Serial.begin(115200);
+
 	loadPattern();
 
 	/* Load a random pattern into the first slot */
@@ -237,7 +286,7 @@ void loop()
  *  Update the sequencer
  */
 
-	if (clockPulseStarting == HIGH /* && clockRun == HIGH */) { /* For testing, pre-interface purposes, we'll pretend the musician doesn't have to press run/stop first to start the sequence. */
+	if (clockPulseStarting == HIGH && clockRun == HIGH) { /* For testing, pre-interface purposes, we'll pretend the user doesn't have to press run/stop first to start the sequence. */
 		if ((oddPulse = oddPulse ^ 1) == 0) {
 			/* It's an even numbered pulse.  So we're stepping down from 96 PPQN (which the clock uses) to 48 PPQN (which the sequencer uses). */
 			sequencerPulseCount++;
@@ -253,13 +302,13 @@ void loop()
 			}
 
 			/* Work out which row we're on.  If it's changed, note the last row we were on, for slides. */
-			newCurrentRowNumber = sequencerPulseCount / SEQUENCER_PPSN;
+			newRowNumber = sequencerPulseCount / SEQUENCER_PPSN;
 
-			if (newCurrentRowNumber != rowNumber) {
+			if (newRowNumber != rowNumber) {
 				lastRowNumber = rowNumber;
 			}
 
-			rowNumber = newCurrentRowNumber;
+			rowNumber = newRowNumber;
 
 			/* Work out the current event's pitch, slide, gate length and accent */
 			pitchRequest = pattern[rowNumber][PITCH] * FROM_SIXTIETHS_TO_TWELVE_BITS;
@@ -319,6 +368,7 @@ void loop()
  *  Set output
  */
 
+	/* Send musical data to the synthesiser */
 	dacWrite(96, pitch);
 	digitalWrite(2, gate);
 	digitalWrite(3, accent);
@@ -330,11 +380,73 @@ void loop()
 		digitalWrite(13, LOW);
 	}
 
+	/* Update the LCD */
+
+	/* Update the serial output only if the user's done something, or if it's the very first cycle.  See README.creole appendix C for what we're outputting. */
+	if (input != -1) {
+		sprintf(hexDigit, "%02X", clockRun);
+		*(output + 9) = *hexDigit;
+		*(output + 10) = *(hexDigit + 1);
+
+		sprintf(hexDigit, "%02X", clockTempo);
+		*(output + 13) = *hexDigit;
+		*(output + 14) = *(hexDigit + 1);
+
+		sprintf(hexDigit, "%02X", rowNumber);
+		*(output + 17) = *hexDigit;
+		*(output + 18) = *(hexDigit + 1);
+
+		sprintf(hexDigit, "%02X", patternNumber);
+		*(output + 21) = *hexDigit;
+		*(output + 22) = *(hexDigit + 1);
+
+		sprintf(hexDigit, "%02X", numberOfRows);
+		*(output + 25) = *hexDigit;
+		*(output + 26) = *(hexDigit + 1);
+
+		sprintf(hexDigit, "%02X", clipboardFull);
+		*(output + 29) = *hexDigit;
+		*(output + 30) = *(hexDigit + 1);
+
+		for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
+			sprintf(hexDigit, "%02X", pattern[row][PITCH]);
+			*(output + 41 + (row * 24)) = *hexDigit;
+			*(output + 42 + (row * 24)) = *(hexDigit + 1);
+
+			sprintf(hexDigit, "%02X", pattern[row][SLIDE]);
+			*(output + 45 + (row * 24)) = *hexDigit;
+			*(output + 46 + (row * 24)) = *(hexDigit + 1);
+
+			sprintf(hexDigit, "%02X", pattern[row][GATE]);
+			*(output + 49 + (row * 24)) = *hexDigit;
+			*(output + 50 + (row * 24)) = *(hexDigit + 1);
+
+			sprintf(hexDigit, "%02X", pattern[row][ACCENT]);
+			*(output + 53 + (row * 24)) = *hexDigit;
+			*(output + 54 + (row * 24)) = *(hexDigit + 1);
+		}
+
+		Serial.write(output);
+	}
+
 /*
  *  Get input
  */
 
-	if (0) { /* Toggle run/stop */
+	if (0) {
+		/* The user's sending input via the physical buttons */
+	} else if (Serial.available() > 0) {
+		/* Someone or something is sending input via the serial connection.  See README.creole appendix B for what we're inputting. */
+		input = Serial.read();
+	} else {
+		input = -1;
+	}
+
+	switch (input) {
+	case -1:
+		break;
+
+	case RUN_STOP:
 		if (clockRunRequest == HIGH) {
 			clockRunRequest = LOW;
 			sequencerPulseCount = (SEQUENCER_PPSN * numberOfRows) - 1;
@@ -342,35 +454,40 @@ void loop()
 			clockRunRequest = HIGH;
 			patternNumberRequest = patternNumber;
 		}
-	}
 
-	if (0) { /* Decrement the clock's tempo */
+		break;
+
+	case DECREMENT_TEMPO:
 		if (clockTempo > 1) {
 			clockTempo--;
 			clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo;
 		}
-	}
 
-	if (0) { /* Increment the clock's tempo */
+		break;
+
+	case INCREMENT_TEMPO:
 		if (clockTempo < 255) {
 			clockTempo++;
 			clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo;
 		}
-	}
 
-	if (0) { /* Cursor up (backwards) */
+		break;
+
+	case DECREMENT_ROW_NUMBER:
 		if (rowNumber > 0) {
 			rowNumber--;
 		}
-	}
 
-	if (0) { /* Cursor down (forwards) */
+		break;
+
+	case INCREMENT_ROW_NUMBER:
 		if (rowNumber < numberOfRows - 1) {
 			rowNumber++;
 		}
-	}
 
-	if (0) { /* Decrement the selected (current or next) pattern */
+		break;
+
+	case DECREMENT_PATTERN_NUMBER:
 		savePattern();
 
 		if (clockRun == HIGH) {
@@ -383,9 +500,10 @@ void loop()
 				loadPattern();
 			}
 		}
-	}
 
-	if (0) { /* Increment the selected (current or next) pattern */
+		break;
+
+	case INCREMENT_PATTERN_NUMBER:
 		savePattern();
 
 		if (clockRun == HIGH) {
@@ -398,9 +516,10 @@ void loop()
 				loadPattern();
 			}
 		}
-	}
 
-	if (0) { /* Remove a row from the pattern */
+		break;
+
+	case DECREMENT_NUMBER_OF_ROWS:
 		if (numberOfRows > 1) {
 			numberOfRows--;
 
@@ -417,17 +536,17 @@ void loop()
 		}
 
 		savePattern();
-	}
+		break;
 
-	if (0) { /* Add a row to the pattern */
+	case INCREMENT_NUMBER_OF_ROWS:
 		if (numberOfRows < MAX_NUMBER_OF_ROWS) {
 			numberOfRows++;
 		}
 
 		savePattern();
-	}
+		break;
 
-	if (0) { /* Copy a pattern to the clipboard */
+	case COPY_PATTERN:
 		for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
 			for (item = 0; item < 4; item++) {
 				clipboard[row][item] = pattern[row][item];
@@ -436,9 +555,9 @@ void loop()
 
 		clipboardNumberOfRows = numberOfRows;
 		clipboardFull = HIGH;
-	}
+		break;
 
-	if (0) { /* Paste a pattern from the clipboard */
+	case PASTE_PATTERN:
 		for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
 			for (item = 0; item < 4; item++) {
 				pattern[row][item] = clipboard[row][item];
@@ -448,12 +567,10 @@ void loop()
 		numberOfRows = clipboardNumberOfRows;
 		clipboardFull = LOW;
 		savePattern();
-	}
+		break;
 
-	if (0) { /* Transpose pattern down a semitone */
+	case TRANSPOSE_PATTERN_DOWN_SEMITONE:
 		/* Only transpose down if every note in the pattern will still be in the 0 to 60 range afterwards */
-		unsigned char lowestPitch = 60;
-
 		for (row = 0; row < numberOfRows; row++) {
 			if (pattern[row][PITCH] < lowestPitch) {
 				lowestPitch = pattern[row][PITCH];
@@ -466,12 +583,11 @@ void loop()
 				pattern[row][PITCH]--;
 			}
 		}
-	}
 
-	if (0) { /* Transpose pattern up a semitone */
+		break;
+
+	case TRANSPOSE_PATTERN_UP_SEMITONE:
 		/* Only transpose up if every note in the pattern will still be in the 0 to 60 range afterwards */
-		unsigned char highestPitch = 0;
-
 		for (row = 0; row < numberOfRows; row++) {
 			if (pattern[row][PITCH] > highestPitch) {
 				highestPitch = pattern[row][PITCH];
@@ -484,14 +600,25 @@ void loop()
 				pattern[row][PITCH]++;
 			}
 		}
-	}
 
-	/* I won't show the code for the other 11 semitones here, as there's a chance we can use a simple for-loop and forego the constant names for the semitones. */
-	if (0) { /* Store a "C" note */
-		if (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE == C_NATURAL && pattern[rowNumber][GATE] != REST) {
+		break;
+
+	case TOGGLE_C_NATURAL:
+	case TOGGLE_C_SHARP:
+	case TOGGLE_D_NATURAL:
+	case TOGGLE_D_SHARP:
+	case TOGGLE_E_NATURAL:
+	case TOGGLE_F_NATURAL:
+	case TOGGLE_F_SHARP:
+	case TOGGLE_G_NATURAL:
+	case TOGGLE_G_SHARP:
+	case TOGGLE_A_NATURAL:
+	case TOGGLE_A_SHARP:
+	case TOGGLE_B_NATURAL:
+		if (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE == input - TOGGLE_C_NATURAL && pattern[rowNumber][GATE] != REST) {
 			pattern[rowNumber][GATE] = REST;
 		} else {
-			pattern[rowNumber][PITCH] = C_NATURAL;
+			pattern[rowNumber][PITCH] = input - TOGGLE_C_NATURAL;
 
 			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
 				pattern[rowNumber][GATE] = SIXTEENTH;
@@ -505,47 +632,25 @@ void loop()
 		}
 
 		savePattern();
-	}
+		break;
 
-	if (0) { /* Move the current note down an octave */
+	case TRANSPOSE_NOTE_DOWN_OCTAVE:
 		if (pattern[rowNumber][PITCH] > 11) {
 			pattern[rowNumber][PITCH] -= 12;
 			savePattern();
 		}
-	}
 
-	if (0) { /* Move the current note up an octave */
+		break;
+
+	case TRANSPOSE_NOTE_UP_OCTAVE:
 		if (pattern[rowNumber][PITCH] < 49) {
 			pattern[rowNumber][PITCH] += 12;
 			savePattern();
 		}
-	}
 
-	if (0) { /* Toggle gate between rest and slide-appropriate note length */
-		if (pattern[rowNumber][GATE] == REST) {
-			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
-				pattern[rowNumber][GATE] = SIXTEENTH;
-			} else {
-				pattern[rowNumber][GATE] = THIRTYSECOND;
-			}
-		} else {
-			pattern[rowNumber][GATE] = REST;
-		}
+		break;
 
-		savePattern();
-	}
-
-	if (0) { /* Toggle accent on/off */
-		if (pattern[rowNumber][ACCENT] == ACCENT_OFF) {
-			pattern[rowNumber][ACCENT] = ACCENT_ON;
-		} else {
-			pattern[rowNumber][ACCENT] = ACCENT_OFF;
-		}
-
-		savePattern();
-	}
-
-	if (0) { /* Toggle slide on/off */
+	case TOGGLE_SLIDE:
 		if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
 			pattern[rowNumber][SLIDE] = SLIDE_OFF;
 
@@ -561,5 +666,30 @@ void loop()
 		}
 
 		savePattern();
+		break;
+
+	case TOGGLE_GATE:
+		if (pattern[rowNumber][GATE] == REST) {
+			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
+				pattern[rowNumber][GATE] = SIXTEENTH;
+			} else {
+				pattern[rowNumber][GATE] = THIRTYSECOND;
+			}
+		} else {
+			pattern[rowNumber][GATE] = REST;
+		}
+
+		savePattern();
+		break;
+
+	case TOGGLE_ACCENT:
+		if (pattern[rowNumber][ACCENT] == ACCENT_OFF) {
+			pattern[rowNumber][ACCENT] = ACCENT_ON;
+		} else {
+			pattern[rowNumber][ACCENT] = ACCENT_OFF;
+		}
+
+		savePattern();
+		break;
 	}
 }

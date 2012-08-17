@@ -31,8 +31,8 @@ one or more instruments each.
 
 === Appendix A: pitch conversion chart ===
 
-You shouldn't need this to use any of the applications, only to
-modify them or build your own.
+You shouldn't need this to use any of the machines, only to modify
+them, build your own, or make your own custom interfaces for them.
 
 |= Note |= Number |= Voltage |
 | C0 | 00 | 0 |
@@ -96,3 +96,50 @@ modify them or build your own.
 | A♯4 | 58 | 4.8(3) |
 | B4 | 59 | 4.91(6) |
 | C5 | 60 | 5 |
+
+=== Appendix B: serial interface input chart ===
+
+Using the built-in serial interface over USB, you can remotely program Stepper Acid and Stepper Drum.
+
+|= Byte value |= Stepper Acid command | Stepper Drum command |
+| 0 | Run/stop | Run/stop |
+| 1 | Decrement tempo | Decrement tempo |
+| 2 | Increment tempo | Increment tempo |
+| 3 | Decrement row number (move cursor back) | (TBC) |
+| 4 | Increment row number (move cursor forwards) | (TBC) |
+| 5 | Decrement pattern number | Decrement pattern number |
+| 6 | Increment pattern number | Increment pattern number |
+| 7 | Decrement number of rows (shorten pattern) | Decrement number of rows (shorten pattern) |
+| 8 | Increment number of rows (lengthen pattern) | Increment number of rows (lengthen pattern) |
+| 9 | Copy pattern | Copy pattern |
+| 10 | Paste pattern | Paste pattern |
+| 11 | Transpose pattern down a semitone | (TBC) |
+| 12 | Transpose pattern up a semitone | (TBC) |
+| 13 | Toggle note C | (TBC) |
+| 14 | Toggle note C# | (TBC) |
+| 15 | Toggle note D | (TBC) |
+| 16 | Toggle note D# | (TBC) |
+| 17 | Toggle note E | (TBC) |
+| 18 | Toggle note F | (TBC) |
+| 19 | Toggle note F# | (TBC) |
+| 20 | Toggle note G | (TBC) |
+| 21 | Toggle note G# | (TBC) |
+| 22 | Toggle note A | (TBC) |
+| 23 | Toggle note A# | (TBC) |
+| 24 | Toggle note B | (TBC) |
+| 25 | Transpose note down an octave | (TBC) |
+| 26 | Transpose note up an octave | (TBC) |
+| 27 | Toggle slide | (TBC) |
+| 28 | Toggle gate | (TBC) |
+| 29 | Toggle accent | (TBC) |
+
+=== Appendix C: serial interface output chart ===
+
+|= Byte position |= Stepper Acid meaning | Stepper Drum meaning |
+| 09,10 | Run/stop | Run/stop |
+| 13,14 | Tempo | Tempo |
+| 17,18 | Row number | Row number |
+| 21,22 | Pattern number | Pattern number |
+| 25,26 | Pattern length | Pattern length |
+| 29,30 | Clipboard full | Clipboard full |
+| 41+ | For each row (used and unused): pitch; slide; gate; accent | (TBC) |
