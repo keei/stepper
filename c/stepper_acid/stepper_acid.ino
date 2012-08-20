@@ -14,20 +14,20 @@
  *  Clock constants
  */
 
-#define FROM_TEMPO_TO_MILLISECONDS 625 /* 60 seconds per minute; 60 / BPM = quarter note length in seconds; 60,000 / BPM = quarter note length in milliseconds; quarter note length in milliseconds / 96 = clock pulse length in milliseconds; 60,000 / 96 = 625; 625 / BPM = pulse length in milliseconds */
+#define FROM_TEMPO_TO_MILLISECONDS 2500 /* 60 seconds per minute; 60 / BPM = quarter note length in seconds; 60,000 / BPM = quarter note length in milliseconds; quarter note length in milliseconds / 24 = clock pulse length in milliseconds; 60,000 / 24 = 2500; 2500 / BPM = pulse length in milliseconds */
 
 /*
  *  Sequencer constants
  */
 
-#define FROM_SIXTIETHS_TO_PULSES 0.2 /* Multiplying by 0.8 is the same as dividing by 60 and multiplying by 12, as in 12 PPSNs */
+#define FROM_SIXTIETHS_TO_PULSES 0.1 /* Multiplying by 0.1 is the same as dividing by 60 and multiplying by 6, as in 6 PPSNs */
 #define FROM_SIXTIETHS_TO_TWELVE_BITS 68.25 /* Multiplying by 68.25 is the same as dividing by 60 and multiplying by 4095 */
 #define MAX_NUMBER_OF_PATTERNS 15 /* We only have 1k of EEPROM to play with */
 #define MAX_NUMBER_OF_ROWS 16
 #define SEMITONES_IN_OCTAVE 12
-#define SEQUENCER_PPSN 12 /* 48 PPQN = 12 PPSN */
+#define SEQUENCER_PPSN 6 /* 24 PPQN = 6 PPSN */
 
-/* Array indeces */
+/* Array indices */
 #define PITCH 0
 #define SLIDE 1
 #define GATE 2
@@ -125,9 +125,9 @@ unsigned char highestPitch = 0;
  */
 
 unsigned long clockLastTime = 0; /* When the last pulse started, in milliseconds */
-unsigned char clockPulse = HIGH; /* The clock pulse, 96 PPQN.  Count 1 in 2 for 48 PPQN, or 1 in 4 for 24 PPQN. */
+unsigned char clockPulse = HIGH; /* The clock pulse, 24 PPQN. */
 unsigned char clockPulseStarting = HIGH; /* Whether the clock pulse is going from low to high on this exact iteration of the main loop */
-unsigned long clockPulseLength = 5; /* The amount of time between one pulse start and the next, in milliseconds */
+unsigned long clockPulseLength = 21; /* The amount of time between one pulse start and the next, in milliseconds.  Calculatd as FROM_TEMPO_TO_MILLISECONDS / clockTempo. */
 unsigned char clockRun = LOW; /* Whether or not we're running */
 unsigned char clockRunRequest = LOW; /* Whether or not we're about to run */
 unsigned char clockTempo = 120; /* In BPM */
@@ -150,7 +150,7 @@ unsigned char numberOfRows = MAX_NUMBER_OF_ROWS;
 unsigned char pattern[MAX_NUMBER_OF_ROWS][4]; /* 4: Pitch, slide, gate, accent */
 unsigned short pitchRequest = 0; /* Used by both the sequencer and slew limiter.  The proposed pitch CV output of the slew limiter, in 12 bits. */
 unsigned char rowNumber = 0;
-unsigned short sequencerPulseCount = 0; /* The number of pulses that have happened so far in this pattern.  Note that although the internal clock is 96 PPQN, the sequencer is only 48 PPQN.  This is so that both can be compatible with other machines. */
+unsigned short sequencerPulseCount = 0; /* The number of pulses that have happened so far in this pattern. */
 unsigned char slide = LOW; /* Used by both the sequencer and slew limiter.  Whether the slew limiter should lag or not. */
 
 /*
@@ -272,50 +272,47 @@ void loop()
  *  Update the sequencer
  */
 
-	if (clockPulseStarting == HIGH && clockRun == HIGH) { /* For testing, pre-interface purposes, we'll pretend the user doesn't have to press run/stop first to start the sequence. */
-		if ((oddPulse = oddPulse ^ 1) == 0) {
-			/* It's an even numbered pulse.  So we're stepping down from 96 PPQN (which the clock uses) to 48 PPQN (which the sequencer uses). */
-			sequencerPulseCount++;
+	if (clockPulseStarting == HIGH && clockRun == HIGH) {
+		sequencerPulseCount++;
 
-			/* Once we reach the end of the pattern, loop back to the beginning, and load in the queued pattern if necessary. */
-			if (sequencerPulseCount >= SEQUENCER_PPSN * numberOfRows) {
-				sequencerPulseCount = 0;
+		/* Once we reach the end of the pattern, loop back to the beginning, and load in the queued pattern if necessary. */
+		if (sequencerPulseCount >= SEQUENCER_PPSN * numberOfRows) {
+			sequencerPulseCount = 0;
 
-				if (patternNumber != patternNumberRequest) {
-					patternNumber = patternNumberRequest;
-					loadPattern();
-				}
+			if (patternNumber != patternNumberRequest) {
+				patternNumber = patternNumberRequest;
+				loadPattern();
 			}
+		}
 
-			/* Work out which row we're on.  If it's changed, note the last row we were on, for slides. */
-			newRowNumber = sequencerPulseCount / SEQUENCER_PPSN;
+		/* Work out which row we're on.  If it's changed, note the last row we were on, for slides. */
+		newRowNumber = sequencerPulseCount / SEQUENCER_PPSN;
 
-			if (newRowNumber != rowNumber) {
-				lastRowNumber = rowNumber;
-			}
+		if (newRowNumber != rowNumber) {
+			lastRowNumber = rowNumber;
+		}
 
-			rowNumber = newRowNumber;
+		rowNumber = newRowNumber;
 
-			/* Work out the current event's pitch, slide, gate length and accent */
-			pitchRequest = pattern[rowNumber][PITCH] * FROM_SIXTIETHS_TO_TWELVE_BITS;
+		/* Work out the current event's pitch, slide, gate length and accent */
+		pitchRequest = pattern[rowNumber][PITCH] * FROM_SIXTIETHS_TO_TWELVE_BITS;
 
-			if (pattern[lastRowNumber][SLIDE] == 0) {
-				slide = LOW;
-			} else {
-				slide = HIGH;
-			}
+		if (pattern[lastRowNumber][SLIDE] == 0) {
+			slide = LOW;
+		} else {
+			slide = HIGH;
+		}
 
-			if (sequencerPulseCount % SEQUENCER_PPSN < pattern[rowNumber][GATE] * FROM_SIXTIETHS_TO_PULSES) {
-				gate = HIGH;
-			} else {
-				gate = LOW;
-			}
+		if (sequencerPulseCount % SEQUENCER_PPSN < pattern[rowNumber][GATE] * FROM_SIXTIETHS_TO_PULSES) {
+			gate = HIGH;
+		} else {
+			gate = LOW;
+		}
 
-			if (pattern[rowNumber][ACCENT] > 0) {
-				accent = HIGH;
-			} else {
-				accent = LOW;
-			}
+		if (pattern[rowNumber][ACCENT] > 0) {
+			accent = HIGH;
+		} else {
+			accent = LOW;
 		}
 	}
 
