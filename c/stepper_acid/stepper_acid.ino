@@ -11,6 +11,12 @@
 #include "Wire.h"
 
 /*
+ *  Hardware constants
+ */
+
+#define VIRGIN_MEMORY 255 /* As per http://arduino.cc/en/Reference/EEPROMRead */
+
+/*
  *  Clock constants
  */
 
@@ -65,7 +71,7 @@
  */
 
 /* Input */
-#define NO_INPUT -1
+#define NO_INPUT 254
 #define RUN_STOP 0
 #define DECREMENT_TEMPO 1
 #define INCREMENT_TEMPO 2
@@ -96,6 +102,7 @@
 #define TOGGLE_SLIDE 27
 #define TOGGLE_GATE 28
 #define TOGGLE_ACCENT 29
+#define FACTORY_RESET 255
 
 /*
  *  Universal, disposable variables
@@ -366,7 +373,7 @@ void loop()
 	/* Update the LCD */
 
 	/* Update the serial output only if the user's done something, or if it's the very first cycle.  See README.creole appendix C for what we're outputting. */
-	if (input != -1) {
+	if (input != NO_INPUT) {
 		sprintf(hexDigit, "%02X", clockRun);
 		*(output + 9) = *hexDigit;
 		*(output + 10) = *(hexDigit + 1);
@@ -422,11 +429,11 @@ void loop()
 		/* Someone or something is sending input via the serial connection.  See README.creole appendix B for what we're inputting. */
 		input = Serial.read();
 	} else {
-		input = -1;
+		input = NO_INPUT;
 	}
 
 	switch (input) {
-	case -1:
+	case NO_INPUT:
 		break;
 
 	case RUN_STOP:
@@ -675,6 +682,35 @@ void loop()
 		}
 
 		savePattern();
+		break;
+
+	case FACTORY_RESET:
+		/* The user probably didn't mean to do a factory reset while playing */
+		if (clockRun == HIGH) {
+			break;
+		}
+
+		numberOfRows = MAX_NUMBER_OF_ROWS;
+
+		for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
+			pattern[row][PITCH] = 24;
+			pattern[row][SLIDE] = SLIDE_OFF;
+			pattern[row][GATE] = REST;
+			pattern[row][ACCENT] = ACCENT_OFF;
+		}
+
+		for (patternNumber = 0; patternNumber < MAX_NUMBER_OF_PATTERNS; patternNumber++) {
+			savePattern();
+		}
+
+		clipboardFull = LOW;
+		lastRowNumber = 0;
+		newRowNumber = 0;
+		patternNumber = 0;
+		patternNumberRequest = 0;
+		rowNumber = 0;
+		sequencerPulseCount = 0;
+		loadPattern();
 		break;
 	}
 }

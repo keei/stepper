@@ -309,3 +309,6 @@ while (True):
 
 	if key == 'a':
 		ser.write(b'\x04') # Increment row number (move cursor forwards)
+
+	if key == 'R':
+		ser.write(b'\xFF') # Factory reset

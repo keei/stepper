@@ -132,6 +132,7 @@ Using the built-in serial interface over USB, you can remotely program Stepper A
 | 27 | Toggle slide | (TBC) |
 | 28 | Toggle gate | (TBC) |
 | 29 | Toggle accent | (TBC) |
+| 255 | Factory reset | Factory reset |
 
 === Appendix C: serial interface output chart ===
 
