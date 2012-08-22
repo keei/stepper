@@ -130,7 +130,7 @@ while (True):
 
 	# Print out the LCD area's settings
 	if lcdMode == 'patternSelect':
-		cursePrint(0, 0, convertNumberIntoChars(patternNumber))
+		cursePrint(0, 0, convertNumberIntoChars(patternNumber + 1))
 		cursePrint(0, 4, 'o')
 	elif lcdMode == 'patternLength':
 		cursePrint(0, 0, convertNumberIntoChars(numberOfRows))
