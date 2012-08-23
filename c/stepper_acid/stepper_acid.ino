@@ -295,11 +295,10 @@ void loop()
 		/* Work out which row we're on.  If it's changed, note the last row we were on, for slides. */
 		newRowNumber = sequencerPulseCount / SEQUENCER_PPSN;
 
-		if (newRowNumber != rowNumber) {
+		if (rowNumber != newRowNumber) {
 			lastRowNumber = rowNumber;
+			rowNumber = newRowNumber;
 		}
-
-		rowNumber = newRowNumber;
 
 		/* Work out the current event's pitch, slide, gate length and accent */
 		pitchRequest = pattern[rowNumber][PITCH] * FROM_SIXTIETHS_TO_TWELVE_BITS;
