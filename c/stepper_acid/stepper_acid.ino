@@ -71,7 +71,7 @@
  */
 
 /* Input */
-#define NO_INPUT 254
+#define NO_INPUT -1
 #define RUN_STOP 0
 #define DECREMENT_TEMPO 1
 #define INCREMENT_TEMPO 2
@@ -123,7 +123,7 @@ char *output = "GLOBAL RSxxTMxxRNxxPNxxPLxxCFxx\nROW 00 PIxxSLxxGTxxACxx\nROW 01
 char *hexDigit = "xx"; /* Converted to ASCII */
 
 /* Input */
-signed char input = -2; /* -2 = very first cycle, no input yet as the user hasn't had a chance; -1 = no input on this particular cycle */
+signed int input = -2; /* -2 = very first cycle, no input yet as the user hasn't had a chance; -1 = no input on this particular cycle */
 unsigned char lowestPitch = 60;
 unsigned char highestPitch = 0;
 
