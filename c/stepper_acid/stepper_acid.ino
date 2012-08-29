@@ -1,9 +1,6 @@
 /*
  *  Stepper Acid: an acid machine with CV and gate outputs.
  *  By Zoe Blade and Nina Richards.
- *
- *  Digital pin 2 is gate.
- *  Digital pin 3 is accent.
  */
 
 #include "Arduino.h"
@@ -13,6 +10,14 @@
 /*
  *  Hardware constants
  */
+
+#define DIGITAL_PIN_CLOCK_PULSE 2
+#define INTERRUPT_CLOCK_PULSE 0
+#define DIGITAL_PIN_RUN_STOP 3
+#define DIGITAL_PIN_GATE 4
+#define DIGITAL_PIN_ACCENT 5
+#define DIGITAL_PIN_CLOCK_SOURCE 6 /* Switch: LOW = internal, HIGH = external */
+#define DIGITAL_PIN_INTERNAL_LED 13 /* Using an Arduino Uno, this is standard */
 
 #define VIRGIN_MEMORY 255 /* As per http://arduino.cc/en/Reference/EEPROMRead */
 
@@ -131,14 +136,16 @@ unsigned char highestPitch = 0;
  *  Clock variables
  */
 
+unsigned long clockLastPulse = LOW; /* The clock pulse state during the last iteration of the main code loop */
 unsigned long clockLastTime = 0; /* When the last pulse started, in milliseconds */
-unsigned char clockPulse = HIGH; /* The clock pulse, 24 PPQN. */
-unsigned char clockPulseStarting = HIGH; /* Whether the clock pulse is going from low to high on this exact iteration of the main loop */
+unsigned long clockPulseCount = 0; /* The number of pulses that have happened so far overall. */
 unsigned long clockPulseLength = 21; /* The amount of time between one pulse start and the next, in milliseconds.  Calculatd as FROM_TEMPO_TO_MILLISECONDS / clockTempo. */
 unsigned char clockRun = LOW; /* Whether or not we're running */
-unsigned char clockRunRequest = LOW; /* Whether or not we're about to run */
 unsigned char clockTempo = 120; /* In BPM */
-unsigned long clockTime = 0; /* The current time, in milliseconds */
+unsigned char clockTempoRequest = 120; /* In BPM */
+unsigned long clockTimeAbsolute = 0; /* The current overall time, in milliseconds */
+unsigned long clockTimeAtRunStart = 0; /* The overall time when when the sequencer started running, in milliseconds */
+unsigned long clockTimeRunning = 0; /* The current time since the sequencer started running, in milliseconds */
 
 /*
  *  Sequencer variables
@@ -222,6 +229,10 @@ void dacWrite(unsigned char deviceNumber, unsigned short twelveBits)
 	Wire.endTransmission();
 }
 
+void incrementClockPulseCount() {
+	clockPulseCount++;
+}
+
 /*
  *  Initialise at bootup
  */
@@ -232,10 +243,15 @@ void setup()
 
 	/* Setup inputs and outputs */
 	Wire.begin();
-	pinMode(2, OUTPUT); /* Gate */
-	pinMode(3, OUTPUT); /* Accent */
-	pinMode(13, OUTPUT); /* The beat flashes the internal LED */
+	pinMode(DIGITAL_PIN_GATE, OUTPUT);
+	pinMode(DIGITAL_PIN_ACCENT, OUTPUT);
+	pinMode(DIGITAL_PIN_CLOCK_SOURCE, INPUT);
+	pinMode(DIGITAL_PIN_CLOCK_PULSE, INPUT);
+	pinMode(DIGITAL_PIN_RUN_STOP, INPUT);
+	pinMode(DIGITAL_PIN_INTERNAL_LED, OUTPUT);
 	Serial.begin(115200);
+
+	attachInterrupt(INTERRUPT_CLOCK_PULSE, incrementClockPulseCount, RISING);
 
 	loadPattern();
 }
@@ -251,44 +267,39 @@ void loop()
  *  Update the clock
  */
 
-	clockTime = millis();
+	clockTimeAbsolute = millis();
+	clockTimeRunning = clockTimeAbsolute - clockTimeAtRunStart;
 
-	if (clockTime - clockLastTime < clockPulseLength / 2) {
-		/* The last pulse is still happening */
-		clockPulse = HIGH;
-		clockPulseStarting = LOW;
-	} else if (clockTime - clockLastTime > clockPulseLength) {
-		/* The next pulse is already happening */
-		clockPulse = HIGH;
-		clockLastTime = clockTime;
-		clockPulseStarting = HIGH;
-
-		/* Run/stop requests can only be fulfilled at the start of a new clock pulse */
-		if (clockRunRequest == HIGH) {
-			clockRun = HIGH;
-		} else {
-			clockRun = LOW;
-		}
+	if (digitalRead(DIGITAL_PIN_CLOCK_SOURCE) == HIGH) {
+		/* Use an external clock */
+		clockRun = digitalRead(DIGITAL_PIN_RUN_STOP);
 	} else {
-		/* Neither pulse is happening */
-		clockPulse = LOW;
-		clockPulseStarting = LOW;
+		/* Use the internal clock */
+		clockPulseCount = clockTimeRunning / clockPulseLength; /* The clock pulse count is absolute (being worked out anew based on a revised clock pulse length), not relative (incrementing), hence changing the tempo changes the position in the bar.  I compensate for this by only changing the *requested* tempo in real time, and updating the live tempo only at the beginning of the bar, just like pattern changes. */
 	}
 
 /*
  *  Update the sequencer
  */
 
-	if (clockPulseStarting == HIGH && clockRun == HIGH) {
-		sequencerPulseCount++;
+	if (clockRun == HIGH) {
+		sequencerPulseCount = clockPulseCount % (SEQUENCER_PPSN * numberOfRows);
 
-		/* Once we reach the end of the pattern, loop back to the beginning, and load in the queued pattern if necessary. */
-		if (sequencerPulseCount >= SEQUENCER_PPSN * numberOfRows) {
-			sequencerPulseCount = 0;
-
+		if (sequencerPulseCount == 0) {
+			/* We're at the very start of a pattern */
 			if (patternNumber != patternNumberRequest) {
+				/* Load in the queued pattern if necessary */
 				patternNumber = patternNumberRequest;
 				loadPattern();
+			}
+
+			if (clockTempo != clockTempoRequest) {
+			/* Load in the queued tempo if necessary */
+				clockTempo = clockTempoRequest;
+				clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo;
+				/* Reset the sequencer's clock to avoid tempo changing glitch */
+				clockTimeAtRunStart = clockTimeAbsolute;
+				clockTimeRunning = 0;
 			}
 		}
 
@@ -326,8 +337,8 @@ void loop()
  *  Run the pitch through the slew limiter
  */
 
-	slewLimiterInterval = clockTime - slewLimiterLastTime;
-	slewLimiterLastTime = clockTime;
+	slewLimiterInterval = clockTimeAbsolute - slewLimiterLastTime;
+	slewLimiterLastTime = clockTimeAbsolute;
 
 	if (slide == LOW) {
 		pitch = pitchRequest;
@@ -359,14 +370,14 @@ void loop()
 
 	/* Send musical data to the synthesiser */
 	dacWrite(96, pitch);
-	digitalWrite(2, gate);
-	digitalWrite(3, accent);
+	digitalWrite(DIGITAL_PIN_GATE, gate);
+	digitalWrite(DIGITAL_PIN_ACCENT, accent);
 
 	/* Flash the Arduino's internal LED on every beat */
 	if (rowNumber % 4 == 0) {
-		digitalWrite(13, HIGH);
+		digitalWrite(DIGITAL_PIN_INTERNAL_LED, HIGH);
 	} else {
-		digitalWrite(13, LOW);
+		digitalWrite(DIGITAL_PIN_INTERNAL_LED, LOW);
 	}
 
 	/* Update the LCD */
@@ -377,7 +388,7 @@ void loop()
 		*(output + 9) = *hexDigit;
 		*(output + 10) = *(hexDigit + 1);
 
-		sprintf(hexDigit, "%02X", clockTempo);
+		sprintf(hexDigit, "%02X", clockTempoRequest);
 		*(output + 13) = *hexDigit;
 		*(output + 14) = *(hexDigit + 1);
 
@@ -385,7 +396,7 @@ void loop()
 		*(output + 17) = *hexDigit;
 		*(output + 18) = *(hexDigit + 1);
 
-		sprintf(hexDigit, "%02X", patternNumber);
+		sprintf(hexDigit, "%02X", patternNumberRequest);
 		*(output + 21) = *hexDigit;
 		*(output + 22) = *(hexDigit + 1);
 
@@ -436,28 +447,27 @@ void loop()
 		break;
 
 	case RUN_STOP:
-		if (clockRunRequest == HIGH) {
-			clockRunRequest = LOW;
+		if (clockRun == HIGH) {
+			clockRun = LOW;
 			sequencerPulseCount = (SEQUENCER_PPSN * numberOfRows) - 1;
 		} else {
-			clockRunRequest = HIGH;
+			clockRun = HIGH;
 			patternNumberRequest = patternNumber;
+			clockTimeAtRunStart = clockTimeAbsolute;
 		}
 
 		break;
 
 	case DECREMENT_TEMPO:
-		if (clockTempo > 1) {
-			clockTempo--;
-			clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo;
+		if (clockTempoRequest > 1) {
+			clockTempoRequest--;
 		}
 
 		break;
 
 	case INCREMENT_TEMPO:
-		if (clockTempo < 255) {
-			clockTempo++;
-			clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo;
+		if (clockTempoRequest < 255) {
+			clockTempoRequest++;
 		}
 
 		break;
