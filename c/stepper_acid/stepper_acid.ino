@@ -318,7 +318,7 @@ void loop()
 				gate = HIGH;
 			} else {
 				/* We're currently playing a non-sliding note */
-				if (sequencerPulseCount % SEQUENCER_PPSN < 35 * FROM_SIXTIETHS_TO_PULSES) { /* 35/60 = the duration of a non-sliding note */
+				if (sequencerPulseCount % SEQUENCER_PPSN < SEQUENCER_PPSN / 2) {
 					gate = HIGH;
 				} else {
 					gate = LOW;
