@@ -78,9 +78,9 @@ pattern = []
 for row in range(16):
 	pattern.append({})
 	pattern[row]['pitch'] = 24
-	pattern[row]['slide'] = 0
-	pattern[row]['gate'] = 0
-	pattern[row]['accent'] = 0
+	pattern[row]['slide'] = '..'
+	pattern[row]['gate'] = '..'
+	pattern[row]['accent'] = '..'
 
 while (True):
 	try:
@@ -99,9 +99,22 @@ while (True):
 	elif state[0:4] == 'ROW ' and len(state) == 24:
 		row = int(state[4:6], 16)
 		pattern[row]['pitch'] = int(state[9:11], 16)
-		pattern[row]['slide'] = int(state[13:15], 16)
-		pattern[row]['gate'] = int(state[17:19], 16)
-		pattern[row]['accent'] = int(state[21:23], 16)
+
+		if int(state[13:15], 16) == 1:
+			pattern[row]['slide'] = 'SL'
+		else:
+			pattern[row]['slide'] = '..'
+
+		if int(state[17:19], 16) == 1:
+			pattern[row]['gate'] = 'GT'
+		else:
+			pattern[row]['gate'] = '..'
+
+
+		if int(state[21:23], 16) == 1:
+			pattern[row]['accent'] = 'AC'
+		else:
+			pattern[row]['accent'] = '..'
 
 	cursePrint(0, 0, 'XXX . Pattern select . Pattern length . Tempo   . Copy')
 	cursePrint(1, 0, 'W E    R                T                Y         I  ')
@@ -120,9 +133,9 @@ while (True):
 
 	for row in pattern:
 		if i - 1 == rowNumber:
-			cursePrint(i, 55, convertPitchInSixtiethsIntoChars(row['pitch']) + ' ' + convertSixtiethIntoChars(row['slide']) + ' ' + convertSixtiethIntoChars(row['gate']) + ' ' + convertSixtiethIntoChars(row['accent']), True)
+			cursePrint(i, 55, convertPitchInSixtiethsIntoChars(row['pitch']) + ' ' + row['slide'] + ' ' + row['gate'] + ' ' + row['accent'], True)
 		elif i - 1 < numberOfRows:
-			cursePrint(i, 55, convertPitchInSixtiethsIntoChars(row['pitch']) + ' ' + convertSixtiethIntoChars(row['slide']) + ' ' + convertSixtiethIntoChars(row['gate']) + ' ' + convertSixtiethIntoChars(row['accent']))
+			cursePrint(i, 55, convertPitchInSixtiethsIntoChars(row['pitch']) + ' ' + row['slide'] + ' ' + row['gate'] + ' ' + row['accent'])
 		else:
 			cursePrint(i, 55, '... .. .. ..')
 

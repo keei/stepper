@@ -33,12 +33,12 @@
 
 #define FROM_SIXTIETHS_TO_PULSES 0.1 /* Multiplying by 0.1 is the same as dividing by 60 and multiplying by 6, as in 6 PPSNs */
 #define FROM_SIXTIETHS_TO_TWELVE_BITS 68.25 /* Multiplying by 68.25 is the same as dividing by 60 and multiplying by 4095 */
-#define MAX_NUMBER_OF_PATTERNS 15 /* We only have 1k of EEPROM to play with */
+#define MAX_NUMBER_OF_PATTERNS 30 /* We only have 1k of EEPROM to play with */
 #define MAX_NUMBER_OF_ROWS 16
 #define SEMITONES_IN_OCTAVE 12
 #define SEQUENCER_PPSN 6 /* 24 PPQN = 6 PPSN */
 
-/* Array indices */
+/* Array indices, doubling up as bitwise sub-addresses */
 #define PITCH 0
 #define SLIDE 1
 #define GATE 2
@@ -58,18 +58,9 @@
 #define A_SHARP 10
 #define B_NATURAL 11
 
-/* Note lengths */
-#define REST 0
-#define THIRTYSECOND 35 /* Technically, this should be 30, but apparently a certain popular acid machine uses 35. */
-#define SIXTEENTH 60
-
-/* Slide */
-#define SLIDE_OFF 0
-#define SLIDE_ON 60 /* For comparisons, I generally tend to use "!= SLIDE_OFF" rather than "== SLIDE_ON".  This is so I can reserve the right to make an upgrade with non-boolean sliding, so that the value of the slide dictates its length, 0 still being off or instant. */
-
-/* Accent */
-#define ACCENT_OFF 0
-#define ACCENT_ON 60
+/* Other note attributes */
+#define OFF 0
+#define ON 1
 
 /*
  *  Main constants
@@ -182,13 +173,14 @@ unsigned short slideAmount = 0; /* The difference between the requested pitch an
 
 void loadPattern()
 {
-	numberOfRows = EEPROM.read(((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber);
+	numberOfRows = EEPROM.read(((MAX_NUMBER_OF_ROWS * 2) + 1) * patternNumber);
 
 	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
-		pattern[row][PITCH] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 1 + (row * 4));
-		pattern[row][SLIDE] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 2 + (row * 4)); /* Really, we're adding 1 as before to skip the pattern length, plus adding another 1 at the end to skip the pitch.  But to save processing time, let's add them together in the source code, as even though it makes no semantic sense, it makes no practical difference to do it that way. */
-		pattern[row][GATE] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 3 + (row * 4));
-		pattern[row][ACCENT] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 4 + (row * 4));
+		pattern[row][PITCH] = EEPROM.read((((MAX_NUMBER_OF_ROWS * 2) + 1) * patternNumber) + 1 + (row * 2));
+		item = EEPROM.read((((MAX_NUMBER_OF_ROWS * 2) + 1) * patternNumber) + 2 + (row * 2)); /* Really, we're adding 1 as before to skip the pattern length, plus adding another 1 at the end to skip the pitch.  But to save processing time, let's add them together in the source code, as even though it makes no semantic sense, it makes no practical difference to do it that way. */
+		pattern[row][SLIDE] = (item & 1 << SLIDE) >> SLIDE;
+		pattern[row][GATE] = (item & 1 << GATE) >> GATE;
+		pattern[row][ACCENT] = (item & 1 << ACCENT) >> ACCENT;
 	}
 
 	/* Ignore obvious errors, as in virgin EEPROM addresses */
@@ -199,22 +191,21 @@ void loadPattern()
 	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
 		if (pattern[row][PITCH] > 60) {
 			pattern[row][PITCH] = 24;
-			pattern[row][SLIDE] = SLIDE_OFF;
-			pattern[row][GATE] = REST;
-			pattern[row][ACCENT] = ACCENT_OFF;
+			pattern[row][SLIDE] = OFF;
+			pattern[row][GATE] = OFF;
+			pattern[row][ACCENT] = OFF;
 		}
 	}
 }
 
 void savePattern()
 {
-	EEPROM.write((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber), numberOfRows);
+	EEPROM.write((((MAX_NUMBER_OF_ROWS * 2) + 1) * patternNumber), numberOfRows);
 
 	for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
-		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 1 + (row * 4)), pattern[row][PITCH]);
-		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 2 + (row * 4)), pattern[row][SLIDE]); /* Really, we're adding 1 as before to skip the pattern length, plus adding another 1 at the end to skip the pitch.  But to save processing time, let's add them together in the source code, as even though it makes no semantic sense, it makes no practical difference to do it that way. */
-		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 3 + (row * 4)), pattern[row][GATE]);
-		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 4) + 1) * patternNumber) + 4 + (row * 4)), pattern[row][ACCENT]);
+		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 2) + 1) * patternNumber) + 1 + (row * 2)), pattern[row][PITCH]);
+		item = (pattern[row][SLIDE] << SLIDE) + (pattern[row][GATE] << GATE) + (pattern[row][ACCENT] << ACCENT);
+		EEPROM.write(((((MAX_NUMBER_OF_ROWS * 2) + 1) * patternNumber) + 2 + (row * 2)), item); /* Really, we're adding 1 as before to skip the pattern length, plus adding another 1 at the end to skip the pitch.  But to save processing time, let's add them together in the source code, as even though it makes no semantic sense, it makes no practical difference to do it that way. */
 	}
 }
 
@@ -314,19 +305,31 @@ void loop()
 		/* Work out the current event's pitch, slide, gate length and accent */
 		pitchRequest = pattern[rowNumber][PITCH] * FROM_SIXTIETHS_TO_TWELVE_BITS;
 
-		if (pattern[lastRowNumber][SLIDE] == 0) {
-			slide = LOW;
-		} else {
+		if (pattern[lastRowNumber][SLIDE] == ON) {
 			slide = HIGH;
+		} else {
+			slide = LOW;
 		}
 
-		if (sequencerPulseCount % SEQUENCER_PPSN < pattern[rowNumber][GATE] * FROM_SIXTIETHS_TO_PULSES) {
-			gate = HIGH;
+		if (pattern[rowNumber][GATE] == ON) {
+			/* We're currently playing a note */
+			if (pattern[lastRowNumber][SLIDE] == ON) {
+				/* We're currently playing a sliding note */
+				gate = HIGH;
+			} else {
+				/* We're currently playing a non-sliding note */
+				if (sequencerPulseCount % SEQUENCER_PPSN < 35 * FROM_SIXTIETHS_TO_PULSES) { /* 35/60 = the duration of a non-sliding note */
+					gate = HIGH;
+				} else {
+					gate = LOW;
+				}
+			}
 		} else {
+			/* We're currently playing a rest */
 			gate = LOW;
 		}
 
-		if (pattern[rowNumber][ACCENT] > 0) {
+		if (pattern[rowNumber][ACCENT] == ON) {
 			accent = HIGH;
 		} else {
 			accent = LOW;
@@ -529,9 +532,9 @@ void loop()
 
 			/* Clear the removed row */
 			pattern[numberOfRows][PITCH] = 24;
-			pattern[numberOfRows][SLIDE] = SLIDE_OFF;
-			pattern[numberOfRows][GATE] = REST;
-			pattern[numberOfRows][ACCENT] = ACCENT_OFF;
+			pattern[numberOfRows][SLIDE] = OFF;
+			pattern[numberOfRows][GATE] = OFF;
+			pattern[numberOfRows][ACCENT] = OFF;
 		}
 
 		savePattern();
@@ -614,18 +617,13 @@ void loop()
 	case TOGGLE_A_NATURAL:
 	case TOGGLE_A_SHARP:
 	case TOGGLE_B_NATURAL:
-		if (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE == input - TOGGLE_C_NATURAL && pattern[rowNumber][GATE] != REST) {
-			pattern[rowNumber][GATE] = REST;
+		if (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE == input - TOGGLE_C_NATURAL && pattern[rowNumber][GATE] == ON) {
+			pattern[rowNumber][GATE] = OFF;
 		} else {
 			/* These two lines do the exact same thing.  Either one is fine.  I'm leaving them both here in the hope that it clarifies what's happening. */
 			/* pattern[rowNumber][PITCH] = (SEMITONES_IN_OCTAVE * (pattern[rowNumber][PITCH] / SEMITONES_IN_OCTAVE)) + (input - TOGGLE_C_NATURAL); */
 			pattern[rowNumber][PITCH] = pattern[rowNumber][PITCH] - (pattern[rowNumber][PITCH] % SEMITONES_IN_OCTAVE) + (input - TOGGLE_C_NATURAL); /* Keep the old octave, but update the semitone. */
-
-			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
-				pattern[rowNumber][GATE] = SIXTEENTH;
-			} else {
-				pattern[rowNumber][GATE] = THIRTYSECOND;
-			}
+			pattern[rowNumber][GATE] = ON;
 		}
 
 		if (rowNumber < numberOfRows - 1) {
@@ -652,42 +650,30 @@ void loop()
 		break;
 
 	case TOGGLE_SLIDE:
-		if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
-			pattern[rowNumber][SLIDE] = SLIDE_OFF;
-
-			if (pattern[rowNumber][GATE] == SIXTEENTH) {
-				pattern[rowNumber][GATE] = THIRTYSECOND;
-			}
+		if (pattern[rowNumber][SLIDE] == ON) {
+			pattern[rowNumber][SLIDE] = OFF;
 		} else {
-			pattern[rowNumber][SLIDE] = SLIDE_ON;
-
-			if (pattern[rowNumber][GATE] == THIRTYSECOND) {
-				pattern[rowNumber][GATE] = SIXTEENTH;
-			}
+			pattern[rowNumber][SLIDE] = ON;
 		}
 
 		savePattern();
 		break;
 
 	case TOGGLE_GATE:
-		if (pattern[rowNumber][GATE] == REST) {
-			if (pattern[rowNumber][SLIDE] != SLIDE_OFF) {
-				pattern[rowNumber][GATE] = SIXTEENTH;
-			} else {
-				pattern[rowNumber][GATE] = THIRTYSECOND;
-			}
+		if (pattern[rowNumber][GATE] == ON) {
+			pattern[rowNumber][GATE] = OFF;
 		} else {
-			pattern[rowNumber][GATE] = REST;
+			pattern[rowNumber][GATE] = ON;
 		}
 
 		savePattern();
 		break;
 
 	case TOGGLE_ACCENT:
-		if (pattern[rowNumber][ACCENT] == ACCENT_OFF) {
-			pattern[rowNumber][ACCENT] = ACCENT_ON;
+		if (pattern[rowNumber][ACCENT] == ON) {
+			pattern[rowNumber][ACCENT] = OFF;
 		} else {
-			pattern[rowNumber][ACCENT] = ACCENT_OFF;
+			pattern[rowNumber][ACCENT] = ON;
 		}
 
 		savePattern();
@@ -703,9 +689,9 @@ void loop()
 
 		for (row = 0; row < MAX_NUMBER_OF_ROWS; row++) {
 			pattern[row][PITCH] = 24;
-			pattern[row][SLIDE] = SLIDE_OFF;
-			pattern[row][GATE] = REST;
-			pattern[row][ACCENT] = ACCENT_OFF;
+			pattern[row][SLIDE] = OFF;
+			pattern[row][GATE] = OFF;
+			pattern[row][ACCENT] = OFF;
 		}
 
 		for (patternNumber = 0; patternNumber < MAX_NUMBER_OF_PATTERNS; patternNumber++) {
