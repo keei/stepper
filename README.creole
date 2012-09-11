@@ -113,25 +113,32 @@ Using the built-in serial interface over USB, you can remotely program Stepper A
 | 8 | Increment number of rows (lengthen pattern) | Increment number of rows (lengthen pattern) |
 | 9 | Copy pattern | Copy pattern |
 | 10 | Paste pattern | Paste pattern |
-| 11 | Transpose pattern down a semitone | (TBC) |
-| 12 | Transpose pattern up a semitone | (TBC) |
-| 13 | Toggle note C | (TBC) |
-| 14 | Toggle note C# | (TBC) |
-| 15 | Toggle note D | (TBC) |
-| 16 | Toggle note D# | (TBC) |
-| 17 | Toggle note E | (TBC) |
-| 18 | Toggle note F | (TBC) |
-| 19 | Toggle note F# | (TBC) |
-| 20 | Toggle note G | (TBC) |
-| 21 | Toggle note G# | (TBC) |
-| 22 | Toggle note A | (TBC) |
-| 23 | Toggle note A# | (TBC) |
-| 24 | Toggle note B | (TBC) |
-| 25 | Transpose note down an octave | (TBC) |
-| 26 | Transpose note up an octave | (TBC) |
-| 27 | Toggle slide | (TBC) |
-| 28 | Toggle gate | (TBC) |
-| 29 | Toggle accent | (TBC) |
+| 11 | Transpose pattern down a semitone | N/A |
+| 12 | Transpose pattern up a semitone | N/A |
+| 13 | Toggle note C | Toggle note in 1st row |
+| 14 | Toggle note C# | Toggle note in 2nd row |
+| 15 | Toggle note D | Toggle note in 3rd row |
+| 16 | Toggle note D# | Toggle note in 4th row |
+| 17 | Toggle note E | Toggle note in 5th row |
+| 18 | Toggle note F | Toggle note in 6th row |
+| 19 | Toggle note F# | Toggle note in 7th row |
+| 20 | Toggle note G | Toggle note in 8th row |
+| 21 | Toggle note G# | Toggle note in 9th row |
+| 22 | Toggle note A | Toggle note in 10th row |
+| 23 | Toggle note A# | Toggle note in 11th row |
+| 24 | Toggle note B | Toggle note in 12th row |
+| 25 | Transpose note down an octave | Toggle note in 13th row |
+| 26 | Transpose note up an octave | Toggle note in 14th row |
+| 27 | Toggle slide | Toggle note in 15th row |
+| 28 | Toggle gate | Toggle note in 16th row |
+| 29 | Toggle accent | Select 1st instrument |
+| 30 | N/A | Select 2nd instrument |
+| 31 | N/A | Select 3rd instrument |
+| 32 | N/A | Select 4th instrument |
+| 33 | N/A | Select 5th instrument |
+| 34 | N/A | Select 6th instrument |
+| 35 | N/A | Select 7th instrument |
+| 36 | N/A | Select 8th instrument |
 | 255 | Factory reset | Factory reset |
 
 === Appendix C: serial interface output chart ===
@@ -139,8 +146,8 @@ Using the built-in serial interface over USB, you can remotely program Stepper A
 |= Byte position |= Stepper Acid meaning | Stepper Drum meaning |
 | 09,10 | Run/stop | Run/stop |
 | 13,14 | Tempo | Tempo |
-| 17,18 | Row number | Row number |
+| 17,18 | Row number | Selected instrument |
 | 21,22 | Pattern number | Pattern number |
 | 25,26 | Pattern length | Pattern length |
 | 29,30 | Clipboard full | Clipboard full |
-| 41+ | For each row (used and unused): pitch; slide; gate; accent | (TBC) |
+| Various | Byte 41+, for each row (used and unused): pitch; slide; gate; accent | Byte 43+, for each row (used and unused): two hex digits |

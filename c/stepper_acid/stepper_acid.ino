@@ -12,12 +12,13 @@
  */
 
 #define DIGITAL_PIN_CLOCK_PULSE 2
-#define INTERRUPT_CLOCK_PULSE 0
 #define DIGITAL_PIN_RUN_STOP 3
-#define DIGITAL_PIN_GATE 4
-#define DIGITAL_PIN_ACCENT 5
-#define DIGITAL_PIN_CLOCK_SOURCE 6 /* Switch: LOW = internal, HIGH = external */
+#define DIGITAL_PIN_CLOCK_SOURCE 4 /* Switch: LOW = internal, HIGH = external */
+#define DIGITAL_PIN_GATE 5
+#define DIGITAL_PIN_ACCENT 6
 #define DIGITAL_PIN_INTERNAL_LED 13 /* Using an Arduino Uno, this is standard */
+
+#define INTERRUPT_CLOCK_PULSE 0
 
 #define VIRGIN_MEMORY 255 /* As per http://arduino.cc/en/Reference/EEPROMRead */
 
@@ -31,7 +32,6 @@
  *  Sequencer constants
  */
 
-#define FROM_SIXTIETHS_TO_PULSES 0.1 /* Multiplying by 0.1 is the same as dividing by 60 and multiplying by 6, as in 6 PPSNs */
 #define FROM_SIXTIETHS_TO_TWELVE_BITS 68.25 /* Multiplying by 68.25 is the same as dividing by 60 and multiplying by 4095 */
 #define MAX_NUMBER_OF_PATTERNS 30 /* We only have 1k of EEPROM to play with */
 #define MAX_NUMBER_OF_ROWS 16
@@ -67,6 +67,7 @@
  */
 
 /* Input */
+#define FIRST_CYCLE -2
 #define NO_INPUT -1
 #define RUN_STOP 0
 #define DECREMENT_TEMPO 1
@@ -119,7 +120,7 @@ char *output = "GLOBAL RSxxTMxxRNxxPNxxPLxxCFxx\nROW 00 PIxxSLxxGTxxACxx\nROW 01
 char *hexDigit = "xx"; /* Converted to ASCII */
 
 /* Input */
-signed int input = -2; /* -2 = very first cycle, no input yet as the user hasn't had a chance; -1 = no input on this particular cycle */
+signed int input = FIRST_CYCLE;
 unsigned char lowestPitch = 60;
 unsigned char highestPitch = 0;
 
@@ -184,7 +185,7 @@ void loadPattern()
 	}
 
 	/* Ignore obvious errors, as in virgin EEPROM addresses */
-	if (numberOfRows > MAX_NUMBER_OF_ROWS) {
+	if (numberOfRows < 1 || numberOfRows > MAX_NUMBER_OF_ROWS) {
 		numberOfRows = MAX_NUMBER_OF_ROWS;
 	}
 
@@ -234,16 +235,15 @@ void setup()
 
 	/* Setup inputs and outputs */
 	Wire.begin();
-	pinMode(DIGITAL_PIN_GATE, OUTPUT);
-	pinMode(DIGITAL_PIN_ACCENT, OUTPUT);
-	pinMode(DIGITAL_PIN_CLOCK_SOURCE, INPUT);
 	pinMode(DIGITAL_PIN_CLOCK_PULSE, INPUT);
 	pinMode(DIGITAL_PIN_RUN_STOP, INPUT);
+	pinMode(DIGITAL_PIN_CLOCK_SOURCE, INPUT);
+	pinMode(DIGITAL_PIN_GATE, OUTPUT);
+	pinMode(DIGITAL_PIN_ACCENT, OUTPUT);
 	pinMode(DIGITAL_PIN_INTERNAL_LED, OUTPUT);
+
 	Serial.begin(115200);
-
 	attachInterrupt(INTERRUPT_CLOCK_PULSE, incrementClockPulseCount, RISING);
-
 	loadPattern();
 }
 
@@ -285,7 +285,7 @@ void loop()
 			}
 
 			if (clockTempo != clockTempoRequest) {
-			/* Load in the queued tempo if necessary */
+				/* Load in the queued tempo if necessary */
 				clockTempo = clockTempoRequest;
 				clockPulseLength = FROM_TEMPO_TO_MILLISECONDS / clockTempo;
 				/* Reset the sequencer's clock to avoid tempo changing glitch */
@@ -368,7 +368,7 @@ void loop()
 	}
 
 /*
- *  Set output
+ *  Set the output
  */
 
 	/* Send musical data to the synthesiser */
@@ -433,7 +433,7 @@ void loop()
 	}
 
 /*
- *  Get input
+ *  Get the input
  */
 
 	if (0) {
@@ -492,13 +492,11 @@ void loop()
 	case DECREMENT_PATTERN_NUMBER:
 		savePattern();
 
-		if (clockRun == HIGH) {
-			if (patternNumberRequest > 0) {
-				patternNumberRequest--;
-			}
-		} else {
-			if (patternNumber > 0) {
-				patternNumber--;
+		if (patternNumberRequest > 0) {
+			patternNumberRequest--;
+
+			if (clockRun != HIGH) {
+				patternNumber = patternNumberRequest;
 				loadPattern();
 			}
 		}
@@ -508,13 +506,11 @@ void loop()
 	case INCREMENT_PATTERN_NUMBER:
 		savePattern();
 
-		if (clockRun == HIGH) {
-			if (patternNumberRequest < MAX_NUMBER_OF_PATTERNS - 1) {
-				patternNumberRequest++;
-			}
-		} else {
-			if (patternNumber < MAX_NUMBER_OF_PATTERNS - 1) {
-				patternNumber++;
+		if (patternNumberRequest < MAX_NUMBER_OF_PATTERNS - 1) {
+			patternNumberRequest++;
+
+			if (clockRun != HIGH) {
+				patternNumber = patternNumberRequest;
 				loadPattern();
 			}
 		}

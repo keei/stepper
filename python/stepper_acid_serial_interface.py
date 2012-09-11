@@ -48,12 +48,6 @@ def convertPitchInSixtiethsIntoChars(sixtieth):
 	semitone = semitoneNames[semitone]
 	return semitone + str(octave)
 
-def convertSixtiethIntoChars(sixtieth):
-	"""Convert a number between 0 and 60 into two characters, suitable for display on a screen with a fixed width font."""
-	sixtieth = int(sixtieth) # This should be unnecessary.  It may be a sign that things need to be debugged.
-	sixtieth = '%02d' % sixtieth
-	return sixtieth
-
 def cursePrint(rowNumber, firstColumnNumber, string, invert = False):
 	columnNumber = firstColumnNumber
 
@@ -110,7 +104,6 @@ while (True):
 		else:
 			pattern[row]['gate'] = '..'
 
-
 		if int(state[21:23], 16) == 1:
 			pattern[row]['accent'] = 'AC'
 		else:
@@ -158,7 +151,7 @@ while (True):
 	if clockRun != 0:
 		cursePrint(8, 4, 'o')
 
-	# Print out the current row
+	# Turn on the appropriate LEDs
 	if pattern[rowNumber]['pitch'] % 12 == 0:
 		cursePrint(4, 1, 'o')
 	elif pattern[rowNumber]['pitch'] % 12 == 1:
