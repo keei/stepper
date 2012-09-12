@@ -1,4 +1,4 @@
-"Surf", a basic software sequencer and modular synthesiser.
+"Stepper" step sequencers and related tools.
 Copyright (C) 2012 Zoe Blade.
 
 This program is free software: you can redistribute it and/or modify
